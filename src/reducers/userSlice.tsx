@@ -12,9 +12,12 @@ interface userInitType {
   token: string;
   darkmode: boolean;
 }
+
 const initialState: userInitType = {
   isAuthenticated: false,
-  userInfo: {},
+  userInfo: {
+    email: '0623hoon@gmail.com',
+  },
   token: '',
   darkmode: false,
 };
@@ -30,7 +33,7 @@ const usersSlice = createSlice({
     },
     setDarkMode: (state: any, action: any) => {
       // state.darkmode = action.payload;
-      state.darkmode = false;
+      state.darkmode = true;
     },
 
     userLogin: (state: any, action: any) => {

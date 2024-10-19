@@ -1,4 +1,8 @@
 {
   "name": "P4U",
-  "displayName": "P4U"
+  "displayName": "P4U",
+  "react-native-google-mobile-ads": {
+    "android_app_id": "ca-app-pub-8504369991661887~7352968373",
+    "ios_app_id": "ca-app-pub-8504369991661887~2395955479"
+  }
 }

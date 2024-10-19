@@ -22,6 +22,7 @@ target 'P4U' do
     # An absolute path to your application root.
     :app_path => "#{Pod::Config.instance.installation_root}/.."
   )
+  $RNGoogleMobileAdsAsStaticFramework = true
 
   target 'P4UTests' do
     inherit! :complete

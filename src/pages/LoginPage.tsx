@@ -1,9 +1,9 @@
 import React from 'react';
 import {View, Text, Image} from 'react-native';
-import {LoginPageStyle} from '../style';
-import Common from '../components/Common';
-import SocialLoginButton from '../components/SocialLoginButton';
-import Logo from '../assets/images/logo.png';
+import {LoginPageStyle} from 'style';
+import Common from 'components/Common';
+import SocialLoginButton from 'components/SocialLoginButton';
+import Logo from 'assets/images/logo.png';
 const LoginPage = (): React.JSX.Element => {
   return (
     <Common>

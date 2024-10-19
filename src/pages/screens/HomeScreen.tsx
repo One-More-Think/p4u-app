@@ -1,9 +1,21 @@
 import React, {useState, useEffect} from 'react';
-import {ScrollView, Text, View, RefreshControl} from 'react-native';
-import Common from '../../components/Common';
-import {useDispatch} from 'react-redux';
-import {HomeScreenStyle} from '../../style';
-import Question from '../../components/Question';
+import {
+  SafeAreaView,
+  StatusBar,
+  ScrollView,
+  Text,
+  View,
+  RefreshControl,
+  TouchableOpacity,
+  Platform,
+} from 'react-native';
+import Common from 'components/Common';
+import {useDispatch, useSelector} from 'react-redux';
+import {HomeScreenStyle} from 'style';
+import Question from 'components/Question';
+import Ionicons from 'react-native-vector-icons/Ionicons';
+import {MenuView} from '@react-native-menu/menu';
+import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 
 const HomeScreen = ({navigation}: any): React.JSX.Element => {
   const dispatch = useDispatch();
@@ -22,7 +34,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       gender: 'female',
       age: 21,
       occupation: 'teacher',
-      description: 'Why my student does not like to do',
+      description: 'Why my student does not like to do their',
     },
     {
       id: '3',
@@ -30,7 +42,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       gender: 'male',
       age: 22,
       occupation: 'student',
-      description: 'I want to move to other country',
+      description: `I don't know what to eat for today's lunch please `,
     },
     {
       id: '4',
@@ -98,6 +110,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
     },
   ];
   const [refreshing, setRefreshing] = useState(false);
+  const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const onRefresh = () => {
     setRefreshing(true);
   };
@@ -125,9 +138,22 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
   }, [refreshing]);
   useEffect(() => {
     // dispatch()
-  }, []);
+  }, [navigation]);
   return (
     <Common>
+      <SafeAreaView style={HomeScreenStyle.SafeArea}>
+        <StatusBar
+          barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+          backgroundColor={isDarkMode ? '#222428' : 'white'}
+        />
+        <TouchableOpacity onPress={() => {}} style={{marginLeft: 15}}>
+          <Ionicons name="search" size={30} color="#222428" />
+        </TouchableOpacity>
+        <Text style={HomeScreenStyle.SafeAreaText}>Forum</Text>
+        <TouchableOpacity onPress={() => {}} style={{marginRight: 15}}>
+          <Ionicons name="create-outline" size={30} color="#222428" />
+        </TouchableOpacity>
+      </SafeAreaView>
       <ScrollView
         style={HomeScreenStyle.ScrollView}
         refreshControl={
@@ -138,6 +164,10 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
           />
         }>
         <View style={HomeScreenStyle.Container}>
+          <BannerAd
+            unitId={TestIds.BANNER}
+            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+          />
           {MockData.map(map => (
             <Question
               navigation={navigation}
@@ -156,4 +186,4 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
   );
 };
 
-export default HomeScreen;
+export default React.memo(HomeScreen);

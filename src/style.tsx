@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import {Dimensions, StyleSheet} from 'react-native';
 export const CommonStyle = StyleSheet.create({
   scrollView: {
     height: '100%',
@@ -60,12 +60,24 @@ export const SocialButtonStyle = StyleSheet.create({
 });
 
 export const HomeScreenStyle = StyleSheet.create({
+  SafeArea: {
+    marginTop: 10,
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  SafeAreaText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
   Container: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 30,
+    marginTop: 10,
     height: '100%',
     width: '100%',
   },
@@ -77,7 +89,8 @@ export const HomeScreenStyle = StyleSheet.create({
 
 export const QuestionStyle = StyleSheet.create({
   Container: {
-    marginBottom: 30,
+    marginBottom: 15,
+    marginTop: 15,
     display: 'flex',
     width: '90%',
     height: 80,
@@ -131,6 +144,7 @@ export const QuestionStyle = StyleSheet.create({
 
 export const QuestionDetailStyle = StyleSheet.create({
   SafeArea: {
+    marginTop: 5,
     width: '100%',
     display: 'flex',
     flexDirection: 'row',
@@ -146,7 +160,7 @@ export const QuestionDetailStyle = StyleSheet.create({
     flexDirection: 'column',
     alignItems: 'center',
     justifyContent: 'center',
-    marginTop: 30,
+    marginTop: 20,
     height: '100%',
     width: '100%',
   },
@@ -154,13 +168,12 @@ export const QuestionDetailStyle = StyleSheet.create({
     width: '85%',
     display: 'flex',
     flexDirection: 'row',
-    // backgroundColor: 'red',
   },
   BottomBox: {
-    width: '85%',
+    width: '90%',
     display: 'flex',
     flexDirection: 'column',
-    backgroundColor: 'red',
+    marginTop: 50,
   },
   UserBox: {
     display: 'flex',
@@ -185,6 +198,12 @@ export const QuestionDetailStyle = StyleSheet.create({
     fontWeight: 'bold',
     marginTop: 15,
   },
+  Content: {
+    width: '85%',
+    fontSize: 15,
+    fontWeight: 'light',
+    marginTop: 20,
+  },
   IconWrapper: {
     display: 'flex',
     flexDirection: 'row',
@@ -196,5 +215,147 @@ export const QuestionDetailStyle = StyleSheet.create({
     fontWeight: '500',
     fontSize: 15,
     fontFamily: 'Rubik',
+  },
+  ChooseBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+    width: '80%',
+    marginTop: 15,
+  },
+  FilterBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    justifyContent: 'space-evenly',
+    alignItems: 'center',
+  },
+
+  ChartBox: {
+    marginTop: 50,
+    marginBottom: 50,
+    width: '100%',
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+});
+
+export const ChooseBoxStyle = StyleSheet.create({
+  ChooseBoxButton: {
+    display: 'flex',
+    justifyContent: 'center',
+    width: '100%',
+    borderRadius: 10,
+    height: 40,
+    marginTop: 25,
+  },
+  ChooseBoxText: {
+    marginLeft: 20,
+    fontSize: 15,
+    fontWeight: '500',
+  },
+});
+
+export const FilterBoxStyle = StyleSheet.create({
+  FilterBoxButton: {
+    display: 'flex',
+    justifyContent: 'center',
+    width: '20%',
+    borderRadius: 20,
+    height: 40,
+  },
+  FilterBoxText: {
+    fontWeight: '500',
+    textAlign: 'center',
+  },
+});
+
+export const ChartStyle = StyleSheet.create({
+  StackBar: {
+    display: 'flex',
+    alignItems: 'center',
+    color: 'black',
+  },
+});
+
+export const SettingBlockStyle = StyleSheet.create({
+  Container: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: '35%',
+    borderBottomEndRadius: 23,
+    borderBottomWidth: 0.3,
+    borderBottomStartRadius: 23,
+  },
+  IconContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 20,
+  },
+  IconText: {
+    fontSize: 17,
+    marginLeft: 15,
+  },
+  Description: {
+    marginRight: 20,
+    color: '#7a7b7e',
+  },
+});
+
+export const SettingPageStyle = StyleSheet.create({
+  SafeArea: {
+    width: '100%',
+    height: '7%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomWidth: 0.2,
+  },
+  SafeAreaText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  Container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 30,
+    height: '100%',
+    width: '100%',
+  },
+});
+
+export const SettingCommonHeaderStyle = StyleSheet.create({
+  SafeArea: {
+    width: '100%',
+    height: '7%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    borderBottomWidth: 0.2,
+  },
+  SafeAreaText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  Container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginTop: 20,
+    height: '100%',
+    width: '100%',
+  },
+  BackButton: {
+    marginLeft: 10,
+    position: 'absolute',
+    left: 0,
   },
 });

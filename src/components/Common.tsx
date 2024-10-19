@@ -1,10 +1,12 @@
 import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {SafeAreaView, StatusBar, View} from 'react-native';
-import {CommonStyle} from '../style';
+import {CommonStyle} from 'style';
 import {useSelector} from 'react-redux';
-type CommonProps = PropsWithChildren<{}>;
-const Common = ({children}: CommonProps): React.JSX.Element => {
+type CommonProps = PropsWithChildren<{
+  style?: any;
+}>;
+const Common = ({children, style = {}}: CommonProps): React.JSX.Element => {
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
 
   const backgroundStyle = {
@@ -21,6 +23,7 @@ const Common = ({children}: CommonProps): React.JSX.Element => {
         style={{
           ...CommonStyle.mainContainer,
           backgroundColor: isDarkMode ? '#b4bac9' : '#e1e9fc',
+          ...style,
         }}>
         {children}
       </View>

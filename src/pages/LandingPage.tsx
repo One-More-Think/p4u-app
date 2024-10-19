@@ -1,12 +1,11 @@
 import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-import {createStackNavigator} from '@react-navigation/stack';
-import HomeScreen from './screens/HomeScreen';
-import SearchScreen from './screens/SearchScreen';
-import PostScreen from './screens/PostScreen';
-import UserScreen from './screens/UserScreen';
-import SettingScreen from './screens/SettingScree';
+import HomeScreen from 'screens/HomeScreen';
+import PostScreen from 'screens/PostScreen';
+import NotificationScreen from 'screens/settings/NotificationScreen';
+import UserScreen from 'screens/UserScreen';
+import SettingPage from 'pages/screens/SettingPage';
 import {useSelector} from 'react-redux';
 
 const LandingPage = (): React.JSX.Element => {
@@ -16,20 +15,16 @@ const LandingPage = (): React.JSX.Element => {
       page: HomeScreen,
     },
     {
-      name: 'Search',
-      page: SearchScreen,
-    },
-    {
-      name: 'Post',
-      page: PostScreen,
-    },
-    {
       name: 'User',
       page: UserScreen,
     },
     {
+      name: 'Notification',
+      page: NotificationScreen,
+    },
+    {
       name: 'Setting',
-      page: SettingScreen,
+      page: SettingPage,
     },
   ];
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
@@ -45,8 +40,9 @@ const LandingPage = (): React.JSX.Element => {
         tabBarIcon: ({focused}: any) => {
           let iconName: any;
           if (route.name === 'HomeStack') iconName = 'home';
-          else if (route.name === 'Search') iconName = 'search';
-          else if (route.name === 'Post') iconName = 'add-circle-outline';
+          else if (route.name === 'Notification')
+            iconName = 'notifications-sharp';
+          else if (route.name === 'Post') iconName = 'pencil';
           else if (route.name === 'User') iconName = 'person';
           else if (route.name === 'Setting') iconName = 'settings';
           return (
@@ -56,8 +52,8 @@ const LandingPage = (): React.JSX.Element => {
               color={
                 isDarkMode
                   ? focused
-                    ? '#70747e'
-                    : 'white'
+                    ? 'white'
+                    : '#70747e'
                   : focused
                   ? '#2d2e32'
                   : '#cad1e2'

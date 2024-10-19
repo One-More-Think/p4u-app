@@ -2,7 +2,7 @@ import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
 import CountryFlag from 'react-native-country-flag';
-import {QuestionStyle} from '../style';
+import {QuestionStyle} from 'style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
 type QuestionProps = PropsWithChildren<{
@@ -40,7 +40,7 @@ const Question = (props: QuestionProps): React.JSX.Element => {
   };
   const handleQuestion = async () => {
     // const data = dispatch({});
-    navigation.navigate('QuestionDetail', {data});
+    navigation.navigate('QuestionDetailScreen', {data});
   };
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   return (

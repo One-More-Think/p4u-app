@@ -2,10 +2,10 @@ import React from 'react';
 import type {PropsWithChildren} from 'react';
 import {TouchableOpacity, Text, Image, useColorScheme} from 'react-native';
 import {SocialButtonStyle} from '../style';
-import Google_Light from '../assets/images/google_light.png';
-import Google_Dark from '../assets/images/google_dark.png';
-import Apple_Light from '../assets/images/apple_light.png';
-import Apple_Dark from '../assets/images/apple_dark.png';
+import Google_Light from 'assets/images/google_light.png';
+import Google_Dark from 'assets/images/google_dark.png';
+import Apple_Light from 'assets/images/apple_light.png';
+import Apple_Dark from 'assets/images/apple_dark.png';
 
 type SocialLoginButtonProps = PropsWithChildren<{
   title: string;
