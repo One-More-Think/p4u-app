@@ -2,13 +2,12 @@ import React, {useState, useCallback, useEffect} from 'react';
 import {Text, View} from 'react-native';
 import SettingCommonHeader from 'components/SettingCommonHeader';
 import {SearchBar} from '@rneui/themed';
-import {CommonHeaderStyle} from './style';
+import {CommonHeaderStyle} from 'screens/settings/style';
 import {useSelector} from 'react-redux';
 import LanguageButton from 'components/LanguageButton';
 
 const LanguageScreen = ({route, navigation}: any): React.JSX.Element => {
   const [search, setSearch] = useState<string>('');
-  const [loading, setLoading] = useState<boolean>(false);
   const language = useSelector((state: any) => state.config.language);
   const [filteredLanguage, setFilteredLanguage] = useState([]);
   const [selected, setSelected] = useState<string>(language);
@@ -25,17 +24,16 @@ const LanguageScreen = ({route, navigation}: any): React.JSX.Element => {
   );
   const LanguageList: any = [
     {name: 'us', title: 'English'},
-    {name: 'kr', title: 'Korean'},
-    {name: 'jp', title: 'Japanese'},
-    {name: 'cn', title: 'Chinese'},
+    {name: 'es', title: 'Español'},
+    {name: 'kr', title: '한국어'},
+    {name: 'jp', title: '日本語'},
+    {name: 'cn', title: '中國語'},
   ];
 
   useEffect(() => {
-    setLoading(true);
     setFilteredLanguage(
       LanguageList.filter((lan: any) => lan.title.includes(search)),
     );
-    setLoading(false);
   }, [search]);
 
   return (
@@ -44,23 +42,22 @@ const LanguageScreen = ({route, navigation}: any): React.JSX.Element => {
         <Text style={CommonHeaderStyle.ContainerText}>Language</Text>
         <SearchBar
           round
-          showLoading={loading}
           placeholder="Search"
           cancelButtonTitle="Cancel"
           containerStyle={{
-            backgroundColor: isDarkMode ? '#222428' : 'white',
+            backgroundColor: '#0000',
             borderTopWidth: 0,
             borderBottomWidth: 0,
           }}
           inputContainerStyle={{
             display: 'flex',
             height: 40,
-            backgroundColor: isDarkMode ? 'white' : '#222428',
+            backgroundColor: isDarkMode ? '#4e4f52' : 'white',
           }}
           onChangeText={handleChange}
           value={search}
         />
-        {filteredLanguage.map(language => (
+        {filteredLanguage.map((language: any) => (
           <LanguageButton
             key={language.name}
             title={language.title}

@@ -305,7 +305,6 @@ export const SettingBlockStyle = StyleSheet.create({
   },
   IconText: {
     fontSize: 17,
-    marginLeft: 15,
   },
   Description: {
     marginRight: 20,
@@ -372,7 +371,7 @@ export const SettingCommonHeaderStyle = StyleSheet.create({
   },
 });
 
-export const ThemeButtonStyle = StyleSheet.create({
+export const RadioButtonStyle = StyleSheet.create({
   Container: {
     display: 'flex',
     flexDirection: 'row',

@@ -39,8 +39,7 @@ const LandingPage = (): React.JSX.Element => {
         tabBarIcon: ({focused}: any) => {
           let iconName: any;
           if (route.name === 'HomeStack') iconName = 'home';
-          else if (route.name === 'Notification')
-            iconName = 'notifications-sharp';
+          else if (route.name === 'Notification') iconName = 'chatbox';
           else if (route.name === 'Post') iconName = 'pencil';
           else if (route.name === 'User') iconName = 'person';
           else if (route.name === 'Setting') iconName = 'settings';

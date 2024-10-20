@@ -1,6 +1,6 @@
 import React from 'react';
 import {TouchableOpacity, View, Text, useColorScheme} from 'react-native';
-import {ThemeButtonStyle} from 'style';
+import {RadioButtonStyle} from 'style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useSelector} from 'react-redux';
 import store from 'reducers/index';
@@ -36,35 +36,35 @@ const ThemeButton = ({
   return (
     <View
       style={{
-        ...ThemeButtonStyle.Container,
+        ...RadioButtonStyle.Container,
         borderBottomColor: isDarkMode ? 'white' : '#222428',
       }}>
       <TouchableOpacity
         style={{
-          ...ThemeButtonStyle.TouchableOpacity,
+          ...RadioButtonStyle.TouchableOpacity,
           borderBottomColor: isDarkMode ? 'white' : '#222428',
         }}
         onPress={() => {
           chooseButton(title), handleTheme(title);
         }}>
-        <View style={ThemeButtonStyle.IconContainer}>
+        <View style={RadioButtonStyle.IconContainer}>
           <Ionicons
             name={name}
             size={40}
             style={{color: isDarkMode ? 'white' : '#222428'}}
           />
-          <View style={ThemeButtonStyle.IconTextWrapper}>
+          <View style={RadioButtonStyle.IconTextWrapper}>
             <Text style={{color: isDarkMode ? 'white' : '#222428'}}>
               {title}
             </Text>
             {description && (
-              <Text style={ThemeButtonStyle.DescriptionText}>
+              <Text style={RadioButtonStyle.DescriptionText}>
                 {description}
               </Text>
             )}
           </View>
         </View>
-        <View style={ThemeButtonStyle.RadioButton}>
+        <View style={RadioButtonStyle.RadioButton}>
           {selected === title ? (
             <Ionicons
               name="radio-button-on"
