@@ -1,4 +1,4 @@
-import {Dimensions, StyleSheet} from 'react-native';
+import {StyleSheet} from 'react-native';
 export const CommonStyle = StyleSheet.create({
   scrollView: {
     height: '100%',
@@ -284,10 +284,18 @@ export const SettingBlockStyle = StyleSheet.create({
     flexDirection: 'row',
     alignItems: 'center',
     justifyContent: 'space-between',
-    height: '35%',
+    height: 75,
     borderBottomEndRadius: 23,
     borderBottomWidth: 0.3,
     borderBottomStartRadius: 23,
+  },
+  TouchableOpacity: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
   },
   IconContainer: {
     display: 'flex',
@@ -344,6 +352,10 @@ export const SettingCommonHeaderStyle = StyleSheet.create({
     fontSize: 20,
     fontWeight: 'bold',
   },
+  scrollView: {
+    height: '100%',
+    width: '100%',
+  },
   Container: {
     display: 'flex',
     flexDirection: 'column',
@@ -357,5 +369,47 @@ export const SettingCommonHeaderStyle = StyleSheet.create({
     marginLeft: 10,
     position: 'absolute',
     left: 0,
+  },
+});
+
+export const ThemeButtonStyle = StyleSheet.create({
+  Container: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    height: 85,
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    borderBottomEndRadius: 23,
+    borderBottomWidth: 0.3,
+    borderBottomStartRadius: 23,
+  },
+  TouchableOpacity: {
+    display: 'flex',
+    flexDirection: 'row',
+    width: '100%',
+    height: '100%',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+  },
+  IconContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    marginLeft: 20,
+  },
+  IconTextWrapper: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'center',
+    width: '60%',
+    marginLeft: 20,
+  },
+  DescriptionText: {
+    flexWrap: 'wrap',
+    color: '#7a7b7e',
+  },
+  RadioButton: {
+    marginRight: 20,
   },
 });

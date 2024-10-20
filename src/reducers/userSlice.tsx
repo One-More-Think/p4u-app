@@ -1,4 +1,5 @@
 import {createSlice} from '@reduxjs/toolkit';
+
 interface UserInfoType {
   name?: string;
   email?: string;
@@ -22,6 +23,10 @@ const initialState: userInitType = {
   darkmode: false,
 };
 
+type DarkModeAction = {
+  payload: boolean;
+};
+
 const usersSlice = createSlice({
   name: 'user',
   initialState,
@@ -31,9 +36,9 @@ const usersSlice = createSlice({
         state.isAuthenticated = true;
       }
     },
-    setDarkMode: (state: any, action: any) => {
-      // state.darkmode = action.payload;
-      state.darkmode = true;
+    setDarkMode: (state: any, action: DarkModeAction) => {
+      state.darkmode = action.payload;
+      // state.darkmode = true;
     },
 
     userLogin: (state: any, action: any) => {

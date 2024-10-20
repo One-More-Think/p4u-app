@@ -9,6 +9,7 @@ const SettingPage = ({route, navigation}: any): React.JSX.Element => {
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const language = useSelector((state: any) => state.config.language);
   const userInfo = useSelector((state: any) => state.user.userInfo);
+  const configInfo = useSelector((state: any) => state.config);
   const backgroundStyle = {
     backgroundColor: isDarkMode ? '#222428' : 'white',
   };
@@ -34,7 +35,7 @@ const SettingPage = ({route, navigation}: any): React.JSX.Element => {
     {
       name: 'contrast',
       title: 'Themes',
-      description: 'Dark Mode',
+      description: configInfo.mode,
       page: 'Theme',
     },
     {
@@ -52,7 +53,7 @@ const SettingPage = ({route, navigation}: any): React.JSX.Element => {
     {
       name: 'information-circle-outline',
       title: 'About',
-      description: '',
+      description: configInfo.appInfo.version,
       page: 'About',
     },
   ];

@@ -8,6 +8,7 @@
       "reducers/*": ["reducers/*"],
       "pages/*": ["pages/*"],
       "screens/*": ["pages/screens/*"],
+      "utils/*": ["utils/*"],
       "style": ["style.ts"]
     }
   }

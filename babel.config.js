@@ -12,6 +12,7 @@ module.exports = {
           pages: './src/pages',
           screens: './src/pages/screens',
           style: './src/style.tsx',
+          utils: './src/utils',
         },
       },
     ],

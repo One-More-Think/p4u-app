@@ -2,10 +2,9 @@ import React from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
 import HomeScreen from 'screens/HomeScreen';
-import PostScreen from 'screens/PostScreen';
-import NotificationScreen from 'screens/settings/NotificationScreen';
-import UserScreen from 'screens/UserScreen';
-import SettingPage from 'pages/screens/SettingPage';
+import NotificationPage from './NotificationPage';
+import UserPage from 'pages/UserPage';
+import SettingPage from 'pages/SettingPage';
 import {useSelector} from 'react-redux';
 
 const LandingPage = (): React.JSX.Element => {
@@ -16,11 +15,11 @@ const LandingPage = (): React.JSX.Element => {
     },
     {
       name: 'User',
-      page: UserScreen,
+      page: UserPage,
     },
     {
       name: 'Notification',
-      page: NotificationScreen,
+      page: NotificationPage,
     },
     {
       name: 'Setting',

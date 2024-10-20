@@ -6,6 +6,7 @@ import {
   StatusBar,
   TouchableOpacity,
   Platform,
+  ScrollView,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Common from './Common';
@@ -45,17 +46,10 @@ const SettingCommonHeader = ({
           }}>
           {title}
         </Text>
-        {/* <TouchableOpacity
-          onPress={() => {}}
-          style={{marginLeft: 10, position: 'absolute', left: 0}}>
-          <Ionicons
-            name="chevron-back"
-            size={40}
-            color={isDarkMode ? 'white' : '#222428'}
-          />
-        </TouchableOpacity> */}
       </SafeAreaView>
-      {children}
+      <ScrollView style={SettingCommonHeaderStyle.scrollView}>
+        {children}
+      </ScrollView>
     </Common>
   );
 };

@@ -3,11 +3,17 @@ import {createSlice} from '@reduxjs/toolkit';
 interface configSliceInitType {
   isLoading: boolean;
   language: string;
+  appInfo: any;
+  mode: string;
 }
 
 const initialState: configSliceInitType = {
   isLoading: false,
   language: 'English',
+  mode: 'System Mode',
+  appInfo: {
+    version: '1.0.0',
+  },
 };
 
 const configSlice = createSlice({
@@ -20,7 +26,13 @@ const configSlice = createSlice({
     setLanguage: (state: any, action: any) => {
       state.language = action.payload;
     },
+    setAppInfo: (state: any, action: any) => {
+      state.appInfo = action.payload;
+    },
+    setMode: (state: any, action: any) => {
+      state.mode = action.payload;
+    },
   },
 });
-export const {setLanguage} = configSlice.actions;
+export const {setLanguage, setAppInfo, setMode} = configSlice.actions;
 export default configSlice.reducer;

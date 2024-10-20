@@ -14,7 +14,6 @@ import {useDispatch, useSelector} from 'react-redux';
 import {HomeScreenStyle} from 'style';
 import Question from 'components/Question';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {MenuView} from '@react-native-menu/menu';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 
 const HomeScreen = ({navigation}: any): React.JSX.Element => {

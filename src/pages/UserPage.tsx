@@ -2,14 +2,14 @@ import React from 'react';
 import {Text, View} from 'react-native';
 import Common from 'components/Common';
 
-const PostScreen = (): React.JSX.Element => {
+const UserPage = (): React.JSX.Element => {
   return (
     <Common>
       <View>
-        <Text>Post</Text>
+        <Text>User</Text>
       </View>
     </Common>
   );
 };
 
-export default React.memo(PostScreen);
+export default UserPage;
