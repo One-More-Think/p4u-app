@@ -12,6 +12,7 @@ type QuestionProps = PropsWithChildren<{
   age: number;
   occupation: string;
   description: string;
+  timestamp: string;
   navigation: any;
 }>;
 const Question = (props: QuestionProps): React.JSX.Element => {
@@ -23,6 +24,7 @@ const Question = (props: QuestionProps): React.JSX.Element => {
     age = 0,
     occupation = 'none',
     description = '',
+    timestamp,
     navigation,
   } = props;
   const data = {
@@ -32,6 +34,7 @@ const Question = (props: QuestionProps): React.JSX.Element => {
     age,
     occupation,
     description,
+    timestamp,
   };
   const GenderColor = (gender: string) => {
     if (gender === 'male') return '#7dc9e0';
@@ -39,7 +42,7 @@ const Question = (props: QuestionProps): React.JSX.Element => {
     return 'gray';
   };
   const handleQuestion = async () => {
-    // const data = dispatch({});
+    // const data = dispatch({}); get real data
     navigation.navigate('QuestionDetailScreen', {data});
   };
   const isDarkMode = useSelector((state: any) => state.user.darkmode);

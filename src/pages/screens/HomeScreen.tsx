@@ -18,6 +18,7 @@ import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 
 const HomeScreen = ({navigation}: any): React.JSX.Element => {
   const dispatch = useDispatch();
+  const LIMIT = 10;
   const MockData = [
     {
       id: '1',
@@ -26,6 +27,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       age: 27,
       occupation: 'programmer',
       description: 'I have a question something about my career',
+      timestamp: '10/26 03:40',
     },
     {
       id: '2',
@@ -34,6 +36,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       age: 21,
       occupation: 'teacher',
       description: 'Why my student does not like to do their',
+      timestamp: '10/26 03:40',
     },
     {
       id: '3',
@@ -42,6 +45,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       age: 22,
       occupation: 'student',
       description: `I don't know what to eat for today's lunch please `,
+      timestamp: '10/26 03:40',
     },
     {
       id: '4',
@@ -50,6 +54,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       age: 24,
       occupation: 'none',
       description: 'Canada rent fee is getting higher',
+      timestamp: '10/26 03:40',
     },
     {
       id: '5',
@@ -58,6 +63,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       age: 24,
       occupation: 'none',
       description: 'Canada rent fee is getting higher',
+      timestamp: '10/26 03:40',
     },
     {
       id: '6',
@@ -66,6 +72,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       age: 24,
       occupation: 'none',
       description: 'Canada rent fee is getting higher',
+      timestamp: '10/26 03:40',
     },
     {
       id: '7',
@@ -74,6 +81,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       age: 24,
       occupation: 'none',
       description: 'Canada rent fee is getting higher',
+      timestamp: '10/26 03:40',
     },
     {
       id: '8',
@@ -82,6 +90,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       age: 24,
       occupation: 'none',
       description: 'Canada rent fee is getting higher',
+      timestamp: '10/26 03:40',
     },
     {
       id: '9',
@@ -90,6 +99,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       age: 24,
       occupation: 'none',
       description: 'Canada rent fee is getting higher',
+      timestamp: '10/26 03:40',
     },
     {
       id: '10',
@@ -98,6 +108,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       age: 24,
       occupation: 'none',
       description: 'Canada rent fee is getting higher',
+      timestamp: '10/26 03:40',
     },
     {
       id: '11',
@@ -106,6 +117,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       age: 24,
       occupation: 'none',
       description: 'Canada rent fee is getting higher',
+      timestamp: '10/26 03:40',
     },
   ];
   const [refreshing, setRefreshing] = useState(false);
@@ -175,6 +187,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
               age={map.age}
               occupation={map.occupation}
               description={map.description}
+              timestamp={map.timestamp}
               key={map.id}
               id={map.id}
             />

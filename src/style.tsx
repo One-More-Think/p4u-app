@@ -173,24 +173,10 @@ export const QuestionDetailStyle = StyleSheet.create({
     width: '90%',
     display: 'flex',
     flexDirection: 'column',
-    marginTop: 50,
-  },
-  UserBox: {
-    display: 'flex',
-    flexDirection: 'column',
+    marginBottom: 30,
   },
   CategoryBox: {
     marginLeft: 20,
-  },
-  InfoBox: {
-    display: 'flex',
-    flexDirection: 'row',
-  },
-  TimeStamp: {
-    fontSize: 12,
-    fontWeight: '500',
-    color: 'gray',
-    marginLeft: 15,
   },
   Title: {
     width: '85%',
@@ -204,24 +190,12 @@ export const QuestionDetailStyle = StyleSheet.create({
     fontWeight: 'light',
     marginTop: 20,
   },
-  IconWrapper: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 15,
-  },
-  IconText: {
-    fontWeight: '500',
-    fontSize: 15,
-    fontFamily: 'Rubik',
-  },
   ChooseBox: {
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-evenly',
     width: '80%',
-    marginTop: 15,
+    marginBottom: 20,
   },
   FilterBox: {
     display: 'flex',
@@ -229,7 +203,13 @@ export const QuestionDetailStyle = StyleSheet.create({
     justifyContent: 'space-evenly',
     alignItems: 'center',
   },
-
+  CommentContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '80%',
+    marginTop: 10,
+    marginBottom: 40,
+  },
   ChartBox: {
     marginTop: 50,
     marginBottom: 50,
@@ -410,5 +390,48 @@ export const RadioButtonStyle = StyleSheet.create({
   },
   RadioButton: {
     marginRight: 20,
+  },
+});
+
+export const AnonymousButtonStyle = StyleSheet.create({
+  Container: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 10,
+  },
+});
+
+export const UserBoxStyle = StyleSheet.create({
+  HeaderBox: {
+    width: '85%',
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  UserBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'flex-start',
+  },
+  InfoBox: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  TimeStamp: {
+    fontWeight: '500',
+    color: 'gray',
+    marginLeft: 15,
+  },
+  IconWrapper: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 15,
+  },
+  IconText: {
+    fontWeight: '500',
+    fontFamily: 'Rubik',
   },
 });

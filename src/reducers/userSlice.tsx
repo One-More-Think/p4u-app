@@ -5,6 +5,8 @@ interface UserInfoType {
   email?: string;
   country?: string;
   questions?: [];
+  gender?: string;
+  occupation?: string;
 }
 
 interface userInitType {
@@ -18,6 +20,9 @@ const initialState: userInitType = {
   isAuthenticated: false,
   userInfo: {
     email: '0623hoon@gmail.com',
+    country: 'Korea',
+    gender: 'Male',
+    occupation: 'Programmer',
   },
   token: '',
   darkmode: false,
@@ -38,7 +43,6 @@ const usersSlice = createSlice({
     },
     setDarkMode: (state: any, action: DarkModeAction) => {
       state.darkmode = action.payload;
-      // state.darkmode = true;
     },
 
     userLogin: (state: any, action: any) => {

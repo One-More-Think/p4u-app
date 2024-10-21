@@ -2,6 +2,7 @@ import React, {useEffect, useState, useCallback, useRef} from 'react';
 import {MenuView} from '@react-native-menu/menu';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {Input} from '@rneui/themed';
 import {
   View,
   Text,
@@ -15,26 +16,62 @@ import {
 import Common from 'components/Common';
 import {useSelector} from 'react-redux';
 import {QuestionDetailStyle} from 'style';
-import CountryFlag from 'react-native-country-flag';
 import ChooseBox from 'components/ChooseBox';
 import FilterBox from 'components/FilterBox';
 import Chart from 'components/Chart';
+import AnonymousButton from 'components/AnonymousButton';
+import UserBox from 'components/UserBox';
 
 const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
   const {data} = route.params;
-  const {country, gender, age, occupation, description} = data;
+  const description = data?.description || '';
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const userInfo = useSelector((state: any) => state.user.userInfo);
   const [refreshing, setRefreshing] = useState<boolean>(false);
   const [selected, setSelected] = useState<string>('');
   const [filtered, setFiltered] = useState<string>('');
+  const [checked, setChecked] = useState<boolean>(false);
+  const [search, setSeacrh] = useState<string>('');
+
   const filterList = ['Country', 'Gender', 'Age', 'Occupation'];
   const MockData = {
     content: `I graduated in BCIT school but I can not find a job for a long time I don't know what should I do give let me know If I need to go school for master or keep it up for job hunting?`,
     choose: ['Go to get master degree', 'Keep it up', 'Find antoher job'],
     category: 'home-sharp', //shcool, fast-food, heart
+    timeout: false,
+    comments: [
+      {
+        id: 1,
+        country: 'cn',
+        gender: 'female',
+        age: 24,
+        occupation: 'professor',
+        comment: `I think it's better to go school again`,
+        timestamp: '10/26 03:40',
+      },
+      {
+        id: 2,
+        country: 'ca',
+        gender: 'male',
+        age: 22,
+        occupation: 'none',
+        comment: `Just do what ever you like`,
+        timestamp: '11/26 10:20',
+      },
+      {
+        id: 3,
+        secret: true,
+        comment: 'Just do it !!',
+        timestamp: '11/26 10:29',
+      },
+    ],
+  };
+
+  const handleChange = (text: string) => {
+    setSeacrh(text);
   };
   const bannerRef = useRef<BannerAd>(null);
+
   const onRefresh = () => {
     setRefreshing(true);
   };
@@ -51,6 +88,9 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
     },
     [filtered],
   );
+  const onCheck = useCallback(() => {
+    setChecked(!checked);
+  }, [checked]);
   const GenderColor = (gender: string) => {
     if (gender === 'male') return '#7dc9e0';
     else if (gender === 'female') return '#ee92ba';
@@ -78,8 +118,10 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
       refreshMainPage();
     }
   }, [refreshing]);
+
   useEffect(() => {
-    // dispatch
+    // dispatch to get the information about the Questions
+    // the
   }, []);
 
   return (
@@ -103,7 +145,7 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
             }}
             actions={[
               {
-                id: 'edit',
+                id: 'edit', // only when the writerId is same as userId
                 title: 'Edit',
                 titleColor: '#2367A2',
                 image: Platform.select({
@@ -141,6 +183,11 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
           </MenuView>
         </View>
       </SafeAreaView>
+      <BannerAd
+        ref={bannerRef}
+        unitId={TestIds.BANNER}
+        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+      />
       <ScrollView
         style={{width: '100%'}}
         refreshControl={
@@ -152,43 +199,7 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
         }>
         <View style={QuestionDetailStyle.Container}>
           <View style={QuestionDetailStyle.HeaderBox}>
-            <CountryFlag
-              isoCode={country}
-              size={40}
-              style={{borderWidth: 0.5}}
-            />
-            <View style={QuestionDetailStyle.UserBox}>
-              <View style={QuestionDetailStyle.InfoBox}>
-                <View style={QuestionDetailStyle.IconWrapper}>
-                  <Ionicons
-                    name={gender}
-                    color={GenderColor(gender)}
-                    size={23}
-                  />
-                </View>
-                <View style={QuestionDetailStyle.IconWrapper}>
-                  <Ionicons name="accessibility" size={20} color="#222428" />
-                  <Text
-                    style={{
-                      ...QuestionDetailStyle.IconText,
-                      color: '#222428',
-                    }}>
-                    {age}
-                  </Text>
-                </View>
-                <View style={QuestionDetailStyle.IconWrapper}>
-                  <Ionicons name="bag" size={20} color="#9a7969" />
-                  <Text
-                    style={{
-                      ...QuestionDetailStyle.IconText,
-                      color: '#222428',
-                    }}>
-                    {occupation}
-                  </Text>
-                </View>
-              </View>
-              <Text style={QuestionDetailStyle.TimeStamp}>10/26 10:40</Text>
-            </View>
+            <UserBox data={data} />
             <View style={QuestionDetailStyle.CategoryBox}>
               <Ionicons name={MockData.category} size={35} color="#222428" />
             </View>
@@ -205,18 +216,39 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
             {MockData.choose.map((question, idx) => (
               <ChooseBox
                 question={`A${idx + 1}. ${question}`}
-                key={question}
+                key={`${idx}-choosebox`}
                 onSelect={onSelect}
                 selected={selected}
               />
             ))}
           </View>
-          {selected && (
+          <View style={QuestionDetailStyle.CommentContainer}>
+            {MockData.comments.map((data: any, idx) => (
+              <React.Fragment key={data.id}>
+                <UserBox
+                  key={`${idx}-userbox`}
+                  data={{
+                    country: data?.country || '',
+                    age: data?.age || '',
+                    gender: data?.gender || '',
+                    occupation: data?.occupation || '',
+                    timestamp: data?.timestamp || '',
+                  }}
+                  secret={data.secret}
+                  comment
+                />
+                <Text key={`${idx}-userboxText`} style={{fontFamily: 'Rubik'}}>
+                  {data.comment}
+                </Text>
+              </React.Fragment>
+            ))}
+          </View>
+          {MockData.timeout && (
             <View style={QuestionDetailStyle.BottomBox}>
               <View style={QuestionDetailStyle.FilterBox}>
                 {filterList.map(filter => (
                   <FilterBox
-                    key={filter}
+                    key={`${filter}-filterBox`}
                     title={filter}
                     onFilter={onFilter}
                     filtered={filtered}
@@ -232,11 +264,33 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
           )}
         </View>
       </ScrollView>
-      <SafeAreaView>
-        <BannerAd
-          ref={bannerRef}
-          unitId={TestIds.BANNER}
-          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+      <SafeAreaView style={{width: '100%'}}>
+        <Input
+          autoFocus={true}
+          keyboardAppearance="default"
+          keyboardType="twitter"
+          leftIcon={<AnonymousButton checked={checked} onCheck={onCheck} />}
+          placeholder="Comment"
+          rightIcon={
+            <TouchableOpacity style={{marginRight: 10}}>
+              <Ionicons name="paper-plane-outline" size={25} />
+            </TouchableOpacity>
+          }
+          containerStyle={{
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+          inputContainerStyle={{
+            borderWidth: 1,
+            borderRadius: 25,
+          }}
+          inputStyle={{
+            marginLeft: 10,
+            display: 'flex',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
         />
       </SafeAreaView>
     </Common>

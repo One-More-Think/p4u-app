@@ -4,11 +4,13 @@ import SettingCommonHeader from 'components/SettingCommonHeader';
 import {CommonHeaderStyle} from './style';
 import SettingBlock from 'components/SettingBlock';
 import CountryFlag from 'react-native-country-flag';
+import {useSelector} from 'react-redux';
 
 const AccountScreen = ({route, navigation}: any): React.JSX.Element => {
   const {title} = route.params;
+  const userInfo = useSelector((state: any) => state.user.userInfo);
   const AccountList = [
-    {title: 'Email', description: 'kcnoh2@hanyang.ac.kr'},
+    {title: 'Email', description: userInfo.email},
     {
       title: 'Country',
       description: <CountryFlag isoCode="ca" size={20} />,
@@ -23,7 +25,7 @@ const AccountScreen = ({route, navigation}: any): React.JSX.Element => {
     {
       title: 'Delete',
       onPress: () =>
-        Alert.alert('Delete Account', 'Are you sure delete your all data?', [
+        Alert.alert('Delete Account', 'Are you sure delete your account?', [
           {
             text: 'Cancel',
             onPress: () => console.log('Cancel Pressed'),

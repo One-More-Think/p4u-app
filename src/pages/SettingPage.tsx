@@ -39,7 +39,7 @@ const SettingPage = ({route, navigation}: any): React.JSX.Element => {
       page: 'Theme',
     },
     {
-      name: 'earth',
+      name: 'globe-outline',
       title: 'Languages',
       description: language,
       page: 'Language',
