@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React from 'react';
 import {NavigationContainer} from '@react-navigation/native';
 import {createNativeStackNavigator} from '@react-navigation/native-stack';
 import LandingPage from 'pages/LandingPage';
@@ -11,6 +11,9 @@ import ThemeScreen from 'screens/settings/ThemeScreen';
 import LanguageScreen from 'screens/settings/LanguageScreen';
 import SupportScreen from 'screens/settings/SupportScreen';
 import AccountScreen from 'screens/settings/AccountScreen';
+import SearchScreen from 'screens/SearchScreen';
+import SettingPage from 'pages/SettingPage';
+import PostPage from 'pages/PostPage';
 export const MainPage = (): React.JSX.Element => {
   const MainStack = createNativeStackNavigator();
   const ScreenList = [
@@ -24,6 +27,9 @@ export const MainPage = (): React.JSX.Element => {
     {name: 'SupportScreen', component: SupportScreen},
     {name: 'AboutScreen', component: AboutScreen},
     {name: 'AccountScreen', component: AccountScreen},
+    {name: 'SettingPage', component: SettingPage},
+    {name: 'SearchScreen', component: SearchScreen},
+    {name: 'PostScreen', component: PostPage},
   ];
 
   const MainStackScreen = () => {
@@ -38,7 +44,13 @@ export const MainPage = (): React.JSX.Element => {
           {ScreenList.map(screen => (
             <MainStack.Screen
               key={screen.name}
-              options={{headerShown: false}}
+              options={{
+                headerShown: false,
+                ...((screen.name === 'SearchScreen' ||
+                  screen.name === 'PostScreen') && {
+                  presentation: 'containedModal',
+                }),
+              }}
               name={screen.name}
               component={screen.component}
             />

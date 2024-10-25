@@ -13,15 +13,26 @@ const AccountScreen = ({route, navigation}: any): React.JSX.Element => {
     {title: 'Email', description: userInfo.email},
     {
       title: 'Country',
-      description: <CountryFlag isoCode="ca" size={20} />,
+      description: (
+        <CountryFlag
+          isoCode={userInfo.country}
+          size={20}
+          style={{borderWidth: 0.5}}
+        />
+      ),
       onPress: () => console.log('show pop up to change country'),
     },
     {
       title: 'Gender',
-      description: 'Male',
+      description:
+        userInfo.gender.at(0).toUpperCase() + userInfo.gender.slice(1),
       onPress: () => console.log('show pop up to change country'),
     },
-    {title: 'Occupation', description: 'Programmer'},
+    {
+      title: 'Occupation',
+      description:
+        userInfo.occupation.at(0).toUpperCase() + userInfo.occupation.slice(1),
+    },
     {
       title: 'Delete',
       onPress: () =>

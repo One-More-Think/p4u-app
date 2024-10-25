@@ -5,7 +5,6 @@ import {
   SafeAreaView,
   StatusBar,
   TouchableOpacity,
-  Platform,
   ScrollView,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';

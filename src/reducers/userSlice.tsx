@@ -7,6 +7,8 @@ interface UserInfoType {
   questions?: [];
   gender?: string;
   occupation?: string;
+  aboutme?: string;
+  age?: number;
 }
 
 interface userInitType {
@@ -20,9 +22,11 @@ const initialState: userInitType = {
   isAuthenticated: false,
   userInfo: {
     email: '0623hoon@gmail.com',
-    country: 'Korea',
-    gender: 'Male',
-    occupation: 'Programmer',
+    country: 'kr',
+    age: 28,
+    gender: 'male',
+    occupation: 'programmer',
+    aboutme: `Hello I like to do play soccer and I'm a programmer in Canada`,
   },
   token: '',
   darkmode: false,

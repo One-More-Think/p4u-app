@@ -19,12 +19,11 @@ import {QuestionDetailStyle} from 'style';
 import ChooseBox from 'components/ChooseBox';
 import FilterBox from 'components/FilterBox';
 import Chart from 'components/Chart';
-import AnonymousButton from 'components/AnonymousButton';
 import UserBox from 'components/UserBox';
 
 const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
   const {data} = route.params;
-  const description = data?.description || '';
+  const title = data?.title || '';
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const userInfo = useSelector((state: any) => state.user.userInfo);
   const [refreshing, setRefreshing] = useState<boolean>(false);
@@ -33,12 +32,12 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
   const [checked, setChecked] = useState<boolean>(false);
   const [search, setSeacrh] = useState<string>('');
 
-  const filterList = ['Country', 'Gender', 'Age', 'Occupation'];
+  const filterList = ['Country', 'Gender', 'Age'];
   const MockData = {
     content: `I graduated in BCIT school but I can not find a job for a long time I don't know what should I do give let me know If I need to go school for master or keep it up for job hunting?`,
     choose: ['Go to get master degree', 'Keep it up', 'Find antoher job'],
     category: 'home-sharp', //shcool, fast-food, heart
-    timeout: false,
+    timeout: true,
     comments: [
       {
         id: 1,
@@ -57,12 +56,6 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
         occupation: 'none',
         comment: `Just do what ever you like`,
         timestamp: '11/26 10:20',
-      },
-      {
-        id: 3,
-        secret: true,
-        comment: 'Just do it !!',
-        timestamp: '11/26 10:29',
       },
     ],
   };
@@ -99,9 +92,9 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
   useEffect(() => {
     const refreshMainPage = async () => {
       try {
-        await new Promise(resolve =>
+        await new Promise((resolve: any) =>
           setTimeout(() => {
-            console.log('refresh main page');
+            console.log('refresh Question Detail page');
             resolve();
           }, 1000),
         );
@@ -209,7 +202,7 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
               ...QuestionDetailStyle.Title,
               color: '#222428',
             }}>
-            {description}
+            {title}
           </Text>
           <Text style={QuestionDetailStyle.Content}>{MockData.content}</Text>
           <View style={QuestionDetailStyle.ChooseBox}>
@@ -225,21 +218,27 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
           <View style={QuestionDetailStyle.CommentContainer}>
             {MockData.comments.map((data: any, idx) => (
               <React.Fragment key={data.id}>
-                <UserBox
-                  key={`${idx}-userbox`}
-                  data={{
-                    country: data?.country || '',
-                    age: data?.age || '',
-                    gender: data?.gender || '',
-                    occupation: data?.occupation || '',
-                    timestamp: data?.timestamp || '',
-                  }}
-                  secret={data.secret}
-                  comment
-                />
-                <Text key={`${idx}-userboxText`} style={{fontFamily: 'Rubik'}}>
-                  {data.comment}
-                </Text>
+                <View
+                  style={{
+                    borderBottomWidth: 0.2,
+                  }}>
+                  <UserBox
+                    key={`${idx}-userbox`}
+                    data={{
+                      country: data?.country || '',
+                      age: data?.age || '',
+                      gender: data?.gender || '',
+                      occupation: data?.occupation || '',
+                      timestamp: data?.timestamp || '',
+                    }}
+                    comment
+                  />
+                  <Text
+                    key={`${idx}-userboxText`}
+                    style={{fontFamily: 'Rubik', marginBottom: 10}}>
+                    {data.comment}
+                  </Text>
+                </View>
               </React.Fragment>
             ))}
           </View>
@@ -266,14 +265,15 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
       </ScrollView>
       <SafeAreaView style={{width: '100%'}}>
         <Input
-          autoFocus={true}
-          keyboardAppearance="default"
-          keyboardType="twitter"
-          leftIcon={<AnonymousButton checked={checked} onCheck={onCheck} />}
           placeholder="Comment"
+          placeholderTextColor={isDarkMode ? 'white' : '#222428'}
           rightIcon={
             <TouchableOpacity style={{marginRight: 10}}>
-              <Ionicons name="paper-plane-outline" size={25} />
+              <Ionicons
+                name="paper-plane-outline"
+                size={25}
+                color={isDarkMode ? 'white' : '#222428'}
+              />
             </TouchableOpacity>
           }
           containerStyle={{
@@ -282,14 +282,16 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
             justifyContent: 'center',
           }}
           inputContainerStyle={{
-            borderWidth: 1,
+            borderWidth: 0,
             borderRadius: 25,
+            backgroundColor: isDarkMode ? '#222428' : 'white',
           }}
           inputStyle={{
-            marginLeft: 10,
+            marginLeft: 20,
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            color: isDarkMode ? 'white' : '#222428',
           }}
         />
       </SafeAreaView>

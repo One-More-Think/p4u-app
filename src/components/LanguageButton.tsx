@@ -33,7 +33,7 @@ const LanguageButton = ({
           chooseButton(title), handleLanguage(title);
         }}>
         <View style={RadioButtonStyle.IconContainer}>
-          <CountryFlag isoCode={name} size={40} />
+          <CountryFlag isoCode={name} size={40} style={{borderWidth: 0.5}} />
           <View style={RadioButtonStyle.IconTextWrapper}>
             <Text style={{color: isDarkMode ? 'white' : '#222428'}}>
               {title}

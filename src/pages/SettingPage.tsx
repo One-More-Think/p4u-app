@@ -1,7 +1,14 @@
 import React from 'react';
-import {Text, View, SafeAreaView, StatusBar, ScrollView} from 'react-native';
+import {
+  Text,
+  SafeAreaView,
+  StatusBar,
+  ScrollView,
+  TouchableOpacity,
+} from 'react-native';
 import Common from 'components/Common';
 import SettingBlock from 'components/SettingBlock';
+import Ionicons from 'react-native-vector-icons/Ionicons';
 import {SettingPageStyle} from 'style';
 import {useSelector} from 'react-redux';
 
@@ -68,6 +75,15 @@ const SettingPage = ({route, navigation}: any): React.JSX.Element => {
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
           backgroundColor={backgroundStyle.backgroundColor}
         />
+        <TouchableOpacity
+          onPress={() => navigation.goBack()}
+          style={{position: 'absolute', left: 0}}>
+          <Ionicons
+            name="chevron-back"
+            size={30}
+            color={isDarkMode ? 'white' : '#222428'}
+          />
+        </TouchableOpacity>
         <Text
           style={{
             ...SettingPageStyle.SafeAreaText,

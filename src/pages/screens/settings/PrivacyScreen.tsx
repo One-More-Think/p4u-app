@@ -1,4 +1,4 @@
-import React, {useCallback} from 'react';
+import React from 'react';
 import {Text, View} from 'react-native';
 import SettingCommonHeader from 'components/SettingCommonHeader';
 import {CommonHeaderStyle} from './style';

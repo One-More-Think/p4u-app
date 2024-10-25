@@ -1,24 +1,32 @@
-import React, {useState, useEffect} from 'react';
+import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
 import {
   SafeAreaView,
   StatusBar,
-  ScrollView,
   Text,
   View,
   RefreshControl,
   TouchableOpacity,
-  Platform,
+  FlatList,
+  ActivityIndicator,
 } from 'react-native';
 import Common from 'components/Common';
+import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import BottomSheet from '@gorhom/bottom-sheet';
 import {useDispatch, useSelector} from 'react-redux';
 import {HomeScreenStyle} from 'style';
 import Question from 'components/Question';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import FilterSheet from 'components/FilterSheet';
 
 const HomeScreen = ({navigation}: any): React.JSX.Element => {
   const dispatch = useDispatch();
+  const [isLoading, setIsLoading] = useState(true);
+  const nextPageIdentifierRef = useRef();
+  const [isFirstPageReceived, setIsFirstPageReceived] = useState(false);
   const LIMIT = 10;
+  const bottomSheetRef = useRef<BottomSheet>(null);
+
   const MockData = [
     {
       id: '1',
@@ -26,7 +34,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       gender: 'male',
       age: 27,
       occupation: 'programmer',
-      description: 'I have a question something about my career',
+      title: 'I have a question something about my career',
       timestamp: '10/26 03:40',
     },
     {
@@ -35,7 +43,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       gender: 'female',
       age: 21,
       occupation: 'teacher',
-      description: 'Why my student does not like to do their',
+      title: 'Why my student does not like to do their',
       timestamp: '10/26 03:40',
     },
     {
@@ -44,7 +52,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       gender: 'male',
       age: 22,
       occupation: 'student',
-      description: `I don't know what to eat for today's lunch please `,
+      title: `I don't know what to eat for today's lunch please `,
       timestamp: '10/26 03:40',
     },
     {
@@ -53,7 +61,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       gender: 'female',
       age: 24,
       occupation: 'none',
-      description: 'Canada rent fee is getting higher',
+      title: 'Canada rent fee is getting higher',
       timestamp: '10/26 03:40',
     },
     {
@@ -62,7 +70,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       gender: 'female',
       age: 24,
       occupation: 'none',
-      description: 'Canada rent fee is getting higher',
+      title: 'Canada rent fee is getting higher',
       timestamp: '10/26 03:40',
     },
     {
@@ -71,7 +79,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       gender: 'female',
       age: 24,
       occupation: 'none',
-      description: 'Canada rent fee is getting higher',
+      title: 'Canada rent fee is getting higher',
       timestamp: '10/26 03:40',
     },
     {
@@ -80,7 +88,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       gender: 'female',
       age: 24,
       occupation: 'none',
-      description: 'Canada rent fee is getting higher',
+      title: 'Canada rent fee is getting higher',
       timestamp: '10/26 03:40',
     },
     {
@@ -89,7 +97,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       gender: 'female',
       age: 24,
       occupation: 'none',
-      description: 'Canada rent fee is getting higher',
+      title: 'Canada rent fee is getting higher',
       timestamp: '10/26 03:40',
     },
     {
@@ -98,7 +106,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       gender: 'female',
       age: 24,
       occupation: 'none',
-      description: 'Canada rent fee is getting higher',
+      title: 'Canada rent fee is getting higher',
       timestamp: '10/26 03:40',
     },
     {
@@ -107,7 +115,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       gender: 'female',
       age: 24,
       occupation: 'none',
-      description: 'Canada rent fee is getting higher',
+      title: 'Canada rent fee is getting higher',
       timestamp: '10/26 03:40',
     },
     {
@@ -116,21 +124,62 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       gender: 'female',
       age: 24,
       occupation: 'none',
-      description: 'Canada rent fee is getting higher',
+      title: 'Canada rent fee is getting higher',
       timestamp: '10/26 03:40',
     },
   ];
+  const [data, setData] = useState<any>(MockData);
   const [refreshing, setRefreshing] = useState(false);
+  const snapPoints = useMemo(() => ['75%'], []);
+
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const onRefresh = () => {
     setRefreshing(true);
   };
+  const fetchData = async () => {
+    // pagination implement
+    setIsLoading(true);
+    await new Promise((resolve: any) =>
+      setTimeout(() => {
+        console.log('refresh main page');
+        resolve();
+      }, 3000),
+    );
+    // await fecth data
+    // const newData: any = data[Math.round(Math.random() % data.length)];
+    // console.log(Math.round(Math.random() % data.length));
+    // console.log(data[Math.round(Math.random() % data.length)]);
+    // newData['id'] = `unique-${Math.random().toString()}`;
+    // console.log(newData);
+    // setData([...data, newData]);
+    // getDataFromApi(nextPageIdentifierRef.current).then(response => {
+    // const {data: newData, nextPageIdentifier} = parseResponse(response);
+    // setData([...data, newData]);
+    //   nextPageIdentifierRef.current = nextPageIdentifier;
+    !isFirstPageReceived && setIsFirstPageReceived(true);
+    console.log('get data');
+    setIsLoading(false);
+    //   !isFirstPageReceived && setIsFirstPageReceived(true);
+    // });
+  };
+  const fetchNextProblem = () => {
+    // if (nextPageIdentifierRef.current == null) {
+    //   // End of data.
+    //   return;
+    // }
+    fetchData();
+  };
+
+  const handlePresentModal = useCallback(() => {
+    bottomSheetRef.current?.expand();
+  }, []);
+
   useEffect(() => {
     const refreshMainPage = async () => {
       try {
-        await new Promise(resolve =>
+        await new Promise((resolve: any) =>
           setTimeout(() => {
-            console.log('refresh main page');
+            console.log('refresh HomeScreen page');
             resolve();
           }, 1000),
         );
@@ -147,9 +196,16 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       refreshMainPage();
     }
   }, [refreshing]);
+
   useEffect(() => {
     // dispatch()
+    // fetchData();
   }, [navigation]);
+
+  useEffect(() => {
+    fetchData();
+  }, []);
+
   return (
     <Common>
       <SafeAreaView style={HomeScreenStyle.SafeArea}>
@@ -157,43 +213,60 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
           backgroundColor={isDarkMode ? '#222428' : 'white'}
         />
-        <TouchableOpacity onPress={() => {}} style={{marginLeft: 15}}>
+        <TouchableOpacity
+          onPress={() => navigation.navigate('SearchScreen')}
+          style={{marginLeft: 15}}>
           <Ionicons name="search" size={30} color="#222428" />
         </TouchableOpacity>
         <Text style={HomeScreenStyle.SafeAreaText}>Forum</Text>
-        <TouchableOpacity onPress={() => {}} style={{marginRight: 15}}>
-          <Ionicons name="create-outline" size={30} color="#222428" />
+        <TouchableOpacity
+          onPress={handlePresentModal}
+          style={{marginRight: 15}}>
+          <Ionicons name="filter" size={30} color="#222428" />
         </TouchableOpacity>
       </SafeAreaView>
-      <ScrollView
-        style={HomeScreenStyle.ScrollView}
-        refreshControl={
-          <RefreshControl
-            refreshing={refreshing}
-            onRefresh={onRefresh}
-            tintColor="black"
-          />
-        }>
-        <View style={HomeScreenStyle.Container}>
-          <BannerAd
-            unitId={TestIds.BANNER}
-            size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
-          />
-          {MockData.map(map => (
+      <GestureHandlerRootView style={{width: '100%'}}>
+        <FlatList
+          style={HomeScreenStyle.ScrollView}
+          showsVerticalScrollIndicator={false}
+          data={data}
+          keyExtractor={item => item.id.toString()}
+          onEndReachedThreshold={0.5}
+          onEndReached={fetchNextProblem}
+          refreshControl={
+            <RefreshControl
+              refreshing={refreshing}
+              onRefresh={onRefresh}
+              tintColor="black"
+            />
+          }
+          renderItem={({item}) => (
             <Question
               navigation={navigation}
-              country={map.country}
-              gender={map.gender}
-              age={map.age}
-              occupation={map.occupation}
-              description={map.description}
-              timestamp={map.timestamp}
-              key={map.id}
-              id={map.id}
+              country={item.country}
+              gender={item.gender}
+              age={item.age}
+              occupation={item.occupation}
+              title={item.title}
+              timestamp={item.timestamp}
+              id={item.id}
             />
-          ))}
-        </View>
-      </ScrollView>
+          )}
+          scrollEventThrottle={16}
+          ListHeaderComponent={
+            <View style={HomeScreenStyle.Container}>
+              <BannerAd
+                unitId={TestIds.BANNER}
+                size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+              />
+            </View>
+          }
+          ListFooterComponent={
+            isLoading ? <ActivityIndicator size="small" /> : null
+          }
+        />
+        <FilterSheet bottomSheetRef={bottomSheetRef} />
+      </GestureHandlerRootView>
     </Common>
   );
 };

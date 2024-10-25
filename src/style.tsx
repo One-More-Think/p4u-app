@@ -73,17 +73,12 @@ export const HomeScreenStyle = StyleSheet.create({
     fontWeight: 'bold',
   },
   Container: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
     marginTop: 10,
-    height: '100%',
     width: '100%',
   },
   ScrollView: {
     width: '100%',
-    height: '100%',
+    marginBottom: 50,
   },
 });
 
@@ -433,5 +428,210 @@ export const UserBoxStyle = StyleSheet.create({
   IconText: {
     fontWeight: '500',
     fontFamily: 'Rubik',
+  },
+});
+
+export const UserPageStyle = StyleSheet.create({
+  Container: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '95%',
+    height: '80%',
+    marginTop: 10,
+  },
+  SafeArea: {
+    marginTop: 10,
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  SafeAreaText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  UserInfoBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '100%',
+    height: '40%',
+    borderRadius: 20,
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  UserInnerBox: {
+    display: 'flex',
+    flexDirection: 'column',
+    justifyContent: 'space-evenly',
+    width: '90%',
+    height: '90%',
+  },
+  UserText: {
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  WrittenQuestionList: {
+    display: 'flex',
+    justifyContent: 'center',
+    height: '20%',
+  },
+  CommentedQuestionList: {
+    display: 'flex',
+    justifyContent: 'center',
+    height: '20%',
+  },
+  TextContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+  },
+  Text: {
+    color: '#7a7b7e',
+    fontSize: 15,
+    fontWeight: 'bold',
+    marginBottom: 5,
+    marginTop: 10,
+  },
+});
+
+export const CommentBoxStyle = StyleSheet.create({
+  Container: {
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 120,
+    height: 100,
+    borderRadius: 10,
+    marginRight: 20,
+  },
+  ViewContainer: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '90%',
+    height: '90%',
+  },
+  UserBox: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: '40%',
+  },
+  Title: {
+    display: 'flex',
+    height: '60%',
+  },
+});
+
+export const SearchScreenStyle = StyleSheet.create({
+  Container: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '95%',
+    height: '80%',
+    marginTop: 10,
+  },
+  SafeArea: {
+    marginTop: 10,
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  SafeAreaText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+});
+
+export const PostScreenStyle = StyleSheet.create({
+  Container: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '95%',
+    height: '80%',
+    marginTop: 10,
+  },
+  SafeArea: {
+    marginTop: 10,
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  SafeAreaText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  PostButton: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: 65,
+    height: 25,
+    borderRadius: 10,
+  },
+  ScrollView: {
+    display: 'flex',
+    flexDirection: 'column',
+    marginTop: 15,
+    marginBottom: 15,
+    height: '100%',
+    width: '90%',
+  },
+  Text: {
+    color: '#7a7b7e',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  CategoryTimeContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-between',
+    height: 200,
+  },
+  CategoryContainer: {
+    display: 'flex',
+    width: '50%',
+    height: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
+  TimeContainer: {
+    display: 'flex',
+    width: '50%',
+    height: '100%',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
+  Picker: {
+    width: '100%',
+    height: '85%',
+  },
+  TextContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 25,
+  },
+  AddButton: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    width: '100%',
+    height: 50,
+    borderRadius: 10,
+  },
+  inputContainerStyle: {
+    width: '100%',
+    borderBottomWidth: 0,
+    height: 50,
+    borderRadius: 10,
   },
 });
