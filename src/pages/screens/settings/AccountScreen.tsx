@@ -3,7 +3,7 @@ import {Alert, Text, View} from 'react-native';
 import SettingCommonHeader from 'components/SettingCommonHeader';
 import {CommonHeaderStyle} from './style';
 import SettingBlock from 'components/SettingBlock';
-import CountryFlag from 'react-native-country-flag';
+import CountryFlag from 'components/CountryFlag';
 import {useSelector} from 'react-redux';
 
 const AccountScreen = ({route, navigation}: any): React.JSX.Element => {
@@ -17,7 +17,7 @@ const AccountScreen = ({route, navigation}: any): React.JSX.Element => {
         <CountryFlag
           isoCode={userInfo.country}
           size={20}
-          style={{borderWidth: 0.5}}
+          style={{borderWidth: 0.5, borderColor: 'black'}}
         />
       ),
       onPress: () => console.log('show pop up to change country'),

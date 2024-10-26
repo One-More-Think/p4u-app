@@ -1,13 +1,9 @@
 import React, {useCallback, useMemo} from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
-
 import HomeScreen from 'screens/HomeScreen';
-import NotificationPage from './NotificationPage';
 import UserPage from 'pages/UserPage';
-import SettingPage from 'pages/SettingPage';
 import {useSelector} from 'react-redux';
-import PostPage from 'pages/PostPage';
 import {View} from 'react-native';
 
 const LandingPage = ({navigation}: any): React.JSX.Element => {
@@ -26,11 +22,14 @@ const LandingPage = ({navigation}: any): React.JSX.Element => {
     },
   ];
   const placeholder = useCallback((): React.JSX.Element => {
-    <>
-      <View />
-    </>;
+    return (
+      <>
+        <View />
+      </>
+    );
   }, []);
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
+  const isLoading = useSelector((state: any) => state.config.isLoading);
   const BottomTab = createBottomTabNavigator();
 
   return (
@@ -69,25 +68,6 @@ const LandingPage = ({navigation}: any): React.JSX.Element => {
           );
         },
       })}>
-      {/* {ScreenArray.map((screen: any) => (
-        <BottomTab.Screen
-          name={screen.name}
-          component={screen.page}
-          options={{
-            headerShown: false,
-            tabBarShowLabel: false,
-          }}
-          key={screen.name}
-          listeners={({navigation}) => ({
-            tabPress: e => {
-              e.preventDefault();
-              {
-                screen.name === 'Post' && navigation.navigate('CustomModal');
-              }
-            },
-          })}
-        />
-      ))} */}
       <BottomTab.Screen
         name="HomeStack"
         component={HomeScreen}
@@ -95,6 +75,11 @@ const LandingPage = ({navigation}: any): React.JSX.Element => {
           headerShown: false,
           tabBarShowLabel: false,
         }}
+        listeners={({navigation}) => ({
+          tabPress: e => {
+            if (isLoading) e.preventDefault();
+          },
+        })}
         key="HomeStack"
       />
 
@@ -108,6 +93,7 @@ const LandingPage = ({navigation}: any): React.JSX.Element => {
         listeners={({navigation}) => ({
           tabPress: e => {
             e.preventDefault();
+            if (isLoading) return;
             navigation.navigate('PostScreen');
           },
         })}
@@ -121,10 +107,15 @@ const LandingPage = ({navigation}: any): React.JSX.Element => {
           headerShown: false,
           tabBarShowLabel: false,
         }}
+        listeners={({navigation}) => ({
+          tabPress: e => {
+            if (isLoading) e.preventDefault();
+          },
+        })}
         key="User"
       />
     </BottomTab.Navigator>
   );
 };
 
-export default LandingPage;
+export default React.memo(LandingPage);

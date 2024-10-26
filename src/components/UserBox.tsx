@@ -2,7 +2,7 @@ import React from 'react';
 import {View, Text} from 'react-native';
 import {UserBoxStyle} from 'style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import CountryFlag from 'react-native-country-flag';
+import CountryFlag from 'components/CountryFlag';
 const UserBox = ({data = null, comment = null}: any): React.JSX.Element => {
   const {country, gender, age, occupation, timestamp} = data;
   const GenderColor = (gender: string) => {
@@ -19,7 +19,7 @@ const UserBox = ({data = null, comment = null}: any): React.JSX.Element => {
       <CountryFlag
         isoCode={country}
         size={comment ? 20 : 40}
-        style={{borderWidth: 0.5}}
+        style={{borderWidth: 0.5, borderColor: 'black'}}
       />
 
       <View style={UserBoxStyle.UserBox}>

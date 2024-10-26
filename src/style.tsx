@@ -388,16 +388,6 @@ export const RadioButtonStyle = StyleSheet.create({
   },
 });
 
-export const AnonymousButtonStyle = StyleSheet.create({
-  Container: {
-    display: 'flex',
-    flexDirection: 'row',
-    alignItems: 'center',
-    justifyContent: 'center',
-    marginLeft: 10,
-  },
-});
-
 export const UserBoxStyle = StyleSheet.create({
   HeaderBox: {
     width: '85%',

@@ -1,7 +1,7 @@
 import React, {useState} from 'react';
 import type {PropsWithChildren} from 'react';
 import {View, Text, TouchableOpacity} from 'react-native';
-import CountryFlag from 'react-native-country-flag';
+import CountryFlag from 'components/CountryFlag';
 import {QuestionStyle} from 'style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
@@ -68,7 +68,11 @@ const Question = (props: QuestionProps): React.JSX.Element => {
       )}
       <View style={QuestionStyle.IconContainer}>
         <View style={{...QuestionStyle.flagContainer, width: '30%'}}>
-          <CountryFlag isoCode={country} size={25} style={{borderWidth: 0.5}} />
+          <CountryFlag
+            isoCode={country}
+            size={25}
+            style={{borderWidth: 0.5, borderColor: 'black'}}
+          />
         </View>
         <View
           style={{

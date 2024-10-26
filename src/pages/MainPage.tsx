@@ -14,11 +14,11 @@ import AccountScreen from 'screens/settings/AccountScreen';
 import SearchScreen from 'screens/SearchScreen';
 import SettingPage from 'pages/SettingPage';
 import PostPage from 'pages/PostPage';
+import {useSelector} from 'react-redux';
 export const MainPage = (): React.JSX.Element => {
   const MainStack = createNativeStackNavigator();
   const ScreenList = [
     {name: 'LandingPage', component: LandingPage},
-    {name: 'LoginPage', component: LoginPage},
     {name: 'QuestionDetailScreen', component: QuestionDetailScreen},
     {name: 'NotificationScreen', component: NotificationScreen},
     {name: 'PrivacyScreen', component: PrivacyScreen},
@@ -33,6 +33,10 @@ export const MainPage = (): React.JSX.Element => {
   ];
 
   const MainStackScreen = () => {
+    const isAuthenticated = useSelector(
+      (state: any) => state.user.isAuthenticated,
+    );
+
     return (
       <NavigationContainer>
         <MainStack.Navigator
@@ -41,20 +45,29 @@ export const MainPage = (): React.JSX.Element => {
             gestureEnabled:
               route.name === 'QuestionDetail' || route.name.includes('Screen'),
           })}>
-          {ScreenList.map(screen => (
+          {isAuthenticated ? (
+            ScreenList.map(screen => (
+              <MainStack.Screen
+                key={screen.name}
+                name={screen.name}
+                component={screen.component}
+                options={{
+                  headerShown: false,
+                  ...(screen.name === 'SearchScreen' ||
+                  screen.name === 'PostScreen'
+                    ? {presentation: 'containedModal'}
+                    : {}),
+                }}
+              />
+            ))
+          ) : (
             <MainStack.Screen
-              key={screen.name}
-              options={{
-                headerShown: false,
-                ...((screen.name === 'SearchScreen' ||
-                  screen.name === 'PostScreen') && {
-                  presentation: 'containedModal',
-                }),
-              }}
-              name={screen.name}
-              component={screen.component}
+              key="Login"
+              name="LoginPage"
+              component={LoginPage}
+              options={{headerShown: false}}
             />
-          ))}
+          )}
         </MainStack.Navigator>
       </NavigationContainer>
     );

@@ -9,9 +9,11 @@ import Apple_Dark from 'assets/images/apple_dark.png';
 
 type SocialLoginButtonProps = PropsWithChildren<{
   title: string;
+  onPress: any;
 }>;
 const SocialLoginButton = ({
   title,
+  onPress,
 }: SocialLoginButtonProps): React.JSX.Element => {
   const isDark = useColorScheme() === 'dark';
   const LogoImage = (title: string, isDark: Boolean) => {
@@ -25,7 +27,7 @@ const SocialLoginButton = ({
     }
   };
   return (
-    <TouchableOpacity style={SocialButtonStyle.Container}>
+    <TouchableOpacity style={SocialButtonStyle.Container} onPress={onPress}>
       <Image
         source={LogoImage(title, isDark)}
         style={SocialButtonStyle.Image}

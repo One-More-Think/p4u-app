@@ -36,14 +36,18 @@ type DarkModeAction = {
   payload: boolean;
 };
 
+type AuthenticatedAction = {
+  payload: boolean;
+};
+
 const usersSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    userValid: (state: any, action: any) => {
-      if (state.token) {
-        state.isAuthenticated = true;
-      }
+    setAuthenticated: (state: any, action: AuthenticatedAction) => {
+      // if (state.token) {
+      state.isAuthenticated = action.payload;
+      // }
     },
     setDarkMode: (state: any, action: DarkModeAction) => {
       state.darkmode = action.payload;
@@ -57,15 +61,11 @@ const usersSlice = createSlice({
       state.method = method;
     },
 
-    setIsLoading: (state: any, action: any) => {
-      state.isLoading = action.payload.loading;
-    },
-
     userLogOut: (state: any, action: any) => {
       state = initialState;
     },
   },
 });
-export const {userValid, userLogin, userLogOut, setIsLoading, setDarkMode} =
+export const {setAuthenticated, userLogin, userLogOut, setDarkMode} =
   usersSlice.actions;
 export default usersSlice.reducer;

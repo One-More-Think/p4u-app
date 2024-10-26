@@ -7,6 +7,7 @@ import {
   StatusBar,
   TouchableOpacity,
   ScrollView,
+  Platform,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Common from 'components/Common';
@@ -228,7 +229,13 @@ const PostPage = ({navigation}: any): React.JSX.Element => {
                   label={item}
                   value={item}
                   key={time}
-                  color={isDarkMode ? 'white' : '#222428'}
+                  color={
+                    Platform.OS === 'android'
+                      ? '#7a7b7e'
+                      : isDarkMode
+                      ? 'white'
+                      : '#222428'
+                  }
                 />
               ))}
             </Picker>

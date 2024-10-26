@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useCallback, useMemo} from 'react';
+import React, {useState, useEffect, useRef, useCallback} from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -20,7 +20,7 @@ import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import FilterSheet from 'components/FilterSheet';
 
 const HomeScreen = ({navigation}: any): React.JSX.Element => {
-  const dispatch = useDispatch();
+  const dispatch: any = useDispatch();
   const [isLoading, setIsLoading] = useState(true);
   const nextPageIdentifierRef = useRef();
   const [isFirstPageReceived, setIsFirstPageReceived] = useState(false);
@@ -130,7 +130,6 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
   ];
   const [data, setData] = useState<any>(MockData);
   const [refreshing, setRefreshing] = useState(false);
-  const snapPoints = useMemo(() => ['75%'], []);
 
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const onRefresh = () => {

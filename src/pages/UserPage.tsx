@@ -9,7 +9,7 @@ import {
 } from 'react-native';
 import Common from 'components/Common';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import CountryFlag from 'react-native-country-flag';
+import CountryFlag from 'components/CountryFlag';
 import {UserPageStyle} from 'style';
 import {useSelector} from 'react-redux';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
@@ -107,7 +107,7 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
               <CountryFlag
                 isoCode={userInfo.country}
                 size={20}
-                style={{marginLeft: 10, borderWidth: 0.5}}
+                style={{marginLeft: 10, borderWidth: 0.5, borderColor: 'black'}}
               />
             </View>
             <View style={UserPageStyle.TextContainer}>

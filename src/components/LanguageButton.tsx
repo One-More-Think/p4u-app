@@ -1,11 +1,11 @@
 import React from 'react';
-import {TouchableOpacity, View, Text, useColorScheme} from 'react-native';
+import {TouchableOpacity, View, Text} from 'react-native';
 import {RadioButtonStyle} from 'style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useSelector} from 'react-redux';
 import store from 'reducers/index';
 import {setLanguage} from 'reducers/configSlice';
-import CountryFlag from 'react-native-country-flag';
+import CountryFlag from 'components/CountryFlag';
 
 const LanguageButton = ({
   name,
@@ -33,7 +33,11 @@ const LanguageButton = ({
           chooseButton(title), handleLanguage(title);
         }}>
         <View style={RadioButtonStyle.IconContainer}>
-          <CountryFlag isoCode={name} size={40} style={{borderWidth: 0.5}} />
+          <CountryFlag
+            isoCode={name}
+            size={40}
+            style={{borderWidth: 0.5, borderColor: 'black'}}
+          />
           <View style={RadioButtonStyle.IconTextWrapper}>
             <Text style={{color: isDarkMode ? 'white' : '#222428'}}>
               {title}

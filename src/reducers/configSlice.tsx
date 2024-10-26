@@ -16,6 +16,10 @@ const initialState: configSliceInitType = {
   },
 };
 
+type IsLoadingProps = {
+  payload: boolean;
+};
+
 const configSlice = createSlice({
   name: 'config',
   initialState,
@@ -32,7 +36,12 @@ const configSlice = createSlice({
     setMode: (state: any, action: any) => {
       state.mode = action.payload;
     },
+    setIsLoading: (state: any, action: IsLoadingProps) => {
+      state.isLoading = action.payload;
+    },
   },
 });
-export const {setLanguage, setAppInfo, setMode} = configSlice.actions;
+export const {setLanguage, setAppInfo, setMode, setIsLoading} =
+  configSlice.actions;
+
 export default configSlice.reducer;

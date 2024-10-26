@@ -3,7 +3,7 @@ import {BottomSheetView} from '@gorhom/bottom-sheet';
 import {FlatList, TouchableOpacity, Text} from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useSelector} from 'react-redux';
-import CountryFlag from 'react-native-country-flag';
+import CountryFlag from 'components/CountryFlag';
 
 const CountryBox = ({country, onCountry, search}: any): React.JSX.Element => {
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
@@ -235,9 +235,9 @@ const CountryBox = ({country, onCountry, search}: any): React.JSX.Element => {
             backgroundColor: isDarkMode ? '#222428' : '#e1e9fc',
           }}>
           <CountryFlag
-            isoCode={countryCode}
+            isoCode={countryCode.toLowerCase()}
             size={30}
-            style={{borderWidth: 0.5}}
+            style={{borderWidth: 0.5, borderColor: 'black'}}
           />
           <Text
             style={{

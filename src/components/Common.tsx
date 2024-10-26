@@ -3,6 +3,8 @@ import type {PropsWithChildren} from 'react';
 import {SafeAreaView, StatusBar, View} from 'react-native';
 import {CommonStyle} from 'style';
 import {useSelector} from 'react-redux';
+import LoadingIndicator from './LoadingIndicator';
+import ToastAlert from './ToastAlert';
 type CommonProps = PropsWithChildren<{
   style?: any;
 }>;
@@ -12,22 +14,35 @@ const Common = ({children, style = {}}: CommonProps): React.JSX.Element => {
   const backgroundStyle = {
     backgroundColor: isDarkMode ? '#222428' : 'white',
   };
+  const alerts = useSelector((state: any) => state.alert.alerts);
+  const isVisible = useSelector((state: any) => state.alert.isVisible);
 
   return (
-    <SafeAreaView style={backgroundStyle}>
-      <StatusBar
-        barStyle={isDarkMode ? 'light-content' : 'dark-content'}
-        backgroundColor={backgroundStyle.backgroundColor}
-      />
-      <View
-        style={{
-          ...CommonStyle.mainContainer,
-          backgroundColor: isDarkMode ? '#b4bac9' : '#e1e9fc',
-          ...style,
-        }}>
-        {children}
-      </View>
-    </SafeAreaView>
+    <>
+      {alerts.map((item: any) => (
+        <ToastAlert
+          key={item.id}
+          message={item.message}
+          type={item.type}
+          visible={isVisible}
+        />
+      ))}
+      <LoadingIndicator />
+      <SafeAreaView style={backgroundStyle}>
+        <StatusBar
+          barStyle={isDarkMode ? 'light-content' : 'dark-content'}
+          backgroundColor={backgroundStyle.backgroundColor}
+        />
+        <View
+          style={{
+            ...CommonStyle.mainContainer,
+            backgroundColor: isDarkMode ? '#b4bac9' : '#e1e9fc',
+            ...style,
+          }}>
+          {children}
+        </View>
+      </SafeAreaView>
+    </>
   );
 };
 
