@@ -1,0 +1,12 @@
+- [ ] Language translation, compact LLM
+- [ ] Dispatch, 
+- [ ] Using Database show the notification that need to update or something screen.
+- [ ] Setting show
+- [ ] Skeleton when it’s loading
+- [ ] Backend server
+- [ ] DB
+
+npx pod-install
+npx react-native start --reset-cache
+npx react-native run-ios
+npx react-native run-android
