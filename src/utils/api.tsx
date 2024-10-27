@@ -50,7 +50,7 @@ api.interceptors.response.use(
     if (err.response.data === 'Expired token') {
       const token = localStorage.token || sessionStorage.token;
       if (token) {
-        const config = {
+        const config: any = {
           headesr: {
             Authorization: `Bearer ${token}`,
           },

@@ -1,4 +1,4 @@
-import React, {useEffect} from 'react';
+import React, {useEffect, useState} from 'react';
 import {
   Text,
   View,
@@ -14,7 +14,9 @@ import {UserPageStyle} from 'style';
 import {useSelector} from 'react-redux';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import CommentBox from 'components/CommentBox';
+import SkeletonBar from 'components/SkeletonBar';
 const UserPage = ({route, navigation}: any): React.JSX.Element => {
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const userInfo = useSelector((state: any) => state.user.userInfo);
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const MockData = [
@@ -45,6 +47,22 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
   ];
   useEffect(() => {
     // dispatch
+    const testLoading = async () => {
+      setIsLoading(true);
+      try {
+        await new Promise((resolve: any) =>
+          setTimeout(() => {
+            console.log('refresh main page');
+            resolve();
+          }, 3000),
+        );
+      } catch (error) {
+        console.error(error);
+      } finally {
+        setIsLoading(false);
+      }
+    };
+    testLoading();
   }, []);
   const GenderColor = (gender: string) => {
     if (gender === 'male') return '#7dc9e0';
@@ -73,86 +91,99 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
       </View>
       <View style={UserPageStyle.Container}>
         <Text style={UserPageStyle.Text}>User Information</Text>
-        <View
-          style={{
-            ...UserPageStyle.UserInfoBox,
-            backgroundColor: isDarkMode ? '#222428' : 'white',
-          }}>
-          <View style={UserPageStyle.UserInnerBox}>
-            <View style={UserPageStyle.TextContainer}>
-              {/* Email will be shown only for owner */}
-              <Text
-                style={{
-                  ...UserPageStyle.UserText,
-                  color: isDarkMode ? 'white' : '#222428',
-                }}>
-                Email:
-              </Text>
-              <Text
-                style={{
-                  marginLeft: 10,
-                  color: isDarkMode ? 'white' : '#222428',
-                }}>
-                {userInfo.email}
-              </Text>
-            </View>
-            <View style={UserPageStyle.TextContainer}>
-              <Text
-                style={{
-                  ...UserPageStyle.UserText,
-                  color: isDarkMode ? 'white' : '#222428',
-                }}>
-                I'm From
-              </Text>
-              <CountryFlag
-                isoCode={userInfo.country}
-                size={20}
-                style={{marginLeft: 10, borderWidth: 0.5, borderColor: 'black'}}
-              />
-            </View>
-            <View style={UserPageStyle.TextContainer}>
-              <Text
-                style={{
-                  ...UserPageStyle.UserText,
-                  color: isDarkMode ? 'white' : '#222428',
-                }}>
-                I'm <Text style={{color: '#79699a'}}>{userInfo.age}</Text> old{' '}
-                <Text style={{color: GenderColor(userInfo.gender)}}>
-                  {userInfo.gender.at(0).toUpperCase() +
-                    userInfo.gender.slice(1)}
-                </Text>{' '}
-                <Text style={{color: '#9a7969'}}>
-                  {userInfo.occupation.at(0).toUpperCase() +
-                    userInfo.occupation.slice(1)}
+        {isLoading ? (
+          <SkeletonBar style={UserPageStyle.UserInfoBox} />
+        ) : (
+          <View
+            style={{
+              ...UserPageStyle.UserInfoBox,
+              backgroundColor: isDarkMode ? '#222428' : 'white',
+            }}>
+            <View style={UserPageStyle.UserInnerBox}>
+              <View style={UserPageStyle.TextContainer}>
+                {/* Email will be shown only for owner */}
+                <Text
+                  style={{
+                    ...UserPageStyle.UserText,
+                    color: isDarkMode ? 'white' : '#222428',
+                  }}>
+                  Email:
                 </Text>
-              </Text>
-            </View>
-            <View
-              style={{...UserPageStyle.TextContainer, flexDirection: 'column'}}>
-              <Text
+                <Text
+                  style={{
+                    marginLeft: 10,
+                    color: isDarkMode ? 'white' : '#222428',
+                  }}>
+                  {userInfo.email}
+                </Text>
+              </View>
+              <View style={UserPageStyle.TextContainer}>
+                <Text
+                  style={{
+                    ...UserPageStyle.UserText,
+                    color: isDarkMode ? 'white' : '#222428',
+                  }}>
+                  I'm From
+                </Text>
+                <CountryFlag
+                  isoCode={userInfo.country}
+                  size={20}
+                  style={{
+                    marginLeft: 10,
+                    borderWidth: 0.5,
+                    borderColor: 'black',
+                  }}
+                />
+              </View>
+              <View style={UserPageStyle.TextContainer}>
+                <Text
+                  style={{
+                    ...UserPageStyle.UserText,
+                    color: isDarkMode ? 'white' : '#222428',
+                  }}>
+                  I'm <Text style={{color: '#79699a'}}>{userInfo.age}</Text> old{' '}
+                  <Text style={{color: GenderColor(userInfo.gender)}}>
+                    {userInfo.gender.at(0).toUpperCase() +
+                      userInfo.gender.slice(1)}
+                  </Text>{' '}
+                  <Text style={{color: '#9a7969'}}>
+                    {userInfo.occupation.at(0).toUpperCase() +
+                      userInfo.occupation.slice(1)}
+                  </Text>
+                </Text>
+              </View>
+              <View
                 style={{
-                  ...UserPageStyle.UserText,
-                  color: isDarkMode ? 'white' : '#222428',
+                  ...UserPageStyle.TextContainer,
+                  flexDirection: 'column',
                 }}>
-                About Me
-              </Text>
-              <Text
-                style={{
-                  marginTop: 5,
-                  color: isDarkMode ? 'white' : '#222428',
-                  flexWrap: 'wrap',
-                }}>
-                {userInfo.aboutme}
-              </Text>
+                <Text
+                  style={{
+                    ...UserPageStyle.UserText,
+                    color: isDarkMode ? 'white' : '#222428',
+                  }}>
+                  About Me
+                </Text>
+                <Text
+                  style={{
+                    marginTop: 5,
+                    color: isDarkMode ? 'white' : '#222428',
+                    flexWrap: 'wrap',
+                  }}>
+                  {userInfo.aboutme}
+                </Text>
+              </View>
             </View>
           </View>
-        </View>
+        )}
         <Text style={UserPageStyle.Text}>Written Questions</Text>
         <View style={UserPageStyle.WrittenQuestionList}>
           <FlatList
             horizontal
             data={MockData}
-            renderItem={({item}) => <CommentBox data={item} />}
+            renderItem={({item}) => (
+              <CommentBox data={item} isLoading={isLoading} />
+            )}
             showsHorizontalScrollIndicator={false}
           />
         </View>
@@ -161,7 +192,9 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
           <FlatList
             horizontal
             data={MockData}
-            renderItem={({item}) => <CommentBox data={item} />}
+            renderItem={({item}) => (
+              <CommentBox data={item} isLoading={isLoading} />
+            )}
             showsHorizontalScrollIndicator={false}
           />
         </View>

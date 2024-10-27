@@ -5,7 +5,8 @@ import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useSelector} from 'react-redux';
 import CountryFlag from 'components/CountryFlag';
 import {useNavigation} from '@react-navigation/native';
-const CommentBox = ({data}: any): React.JSX.Element => {
+import SkeletonBar from './SkeletonBar';
+const CommentBox = ({data, isLoading}: any): React.JSX.Element => {
   const navigation: any = useNavigation();
   const {country, gender, age, title} = data;
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
@@ -14,7 +15,9 @@ const CommentBox = ({data}: any): React.JSX.Element => {
     else if (gender === 'female') return '#ee92ba';
     return 'gray';
   };
-  return (
+  return isLoading ? (
+    <SkeletonBar style={CommentBoxStyle.Container} />
+  ) : (
     <TouchableOpacity
       style={{
         ...CommentBoxStyle.Container,

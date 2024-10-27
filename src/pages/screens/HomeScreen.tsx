@@ -18,10 +18,11 @@ import Question from 'components/Question';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
 import FilterSheet from 'components/FilterSheet';
+import SkeletonBar from 'components/SkeletonBar';
 
 const HomeScreen = ({navigation}: any): React.JSX.Element => {
   const dispatch: any = useDispatch();
-  const [isLoading, setIsLoading] = useState(true);
+  const [isLoading, setIsLoading] = useState(false);
   const nextPageIdentifierRef = useRef();
   const [isFirstPageReceived, setIsFirstPageReceived] = useState(false);
   const LIMIT = 10;
@@ -241,6 +242,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
           }
           renderItem={({item}) => (
             <Question
+              isLoading={isLoading}
               navigation={navigation}
               country={item.country}
               gender={item.gender}

@@ -5,6 +5,7 @@ import CountryFlag from 'components/CountryFlag';
 import {QuestionStyle} from 'style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import {useDispatch, useSelector} from 'react-redux';
+import SkeletonBar from 'components/SkeletonBar';
 type QuestionProps = PropsWithChildren<{
   id: string;
   country: string;
@@ -15,6 +16,7 @@ type QuestionProps = PropsWithChildren<{
   timestamp: string;
   navigation: any;
   search?: boolean;
+  isLoading?: boolean;
 }>;
 const Question = (props: QuestionProps): React.JSX.Element => {
   const dispatch = useDispatch();
@@ -29,6 +31,7 @@ const Question = (props: QuestionProps): React.JSX.Element => {
     timestamp,
     navigation,
     search = false,
+    isLoading = false,
   } = props;
   const data = {
     id,
@@ -51,7 +54,11 @@ const Question = (props: QuestionProps): React.JSX.Element => {
     console.log('press');
   };
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
-  return (
+  return isLoading ? (
+    <>
+      <SkeletonBar style={QuestionStyle.Container} />
+    </>
+  ) : (
     <TouchableOpacity
       style={{
         ...QuestionStyle.Container,
