@@ -3,8 +3,18 @@
 .DS_Store
 .env
 *.conf
+*_initial.py
+migrations/
+__pycache__/
+*.pyc
+secret.py
 # Xcode
 #
+lib/
+bin/
+include/
+__init__.py
+*.cfg
 build/
 *.pbxuser
 !default.pbxuser

@@ -42,7 +42,7 @@ class Option(models.Model):
     context = models.CharField(max_length=255, default='')
 
 class Comment(models.Model):
-    writer = models.ForeignKey('user.User', on_delete=models.CASCADE)
+    writer = models.ForeignKey('user.User', on_delete=models.CASCADE, to_field='sns_id')
     context = models.CharField(max_length=255, default='')
     report = models.SmallIntegerField(
         default=0,
@@ -53,7 +53,7 @@ class Comment(models.Model):
     )
 
 class Question(models.Model):
-    writer = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='writer')
+    writer = models.ForeignKey('user.User', on_delete=models.CASCADE, related_name='writer', to_field='sns_id')
     language = models.CharField(max_length=10, default='en')
     category = models.ForeignKey(Category, on_delete=models.CASCADE)
     timeout = models.ForeignKey(TimeOut, on_delete=models.CASCADE)
