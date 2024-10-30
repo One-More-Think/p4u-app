@@ -2,37 +2,48 @@ from django.db import models
 from django.core.validators import MaxValueValidator, MinValueValidator
 
 class Category(models.Model):
-    CATEGORY_TYPES = (
-    (1, "Living"),
-    (2, "Career"),
-    (3, "Food"),
-    (4, "Relationship"),
-  )
+    LIVING       = "living"
+    CAREER       = "career"
+    FOOD         = "food"
+    RELATIONSHIP = "relationship"
 
-    name = models.CharField(max_length=255, choices=CATEGORY_TYPES, default=1)
+    CATEGORY_TYPES = {
+        LIVING: "Living",
+        CAREER: "Career",
+        FOOD:"Food",
+        RELATIONSHIP: "Relationship"
+    }
+
+    name = models.CharField(max_length=12, choices=CATEGORY_TYPES, default=LIVING)
 
     def __str__(self) -> str:
         return self.name
     
 class TimeOut(models.Model):
-    TIMENAME_TYPES = (
-        (1,"none"),
-        (2,"5 min"),
-        (3,"30 min"),
-        (4,"1 hr"),
-        (5,"1 day"),
+    TIMEOUT_CHOICES = (
+        (1, "none"),
+        (2, "5 min"),
+        (3, "30 min"),
+        (4, "1 hr"),
+        (5, "1 day")
     )
 
-    TIMEOUT_TYPES = (
-        (1, 0),
-        (2, 300),
-        (3, 1800),
-        (4, 3600),
-        (5, 86400),
-    )
+    TIMEOUT_VALUES = {
+        1: 0,
+        2: 300,
+        3: 1800,
+        4: 3600,
+        5: 86400
+    }
     
-    timename = models.CharField(max_length=255, choices=TIMENAME_TYPES, default=1)
-    timeout = models.IntegerField(choices=TIMEOUT_TYPES, default=1)
+    type = models.IntegerField(choices=TIMEOUT_CHOICES, default=1)
+    timename = models.CharField(max_length=255)
+    timeout = models.IntegerField()
+
+    def save(self, *args, **kwargs):
+        self.timename = dict(self.TIMEOUT_CHOICES).get(self.type, "none")
+        self.timeout = self.TIMEOUT_VALUES.get(self.type, 0)
+        super().save(*args, **kwargs)
 
     def __str__(self) -> str:
         return self.timename
