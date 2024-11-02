@@ -1,4 +1,4 @@
-import React, {useState, useEffect, useRef, useCallback} from 'react';
+import React, { useState, useEffect, useRef, useCallback } from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -10,17 +10,21 @@ import {
   ActivityIndicator,
 } from 'react-native';
 import Common from 'components/Common';
-import {GestureHandlerRootView} from 'react-native-gesture-handler';
+import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet from '@gorhom/bottom-sheet';
-import {useDispatch, useSelector} from 'react-redux';
-import {HomeScreenStyle} from 'style';
+import { useDispatch, useSelector } from 'react-redux';
+import { HomeScreenStyle } from 'style';
 import Question from 'components/Question';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 import FilterSheet from 'components/FilterSheet';
 import SkeletonBar from 'components/SkeletonBar';
 
-const HomeScreen = ({navigation}: any): React.JSX.Element => {
+const HomeScreen = ({ navigation }: any): React.JSX.Element => {
   const dispatch: any = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
   const nextPageIdentifierRef = useRef();
@@ -143,7 +147,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
       setTimeout(() => {
         console.log('refresh main page');
         resolve();
-      }, 3000),
+      }, 3000)
     );
     // await fecth data
     // const newData: any = data[Math.round(Math.random() % data.length)];
@@ -181,7 +185,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
           setTimeout(() => {
             console.log('refresh HomeScreen page');
             resolve();
-          }, 1000),
+          }, 1000)
         );
         console.log('refresh done');
         // dispatch to get list of problems
@@ -215,22 +219,24 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
         />
         <TouchableOpacity
           onPress={() => navigation.navigate('SearchScreen')}
-          style={{marginLeft: 15}}>
+          style={{ marginLeft: 15 }}
+        >
           <Ionicons name="search" size={30} color="#222428" />
         </TouchableOpacity>
         <Text style={HomeScreenStyle.SafeAreaText}>Forum</Text>
         <TouchableOpacity
           onPress={handlePresentModal}
-          style={{marginRight: 15}}>
+          style={{ marginRight: 15 }}
+        >
           <Ionicons name="filter" size={30} color="#222428" />
         </TouchableOpacity>
       </SafeAreaView>
-      <GestureHandlerRootView style={{width: '100%'}}>
+      <GestureHandlerRootView style={{ width: '100%' }}>
         <FlatList
           style={HomeScreenStyle.ScrollView}
           showsVerticalScrollIndicator={false}
           data={data}
-          keyExtractor={item => item.id.toString()}
+          keyExtractor={(item) => item.id.toString()}
           onEndReachedThreshold={0.5}
           onEndReached={fetchNextProblem}
           refreshControl={
@@ -240,7 +246,7 @@ const HomeScreen = ({navigation}: any): React.JSX.Element => {
               tintColor="black"
             />
           }
-          renderItem={({item}) => (
+          renderItem={({ item }) => (
             <Question
               isLoading={isLoading}
               navigation={navigation}

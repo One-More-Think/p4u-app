@@ -1,23 +1,23 @@
 import React from 'react';
-import {Alert, Text, View} from 'react-native';
+import { Alert, Text, View } from 'react-native';
 import SettingCommonHeader from 'components/SettingCommonHeader';
-import {CommonHeaderStyle} from './style';
+import { CommonHeaderStyle } from './style';
 import SettingBlock from 'components/SettingBlock';
 import CountryFlag from 'components/CountryFlag';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 
-const AccountScreen = ({route, navigation}: any): React.JSX.Element => {
-  const {title} = route.params;
+const AccountScreen = ({ route, navigation }: any): React.JSX.Element => {
+  const { title } = route.params;
   const userInfo = useSelector((state: any) => state.user.userInfo);
   const AccountList = [
-    {title: 'Email', description: userInfo.email},
+    { title: 'Email', description: userInfo.email },
     {
       title: 'Country',
       description: (
         <CountryFlag
           isoCode={userInfo.country}
           size={20}
-          style={{borderWidth: 0.5, borderColor: 'black'}}
+          style={{ borderWidth: 0.5, borderColor: 'black' }}
         />
       ),
       onPress: () => console.log('show pop up to change country'),
@@ -42,7 +42,7 @@ const AccountScreen = ({route, navigation}: any): React.JSX.Element => {
             onPress: () => console.log('Cancel Pressed'),
             style: 'cancel',
           },
-          {text: 'OK', onPress: () => console.log('OK Pressed')},
+          { text: 'OK', onPress: () => console.log('OK Pressed') },
         ]),
       fontColor: '#e06666',
     },
@@ -51,7 +51,7 @@ const AccountScreen = ({route, navigation}: any): React.JSX.Element => {
     <SettingCommonHeader title={title} navigation={navigation}>
       <View style={CommonHeaderStyle.Container}>
         <Text style={CommonHeaderStyle.ContainerText}>Account</Text>
-        {AccountList.map(account => (
+        {AccountList.map((account) => (
           <SettingBlock
             key={account.title}
             title={account.title}

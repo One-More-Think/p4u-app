@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useMemo } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LandingPage from 'pages/LandingPage';
@@ -12,30 +12,35 @@ import LanguageScreen from 'screens/settings/LanguageScreen';
 import SupportScreen from 'screens/settings/SupportScreen';
 import AccountScreen from 'screens/settings/AccountScreen';
 import SearchScreen from 'screens/SearchScreen';
+import NewMemberScreen from 'screens/NewMemberScreen';
 import SettingPage from 'pages/SettingPage';
 import PostPage from 'pages/PostPage';
 import { useSelector } from 'react-redux';
 export const MainPage = (): React.JSX.Element => {
   const MainStack = createNativeStackNavigator();
-  const ScreenList = [
-    { name: 'LandingPage', component: LandingPage },
-    { name: 'QuestionDetailScreen', component: QuestionDetailScreen },
-    { name: 'NotificationScreen', component: NotificationScreen },
-    { name: 'PrivacyScreen', component: PrivacyScreen },
-    { name: 'ThemeScreen', component: ThemeScreen },
-    { name: 'LanguageScreen', component: LanguageScreen },
-    { name: 'SupportScreen', component: SupportScreen },
-    { name: 'AboutScreen', component: AboutScreen },
-    { name: 'AccountScreen', component: AccountScreen },
-    { name: 'SettingPage', component: SettingPage },
-    { name: 'SearchScreen', component: SearchScreen },
-    { name: 'PostScreen', component: PostPage },
-  ];
+
+  const ScreenList = useMemo(() => {
+    return [
+      { name: 'LandingPage', component: LandingPage },
+      { name: 'QuestionDetailScreen', component: QuestionDetailScreen },
+      { name: 'NotificationScreen', component: NotificationScreen },
+      { name: 'PrivacyScreen', component: PrivacyScreen },
+      { name: 'ThemeScreen', component: ThemeScreen },
+      { name: 'LanguageScreen', component: LanguageScreen },
+      { name: 'SupportScreen', component: SupportScreen },
+      { name: 'AboutScreen', component: AboutScreen },
+      { name: 'AccountScreen', component: AccountScreen },
+      { name: 'SettingPage', component: SettingPage },
+      { name: 'SearchScreen', component: SearchScreen },
+      { name: 'PostScreen', component: PostPage },
+    ];
+  }, []);
 
   const MainStackScreen = () => {
     const isAuthenticated = useSelector(
       (state: any) => state.user.isAuthenticated
     );
+    const userInfo = useSelector((state: any) => state.user.userInfo);
 
     return (
       <NavigationContainer>
@@ -47,20 +52,28 @@ export const MainPage = (): React.JSX.Element => {
           })}
         >
           {isAuthenticated ? (
-            ScreenList.map((screen) => (
+            userInfo.age === 0 ? (
               <MainStack.Screen
-                key={screen.name}
-                name={screen.name}
-                component={screen.component}
-                options={{
-                  headerShown: false,
-                  ...(screen.name === 'SearchScreen' ||
-                  screen.name === 'PostScreen'
-                    ? { presentation: 'containedModal' }
-                    : {}),
-                }}
+                component={NewMemberScreen}
+                name="NewMemberScreen"
+                options={{ headerShown: false }}
               />
-            ))
+            ) : (
+              ScreenList.map((screen) => (
+                <MainStack.Screen
+                  key={screen.name}
+                  name={screen.name}
+                  component={screen.component}
+                  options={{
+                    headerShown: false,
+                    ...(screen.name === 'SearchScreen' ||
+                    screen.name === 'PostScreen'
+                      ? { presentation: 'containedModal' }
+                      : {}),
+                  }}
+                />
+              ))
+            )
           ) : (
             <MainStack.Screen
               key="Login"

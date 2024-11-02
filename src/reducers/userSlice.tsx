@@ -1,6 +1,7 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 interface UserInfoType {
+  id?: string;
   name?: string;
   email?: string;
   country?: string;
@@ -14,51 +15,46 @@ interface UserInfoType {
 interface userInitType {
   isAuthenticated: boolean;
   userInfo: UserInfoType;
-  token: string;
   darkmode: boolean;
+  sns?: string;
 }
 
 const initialState: userInitType = {
   isAuthenticated: false,
   userInfo: {
-    email: '0623hoon@gmail.com',
-    country: 'kr',
-    age: 28,
-    gender: 'male',
-    occupation: 'programmer',
-    aboutme: `Hello I like to do play soccer and I'm a programmer in Canada`,
+    id: '',
+    email: '',
+    country: '',
+    age: 0,
+    gender: 'none',
+    occupation: 'none',
+    aboutme: ``,
   },
-  token: '',
   darkmode: false,
+  sns: '',
 };
 
 type DarkModeAction = {
   payload: boolean;
 };
 
-type AuthenticatedAction = {
-  payload: boolean;
+type OAuth2Action = {
+  payload: any;
 };
 
 const usersSlice = createSlice({
   name: 'user',
   initialState,
   reducers: {
-    setAuthenticated: (state: any, action: AuthenticatedAction) => {
-      // if (state.token) {
-      state.isAuthenticated = action.payload;
-      // }
-    },
     setDarkMode: (state: any, action: DarkModeAction) => {
       state.darkmode = action.payload;
     },
 
-    userLogin: (state: any, action: any) => {
-      const {user, token, method} = action.payload;
-      state.userInfo = user;
+    userLogin: (state: any, action: OAuth2Action) => {
+      const { userInfo, sns } = action.payload;
+      state.userInfo = { ...state.userInfo, ...userInfo };
+      if (sns) state.sns = sns;
       state.isAuthenticated = true;
-      state.token = token;
-      state.method = method;
     },
 
     userLogOut: (state: any, action: any) => {
@@ -66,6 +62,5 @@ const usersSlice = createSlice({
     },
   },
 });
-export const {setAuthenticated, userLogin, userLogOut, setDarkMode} =
-  usersSlice.actions;
+export const { userLogin, userLogOut, setDarkMode } = usersSlice.actions;
 export default usersSlice.reducer;

@@ -1,4 +1,4 @@
-import {StyleSheet} from 'react-native';
+import { StyleSheet } from 'react-native';
 export const CommonStyle = StyleSheet.create({
   scrollView: {
     height: '100%',
@@ -623,5 +623,67 @@ export const PostScreenStyle = StyleSheet.create({
     borderBottomWidth: 0,
     height: 50,
     borderRadius: 10,
+  },
+});
+
+export const NewMemberScreenStyle = StyleSheet.create({
+  SafeArea: {
+    marginTop: 10,
+    width: '100%',
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  SafeAreaText: {
+    fontSize: 20,
+    fontWeight: 'bold',
+  },
+  Container: {
+    display: 'flex',
+    flexDirection: 'column',
+    width: '95%',
+    height: '80%',
+    marginTop: 10,
+  },
+  Text: {
+    color: '#7a7b7e',
+    fontSize: 15,
+    fontWeight: 'bold',
+  },
+  ColumnContainer: {
+    display: 'flex',
+    width: '50%',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  RowContainer: {
+    display: 'flex',
+    flexDirection: 'row',
+    alignItems: 'center',
+    justifyContent: 'space-evenly',
+  },
+  inputContainerStyle: {
+    width: '100%',
+    borderBottomWidth: 0,
+    height: 50,
+    borderRadius: 10,
+  },
+  TextContainer: {
+    display: 'flex',
+    alignItems: 'center',
+    justifyContent: 'center',
+    marginLeft: 25,
+    fontSize: 15,
+  },
+  ConfirmButton: {
+    width: '70%',
+    height: 50,
+    borderRadius: 20,
+    backgroundColor: '#8672a5',
+    display: 'flex',
+    justifyContent: 'center',
+    alignItems: 'center',
   },
 });

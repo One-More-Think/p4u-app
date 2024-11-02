@@ -1,11 +1,7 @@
 import React from 'react';
-import type {PropsWithChildren} from 'react';
-import {TouchableOpacity, Text, Image, useColorScheme} from 'react-native';
-import {SocialButtonStyle} from '../style';
-import Google_Light from 'assets/images/google_light.png';
-import Google_Dark from 'assets/images/google_dark.png';
-import Apple_Light from 'assets/images/apple_light.png';
-import Apple_Dark from 'assets/images/apple_dark.png';
+import type { PropsWithChildren } from 'react';
+import { TouchableOpacity, Image, useColorScheme } from 'react-native';
+import { SocialButtonStyle } from '../style';
 
 type SocialLoginButtonProps = PropsWithChildren<{
   title: string;
@@ -19,11 +15,17 @@ const SocialLoginButton = ({
   const LogoImage = (title: string, isDark: Boolean) => {
     switch (title) {
       case 'Google':
-        return isDark ? Google_Dark : Google_Light;
+        return isDark
+          ? require('assets/images/google_dark.png')
+          : require('assets/images/google_light.png');
       case 'Apple':
-        return isDark ? Apple_Dark : Apple_Light;
+        return isDark
+          ? require('assets/images/apple_dark.png')
+          : require('assets/images/apple_light.png');
       default:
-        return isDark ? Google_Dark : Google_Light;
+        return isDark
+          ? require('assets/images/google_dark.png')
+          : require('assets/images/google_light.png');
     }
   };
   return (

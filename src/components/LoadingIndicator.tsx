@@ -1,6 +1,6 @@
 import React from 'react';
-import {View, ActivityIndicator, Dimensions} from 'react-native';
-import {useSelector} from 'react-redux';
+import { View, ActivityIndicator, Dimensions } from 'react-native';
+import { useSelector } from 'react-redux';
 
 const LoadingIndicator = (): React.JSX.Element => {
   const isLoading = useSelector((state: any) => state.config.isLoading);
@@ -17,11 +17,12 @@ const LoadingIndicator = (): React.JSX.Element => {
             alignItems: 'center',
             justifyContent: 'center',
             zIndex: 20,
-          }}>
+          }}
+        >
           <ActivityIndicator
             size="large"
             color="white"
-            style={{transform: [{scale: 50 / 30}]}}
+            style={{ transform: [{ scale: 50 / 30 }] }}
           />
         </View>
       )}

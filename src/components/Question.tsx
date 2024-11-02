@@ -1,10 +1,10 @@
-import React, {useState} from 'react';
-import type {PropsWithChildren} from 'react';
-import {View, Text, TouchableOpacity} from 'react-native';
+import React, { useCallback, useState } from 'react';
+import type { PropsWithChildren } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import CountryFlag from 'components/CountryFlag';
-import {QuestionStyle} from 'style';
+import { QuestionStyle } from 'style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useDispatch, useSelector} from 'react-redux';
+import { useDispatch, useSelector } from 'react-redux';
 import SkeletonBar from 'components/SkeletonBar';
 type QuestionProps = PropsWithChildren<{
   id: string;
@@ -42,15 +42,17 @@ const Question = (props: QuestionProps): React.JSX.Element => {
     title,
     timestamp,
   };
-  const GenderColor = (gender: string) => {
+
+  const GenderColor = useCallback((gender: string) => {
     if (gender === 'male') return '#7dc9e0';
     else if (gender === 'female') return '#ee92ba';
     return 'gray';
-  };
+  }, []);
+
   const handleQuestion = async () => {
     // const data = dispatch({}); get real data
     if (search) navigation.goBack();
-    navigation.navigate('QuestionDetailScreen', {data});
+    navigation.navigate('QuestionDetailScreen', { data });
     console.log('press');
   };
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
@@ -65,20 +67,26 @@ const Question = (props: QuestionProps): React.JSX.Element => {
         alignSelf: 'center',
         backgroundColor: isDarkMode ? '#222428' : 'white',
       }}
-      onPress={handleQuestion}>
+      onPress={handleQuestion}
+    >
       {popular && (
         <Ionicons
           name="flame-sharp"
           size={30}
-          style={{position: 'absolute', top: -10, left: -10, color: '#e06666'}}
+          style={{
+            position: 'absolute',
+            top: -10,
+            left: -10,
+            color: '#e06666',
+          }}
         />
       )}
       <View style={QuestionStyle.IconContainer}>
-        <View style={{...QuestionStyle.flagContainer, width: '30%'}}>
+        <View style={{ ...QuestionStyle.flagContainer, width: '30%' }}>
           <CountryFlag
             isoCode={country}
             size={25}
-            style={{borderWidth: 0.5, borderColor: 'black'}}
+            style={{ borderWidth: 0.5, borderColor: 'black' }}
           />
         </View>
         <View
@@ -87,10 +95,15 @@ const Question = (props: QuestionProps): React.JSX.Element => {
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
-          }}>
-          <Ionicons name={gender} color={GenderColor(gender)} size={23} />
+          }}
+        >
+          <Ionicons
+            name={gender === 'none' ? 'remove' : gender}
+            color={GenderColor(gender)}
+            size={23}
+          />
         </View>
-        <View style={{...QuestionStyle.TopIconWrapper, width: '20%'}}>
+        <View style={{ ...QuestionStyle.TopIconWrapper, width: '20%' }}>
           <Ionicons
             name="accessibility"
             size={20}
@@ -100,17 +113,19 @@ const Question = (props: QuestionProps): React.JSX.Element => {
             style={{
               ...QuestionStyle.IconTextContainer,
               color: isDarkMode ? 'white' : '#222428',
-            }}>
+            }}
+          >
             {age}
           </Text>
         </View>
-        <View style={{...QuestionStyle.TopIconWrapper, width: '40%'}}>
+        <View style={{ ...QuestionStyle.TopIconWrapper, width: '40%' }}>
           <Ionicons name="bag" size={20} color="#9a7969" />
           <Text
             style={{
               ...QuestionStyle.IconTextContainer,
               color: isDarkMode ? 'white' : '#222428',
-            }}>
+            }}
+          >
             {occupation}
           </Text>
         </View>
@@ -121,7 +136,8 @@ const Question = (props: QuestionProps): React.JSX.Element => {
           color: isDarkMode ? 'white' : '#222428',
         }}
         ellipsizeMode="tail"
-        numberOfLines={1}>
+        numberOfLines={1}
+      >
         {title}
       </Text>
     </TouchableOpacity>

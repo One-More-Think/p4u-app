@@ -1,4 +1,4 @@
-import {createSlice} from '@reduxjs/toolkit';
+import { createSlice } from '@reduxjs/toolkit';
 
 interface configSliceInitType {
   isLoading: boolean;
@@ -41,7 +41,7 @@ const configSlice = createSlice({
     },
   },
 });
-export const {setLanguage, setAppInfo, setMode, setIsLoading} =
+export const { setLanguage, setAppInfo, setMode, setIsLoading } =
   configSlice.actions;
 
 export default configSlice.reducer;
