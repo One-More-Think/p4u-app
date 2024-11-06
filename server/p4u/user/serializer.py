@@ -5,13 +5,13 @@ class UserSerializer(serializers.ModelSerializer):
     class Meta:
         model = User
         fields = ['email', 'sns_id', 'sns', 'country','language', 'gender', 'age', 
-                  'occupation', 'writtenQuestion', 'commented_questions', 
+                  'occupation', 'aboutme', 'written_question', 'commented_question', 
                   'is_banned', 'create_at', 'update_at']
         extra_kwargs = {
             'email': {'required': True},
             'gender': {'required': True},
             'country': {'required': True},
-            'writtenQuestion': {'required': False},
+            'written_question': {'required': False},
             'commented_questions': {'required': False}
         }
     

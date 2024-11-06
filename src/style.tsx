@@ -398,10 +398,12 @@ export const UserBoxStyle = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
+    width: '100%',
   },
   InfoBox: {
     display: 'flex',
     flexDirection: 'row',
+    width: '100%',
   },
   TimeStamp: {
     fontWeight: '500',

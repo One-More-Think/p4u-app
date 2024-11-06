@@ -1,4 +1,4 @@
-import React, {useEffect, useState} from 'react';
+import React, { useEffect, useState } from 'react';
 import {
   Text,
   View,
@@ -10,12 +10,17 @@ import {
 import Common from 'components/Common';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CountryFlag from 'components/CountryFlag';
-import {UserPageStyle} from 'style';
-import {useSelector} from 'react-redux';
-import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
+import { UserPageStyle } from 'style';
+import { useDispatch, useSelector } from 'react-redux';
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
 import CommentBox from 'components/CommentBox';
 import SkeletonBar from 'components/SkeletonBar';
-const UserPage = ({route, navigation}: any): React.JSX.Element => {
+const UserPage = ({ route, navigation }: any): React.JSX.Element => {
+  const dispatch: any = useDispatch();
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const userInfo = useSelector((state: any) => state.user.userInfo);
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
@@ -54,7 +59,7 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
           setTimeout(() => {
             console.log('refresh main page');
             resolve();
-          }, 3000),
+          }, 3000)
         );
       } catch (error) {
         console.error(error);
@@ -78,12 +83,13 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
         />
         <Text style={UserPageStyle.SafeAreaText}>Profile</Text>
         <TouchableOpacity
-          style={{position: 'absolute', right: 0, marginRight: 20}}
-          onPress={() => navigation.navigate('SettingPage')}>
+          style={{ position: 'absolute', right: 0, marginRight: 20 }}
+          onPress={() => navigation.navigate('SettingPage')}
+        >
           <Ionicons name="settings" size={30} />
         </TouchableOpacity>
       </SafeAreaView>
-      <View style={{display: 'flex', marginTop: 16}}>
+      <View style={{ display: 'flex', marginTop: 16 }}>
         <BannerAd
           unitId={TestIds.BANNER}
           size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
@@ -98,7 +104,8 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
             style={{
               ...UserPageStyle.UserInfoBox,
               backgroundColor: isDarkMode ? '#222428' : 'white',
-            }}>
+            }}
+          >
             <View style={UserPageStyle.UserInnerBox}>
               <View style={UserPageStyle.TextContainer}>
                 {/* Email will be shown only for owner */}
@@ -106,14 +113,16 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
                   style={{
                     ...UserPageStyle.UserText,
                     color: isDarkMode ? 'white' : '#222428',
-                  }}>
+                  }}
+                >
                   Email:
                 </Text>
                 <Text
                   style={{
                     marginLeft: 10,
                     color: isDarkMode ? 'white' : '#222428',
-                  }}>
+                  }}
+                >
                   {userInfo.email}
                 </Text>
               </View>
@@ -122,7 +131,8 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
                   style={{
                     ...UserPageStyle.UserText,
                     color: isDarkMode ? 'white' : '#222428',
-                  }}>
+                  }}
+                >
                   I'm From
                 </Text>
                 <CountryFlag
@@ -140,13 +150,15 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
                   style={{
                     ...UserPageStyle.UserText,
                     color: isDarkMode ? 'white' : '#222428',
-                  }}>
-                  I'm <Text style={{color: '#79699a'}}>{userInfo.age}</Text> old{' '}
-                  <Text style={{color: GenderColor(userInfo.gender)}}>
+                  }}
+                >
+                  I'm <Text style={{ color: '#79699a' }}>{userInfo.age}</Text>{' '}
+                  old{' '}
+                  <Text style={{ color: GenderColor(userInfo.gender) }}>
                     {userInfo.gender.at(0).toUpperCase() +
                       userInfo.gender.slice(1)}
                   </Text>{' '}
-                  <Text style={{color: '#9a7969'}}>
+                  <Text style={{ color: '#9a7969' }}>
                     {userInfo.occupation.at(0).toUpperCase() +
                       userInfo.occupation.slice(1)}
                   </Text>
@@ -156,12 +168,14 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
                 style={{
                   ...UserPageStyle.TextContainer,
                   flexDirection: 'column',
-                }}>
+                }}
+              >
                 <Text
                   style={{
                     ...UserPageStyle.UserText,
                     color: isDarkMode ? 'white' : '#222428',
-                  }}>
+                  }}
+                >
                   About Me
                 </Text>
                 <Text
@@ -169,7 +183,8 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
                     marginTop: 5,
                     color: isDarkMode ? 'white' : '#222428',
                     flexWrap: 'wrap',
-                  }}>
+                  }}
+                >
                   {userInfo.aboutme}
                 </Text>
               </View>
@@ -181,7 +196,7 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
           <FlatList
             horizontal
             data={MockData}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <CommentBox data={item} isLoading={isLoading} />
             )}
             showsHorizontalScrollIndicator={false}
@@ -192,7 +207,7 @@ const UserPage = ({route, navigation}: any): React.JSX.Element => {
           <FlatList
             horizontal
             data={MockData}
-            renderItem={({item}) => (
+            renderItem={({ item }) => (
               <CommentBox data={item} isLoading={isLoading} />
             )}
             showsHorizontalScrollIndicator={false}

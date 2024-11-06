@@ -4,7 +4,6 @@ from utils.permission import IsUser
 from rest_framework.response import Response
 from rest_framework.views import APIView
 from rest_framework import status, exceptions
-from django.forms.models import model_to_dict
 from utils.secret import *
 from utils.authentication import OAuthAuthentication
 from .serializer import UserSerializer
@@ -20,19 +19,24 @@ class UserSignInView(APIView):
     def get_authenticators(self):
         if self.request.method == 'GET':
             return super().get_authenticators()
-        return []  # No authenticators for POST requests
+        return []
 
     def get_permissions(self):
         if self.request.method == 'GET':
             return [permission() for permission in self.permission_classes]
-        return []  # No permissions for POST requests
+        return []
     
     def get(self, request, sns):
         try:
             user = User.objects.filter(email=request.user['email']).values('sns_id', 'gender', 'email', 'occupation', 'country', 'age')
-            print(user[0])
             return Response(user[0], status=status.HTTP_200_OK)
-        except Exception as e:
+        except User.DoesNotExist:
+            return Response({'message':'Not Found Model'}, status=status.HTTP_404_NOT_FOUND)
+        except exceptions.AuthenticationFailed as e:
+            return Response({'message': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+        except exceptions.PermissionDenied as e:
+            return Response({'message': str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except Exception:
             return Response({'message':'Internal Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
     def post(self, request, sns):
@@ -95,7 +99,7 @@ class UserSignInView(APIView):
                 user_data['email'] = email[0]['value']
                 user_data['sns_id'] = email[0]['metadata']['source']['id']
 
-            sns_user = User.objects.filter(email=user_data['email']).values('id')
+            sns_user = User.objects.filter(email=user_data['email']).values('sns_id', 'gender', 'email', 'occupation', 'country', 'age')
             if not sns_user:
                 serializer = UserSerializer(data=user_data)
                 if serializer.is_valid():
@@ -104,19 +108,38 @@ class UserSignInView(APIView):
                     print('Error: Invalid data')
                     print(serializer.errors)
                     raise serializers.ValidationError(serializer.errors)
+            else:
+                sns_user[0]['access_token'] = response_dict['access_token']
+                return Response(sns_user[0], status=status.HTTP_200_OK)
             return Response(user_data, status=status.HTTP_200_OK)
         except User.DoesNotExist:
             return Response({'message':'Not Found Model'}, status=status.HTTP_404_NOT_FOUND)
-        except Exception as e:
+        except exceptions.AuthenticationFailed as e:
+            return Response({'message': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+        except exceptions.PermissionDenied as e:
+            return Response({'message': str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except Exception:
             return Response({'message':'Internal Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
         
+class UserLogoutView(APIView):
+    def get(self, request):
+        try:
+            token = request.headers['Authorization'].split(' ')[1]
+            cache.delete(token)
+            return Response({'message': 'successfully logout'}, status=status.HTTP_200_OK)
+        except exceptions.AuthenticationFailed as e:
+            return Response({'message': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
+        except exceptions.PermissionDenied as e:
+            return Response({'message': str(e)}, status=status.HTTP_403_FORBIDDEN)
+        except Exception:
+            return Response({'message':'Internal Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
+
 class UserUpdateView(APIView):
     authentication_classes = [OAuthAuthentication]
     permission_classes = [IsUser]
     def patch(self, request, id):
         try:
             data = request.data
-            print(data)
             user = User.objects.get(email=request.user['email'])
             if user.sns_id != id:
                 raise User.DoesNotExist
@@ -137,7 +160,7 @@ class UserDeleteView(APIView):
     def delete(self, request):
         try:
             user_id = request.user['id']
-            user = User.objects.get(id=user_id)
+            user = User.objects.get(sns_id=user_id)
             user.delete()
             return Response({'message': f'{user_id} successfully deleted'}, status=status.HTTP_200_OK)
         except User.DoesNotExist:
@@ -145,11 +168,9 @@ class UserDeleteView(APIView):
         except exceptions.AuthenticationFailed as e:
             return Response({'message': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
         except exceptions.PermissionDenied as e:
-            print(str(e))
             return Response({'message': str(e)}, status=status.HTTP_403_FORBIDDEN)
         except Exception:
             return Response({'message':'Internal Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
 
 class UserDetailView(APIView):
     authentication_classes = [OAuthAuthentication]
@@ -157,31 +178,13 @@ class UserDetailView(APIView):
 
     def get(self, request, pk):
         try:
-            user = User.objects.get(user_id=pk)
+            user = User.objects.get(sns_id=pk)
             serializer = UserSerializer(user)
+            print(serializer.data)
             return Response(serializer.data, status=status.HTTP_200_OK) 
         except User.DoesNotExist:
             return Response({'message':'Not Found Model'}, status=status.HTTP_404_NOT_FOUND)
         except exceptions.AuthenticationFailed as e:
             return Response({'message': str(e)}, status=status.HTTP_401_UNAUTHORIZED)
-        except Exception:
-            return Response({'message':'Internal Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)
-
-class Oauth2UserView(APIView):
-    # authentication_classes = [OAuthAuthentication]
-
-    def post(self, request, sns):
-        try:
-            headers = {
-                "Content-Type": "application/json",
-                "Authorization": "Bearer YOUR_ACCESS_TOKEN"
-            }
-
-            sns_dict = SNS_KEY[sns]
-            # requests.post(sns_dict.token_url, headers=headers, json=data)
-            if 'client_id' not in sns_dict:
-                return Response({'message':'Invalid Request'}, status=status.HTTP_400_BAD_REQUEST)
-            request_url = f"{sns_dict['auth_url']}?client_id={sns_dict['client_id']}&redirect_uri={HOME_URL}/api/v1/user/login/{sns}&response_type=code&scope=email%20profile%20openid&access_type=offline"
-            return Response({'data': request_url}, status=status.HTTP_200_OK)
         except Exception:
             return Response({'message':'Internal Error'}, status=status.HTTP_500_INTERNAL_SERVER_ERROR)

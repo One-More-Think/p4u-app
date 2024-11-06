@@ -4,6 +4,7 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import store from 'reducers/index';
 import { showAlert } from 'reducers/alertSlice';
 import { useNavigation } from '@react-navigation/native';
+import { LogoutUser } from 'reducers/actions/UserAction';
 const api = axios.create({
   baseURL: process.env.API_URL,
   headers: {
@@ -23,7 +24,6 @@ api.interceptors.request.use(
     config.headers['Authorization'] = `Bearer ${token}`;
     config.headers['x-sns-name'] = sns;
     // config.headers['SECRET-KEY'] = process.env.HEADER_SECRET_KEY;
-
     return config;
   },
   (error) => {
@@ -40,61 +40,26 @@ api.interceptors.request.use(
     );
   }
 );
-// api.interceptors.request.use(
-//   (config) => {
-//     const token =
-//       localStorage.getItem('token') || sessionStorage.getItem('token');
-//     if (token === null) {
-//       return config;
-//     }
-//     // config.headers['Authorization'] = `Bearer ${
-//     //   localStorage.getItem('token') || sessionStorage.getItem('token')
-//     // }`;
-//     // const sns = localStorage.getItem('sns') || null;
-//     // if (localStorage.getItem('sns')) {
-//     //   config.headers['x-sns-name'] = sns;
-//     // }
-//     return config;
-//   },
-//   (error) => {
-//     return Promise.reject(error);
-//   }
-// );
 
-// api.interceptors.response.use(
-//   (res) => res,
-//   async (err) => {
-//     const originalConfig = err.config;
-//     if (err.response.status === 401 && originalConfig.url !== "/auth/token") {
-//       try {
-//         const rs = await api.get("/auth/token");
-//         const { token } = rs.data;
-//         const isRemember = localStorage.getItem("remember");
-//         const storage = isRemember === "true" ? localStorage : sessionStorage;
-//         storage.setItem("token", token);
-//         return api(originalConfig);
-//       } catch (_error) {
-//         return Promise.reject(_error);
-//       }
-//     }
-
-//     if (err.response.data === "Expired token") {
-//       const token = localStorage.token || sessionStorage.token;
-//       if (token) {
-//         const config: any = {
-//           headesr: {
-//             Authorization: `Bearer ${token}`,
-//           },
-//         };
-//         await axios.get("/auth/logout", config);
-//       }
-//       localStorage.removeItem("token");
-//       sessionStorage.removeItem("token");
-//       localStorage.removeItem("recipe");
-//       localStorage.removeItem("sns");
-//     }
-//     return Promise.reject(err);
-//   }
-// );
+api.interceptors.response.use(
+  (res) => res,
+  async (err) => {
+    store.dispatch(
+      showAlert({
+        message: err?.message || 'Network Error',
+        type: 'error',
+        id: Date.now().toString(),
+      })
+    );
+    if (err.response.status === 401 || err.response.status === 403) {
+      try {
+        store.dispatch(LogoutUser());
+      } catch (_error) {
+        return Promise.reject(_error);
+      }
+    }
+    return Promise.reject(err);
+  }
+);
 
 export default api;

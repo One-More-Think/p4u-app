@@ -5,14 +5,17 @@ import {
   StatusBar,
   ScrollView,
   TouchableOpacity,
+  Alert,
 } from 'react-native';
 import Common from 'components/Common';
 import SettingBlock from 'components/SettingBlock';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {SettingPageStyle} from 'style';
-import {useSelector} from 'react-redux';
+import { SettingPageStyle } from 'style';
+import { useSelector } from 'react-redux';
+import store from 'reducers/index';
+import { LogoutUser } from 'reducers/actions/UserAction';
 
-const SettingPage = ({route, navigation}: any): React.JSX.Element => {
+const SettingPage = ({ route, navigation }: any): React.JSX.Element => {
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const language = useSelector((state: any) => state.config.language);
   const userInfo = useSelector((state: any) => state.user.userInfo);
@@ -63,21 +66,37 @@ const SettingPage = ({route, navigation}: any): React.JSX.Element => {
       description: configInfo.appInfo.version,
       page: 'About',
     },
+    {
+      name: 'log-in-outline',
+      title: 'LogOut',
+      page: 'LogOut',
+      fontColor: '#e06666',
+      onPress: () =>
+        Alert.alert('LogOut', 'Do you want to logout?', [
+          { text: 'Cancel', style: 'cancel' },
+          {
+            text: 'OK',
+            onPress: () => store.dispatch(LogoutUser()),
+          },
+        ]),
+    },
   ];
   return (
-    <Common style={isDarkMode ? {backgroundColor: '#222428'} : {}}>
+    <Common style={isDarkMode ? { backgroundColor: '#222428' } : {}}>
       <SafeAreaView
         style={{
           ...SettingPageStyle.SafeArea,
           borderBottomColor: isDarkMode ? 'white' : '#222428',
-        }}>
+        }}
+      >
         <StatusBar
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
           backgroundColor={backgroundStyle.backgroundColor}
         />
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={{position: 'absolute', left: 0}}>
+          style={{ position: 'absolute', left: 0 }}
+        >
           <Ionicons
             name="chevron-back"
             size={30}
@@ -88,18 +107,21 @@ const SettingPage = ({route, navigation}: any): React.JSX.Element => {
           style={{
             ...SettingPageStyle.SafeAreaText,
             color: isDarkMode ? 'white' : '#222428',
-          }}>
+          }}
+        >
           Settings
         </Text>
       </SafeAreaView>
-      <ScrollView style={{width: '100%'}}>
-        {settingList.map(block => (
+      <ScrollView style={{ width: '100%' }}>
+        {settingList.map((block) => (
           <SettingBlock
             key={block.name}
             name={block.name}
             title={block.title}
             description={block.description}
             page={block.page}
+            fontColor={block?.fontColor}
+            onPress={block?.onPress}
           />
         ))}
       </ScrollView>

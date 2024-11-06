@@ -1,8 +1,12 @@
-import React, {useEffect, useState, useCallback, useRef} from 'react';
-import {MenuView} from '@react-native-menu/menu';
+import React, { useEffect, useState, useCallback, useRef } from 'react';
+import { MenuView } from '@react-native-menu/menu';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {BannerAd, BannerAdSize, TestIds} from 'react-native-google-mobile-ads';
-import {Input} from '@rneui/themed';
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
+import { Input } from '@rneui/themed';
 import {
   View,
   Text,
@@ -14,15 +18,19 @@ import {
   RefreshControl,
 } from 'react-native';
 import Common from 'components/Common';
-import {useSelector} from 'react-redux';
-import {QuestionDetailStyle} from 'style';
+import { useSelector } from 'react-redux';
+import { QuestionDetailStyle } from 'style';
 import ChooseBox from 'components/ChooseBox';
 import FilterBox from 'components/FilterBox';
 import Chart from 'components/Chart';
 import UserBox from 'components/UserBox';
+import QuestionComment from 'components/QuestionComment';
 
-const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
-  const {data} = route.params;
+const QuestionDetailScreen = ({
+  route,
+  navigation,
+}: any): React.JSX.Element => {
+  const { data } = route.params;
   const title = data?.title || '';
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const userInfo = useSelector((state: any) => state.user.userInfo);
@@ -36,8 +44,8 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
   const MockData = {
     content: `I graduated in BCIT school but I can not find a job for a long time I don't know what should I do give let me know If I need to go school for master or keep it up for job hunting?`,
     choose: ['Go to get master degree', 'Keep it up', 'Find antoher job'],
-    category: 'home-sharp', //shcool, fast-food, heart
-    timeout: true,
+    category: 'school', //home-sharp, fast-food, heart
+    timeout: false,
     comments: [
       {
         id: 1,
@@ -47,6 +55,7 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
         occupation: 'professor',
         comment: `I think it's better to go school again`,
         timestamp: '10/26 03:40',
+        like: 3,
       },
       {
         id: 2,
@@ -56,6 +65,7 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
         occupation: 'none',
         comment: `Just do what ever you like`,
         timestamp: '11/26 10:20',
+        like: 5,
       },
     ],
   };
@@ -73,13 +83,13 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
     (question: any) => {
       setSelected(question);
     },
-    [selected],
+    [selected]
   );
   const onFilter = useCallback(
     (filter: any) => {
       setFiltered(filter);
     },
-    [filtered],
+    [filtered]
   );
   const onCheck = useCallback(() => {
     setChecked(!checked);
@@ -96,7 +106,7 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
           setTimeout(() => {
             console.log('refresh Question Detail page');
             resolve();
-          }, 1000),
+          }, 1000)
         );
         console.log('refresh done');
         // dispatch to get list of problems
@@ -126,14 +136,15 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
         />
         <TouchableOpacity
           onPress={() => navigation.goBack()}
-          style={{marginLeft: 10}}>
+          style={{ marginLeft: 10 }}
+        >
           <Ionicons name="chevron-back" size={40} color="#222428" />
         </TouchableOpacity>
         <Text style={QuestionDetailStyle.SafeAreaText}>Contents</Text>
         <View>
           <MenuView
             title="Options"
-            onPressAction={({nativeEvent}) => {
+            onPressAction={({ nativeEvent }) => {
               console.log(JSON.stringify(nativeEvent));
             }}
             actions={[
@@ -169,8 +180,9 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
                 }),
               },
             ]}
-            shouldOpenOnLongPress={false}>
-            <TouchableOpacity style={{marginRight: 10}}>
+            shouldOpenOnLongPress={false}
+          >
+            <TouchableOpacity style={{ marginRight: 10 }}>
               <Ionicons name="ellipsis-vertical" size={30} color="#222428" />
             </TouchableOpacity>
           </MenuView>
@@ -182,14 +194,15 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
       />
       <ScrollView
-        style={{width: '100%'}}
+        style={{ width: '100%' }}
         refreshControl={
           <RefreshControl
             refreshing={refreshing}
             onRefresh={onRefresh}
             tintColor="black"
           />
-        }>
+        }
+      >
         <View style={QuestionDetailStyle.Container}>
           <View style={QuestionDetailStyle.HeaderBox}>
             <UserBox data={data} />
@@ -201,7 +214,8 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
             style={{
               ...QuestionDetailStyle.Title,
               color: '#222428',
-            }}>
+            }}
+          >
             {title}
           </Text>
           <Text style={QuestionDetailStyle.Content}>{MockData.content}</Text>
@@ -217,35 +231,13 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
           </View>
           <View style={QuestionDetailStyle.CommentContainer}>
             {MockData.comments.map((data: any, idx) => (
-              <React.Fragment key={data.id}>
-                <View
-                  style={{
-                    borderBottomWidth: 0.2,
-                  }}>
-                  <UserBox
-                    key={`${idx}-userbox`}
-                    data={{
-                      country: data?.country || '',
-                      age: data?.age || '',
-                      gender: data?.gender || '',
-                      occupation: data?.occupation || '',
-                      timestamp: data?.timestamp || '',
-                    }}
-                    comment
-                  />
-                  <Text
-                    key={`${idx}-userboxText`}
-                    style={{fontFamily: 'Rubik', marginBottom: 10}}>
-                    {data.comment}
-                  </Text>
-                </View>
-              </React.Fragment>
+              <QuestionComment key={`${idx}-userbox`} data={data} />
             ))}
           </View>
           {MockData.timeout && (
             <View style={QuestionDetailStyle.BottomBox}>
               <View style={QuestionDetailStyle.FilterBox}>
-                {filterList.map(filter => (
+                {filterList.map((filter) => (
                   <FilterBox
                     key={`${filter}-filterBox`}
                     title={filter}
@@ -263,12 +255,12 @@ const QuestionDetailScreen = ({route, navigation}: any): React.JSX.Element => {
           )}
         </View>
       </ScrollView>
-      <SafeAreaView style={{width: '100%'}}>
+      <SafeAreaView style={{ width: '100%' }}>
         <Input
           placeholder="Comment"
           placeholderTextColor={isDarkMode ? 'white' : '#222428'}
           rightIcon={
-            <TouchableOpacity style={{marginRight: 10}}>
+            <TouchableOpacity style={{ marginRight: 10 }}>
               <Ionicons
                 name="paper-plane-outline"
                 size={25}

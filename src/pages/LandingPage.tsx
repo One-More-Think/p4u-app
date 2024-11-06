@@ -1,12 +1,12 @@
-import React, {useCallback, useMemo} from 'react';
+import React, { useCallback, useMemo } from 'react';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {createBottomTabNavigator} from '@react-navigation/bottom-tabs';
+import { createBottomTabNavigator } from '@react-navigation/bottom-tabs';
 import HomeScreen from 'screens/HomeScreen';
 import UserPage from 'pages/UserPage';
-import {useSelector} from 'react-redux';
-import {View} from 'react-native';
+import { useSelector } from 'react-redux';
+import { View } from 'react-native';
 
-const LandingPage = ({navigation}: any): React.JSX.Element => {
+const LandingPage = ({ navigation }: any): React.JSX.Element => {
   const ScreenArray = [
     {
       name: 'HomeStack',
@@ -35,12 +35,12 @@ const LandingPage = ({navigation}: any): React.JSX.Element => {
   return (
     <BottomTab.Navigator
       initialRouteName="HomeStack"
-      screenOptions={({route}) => ({
+      screenOptions={({ route }) => ({
         headerShown: false,
         tabBarStyle: {
           backgroundColor: isDarkMode ? '#222428' : 'white',
         },
-        tabBarIcon: ({focused}: any) => {
+        tabBarIcon: ({ focused }: any) => {
           let iconName: any;
           if (route.name === 'HomeStack') iconName = 'home';
           else if (route.name === 'Notification') iconName = 'chatbox';
@@ -67,7 +67,8 @@ const LandingPage = ({navigation}: any): React.JSX.Element => {
             />
           );
         },
-      })}>
+      })}
+    >
       <BottomTab.Screen
         name="HomeStack"
         component={HomeScreen}
@@ -75,8 +76,8 @@ const LandingPage = ({navigation}: any): React.JSX.Element => {
           headerShown: false,
           tabBarShowLabel: false,
         }}
-        listeners={({navigation}) => ({
-          tabPress: e => {
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
             if (isLoading) e.preventDefault();
           },
         })}
@@ -90,8 +91,8 @@ const LandingPage = ({navigation}: any): React.JSX.Element => {
           headerShown: false,
           tabBarShowLabel: false,
         }}
-        listeners={({navigation}) => ({
-          tabPress: e => {
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
             e.preventDefault();
             if (isLoading) return;
             navigation.navigate('PostScreen');
@@ -107,8 +108,8 @@ const LandingPage = ({navigation}: any): React.JSX.Element => {
           headerShown: false,
           tabBarShowLabel: false,
         }}
-        listeners={({navigation}) => ({
-          tabPress: e => {
+        listeners={({ navigation }) => ({
+          tabPress: (e) => {
             if (isLoading) e.preventDefault();
           },
         })}

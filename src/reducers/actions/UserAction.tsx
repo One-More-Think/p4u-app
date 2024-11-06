@@ -66,7 +66,7 @@ export const OAuth2Login = (sns: string) => async (dispatch: any) => {
       gender: userData.data?.gender || '',
       language: userData.data?.language || '',
       country: current_country?.data.toLowerCase() || '',
-      age: 0,
+      age: userData.data?.age || 0,
     };
 
     dispatch(userLogin({ userInfo, sns }));
@@ -96,9 +96,20 @@ export const LoginUser = () => async (dispatch: any) => {
     const token = await EncryptedStorage.getItem('token');
     if (!token) return;
     const sns = await AsyncStorage.getItem('sns');
+    if (!sns) return;
     const userData = await api.get(`user/login/${sns}`);
     if (!userData.data) throw new Error('Fail to login');
-    dispatch(userLogin({ userInfo: userData.data, sns }));
+    const userInfo: any = {
+      id: userData.data?.sns_id || '',
+      email: userData.data?.email || '',
+      gender: userData.data?.gender || '',
+      language: userData.data?.language || '',
+      country: userData.data?.country || '',
+      occupation: userData.data?.occupation || '',
+      aboutme: userData.data?.aboutme || '',
+      age: userData.data?.age || 0,
+    };
+    dispatch(userLogin({ userInfo, sns }));
   } catch (error: any) {
     const errorMessage: string =
       error.response?.data?.message ||
@@ -112,6 +123,9 @@ export const LoginUser = () => async (dispatch: any) => {
 
 export const GetUserDetail = (id: string) => async (dispatch: any) => {
   try {
+    const userData = await api.get(`user/detail/${id}`);
+    if (!userData.data) throw new Error('Fail to get user info');
+    return userData.data;
   } catch (error: any) {
     const errorMessage: string =
       error.response?.data?.message ||
@@ -155,6 +169,43 @@ export const UpdateUser =
       dispatch(setIsLoading(false));
     }
   };
+
+export const LogoutUser = () => async (dispatch: any) => {
+  try {
+    dispatch(setIsLoading(true));
+    await api.get('/user/logout');
+    await EncryptedStorage.removeItem('token');
+    dispatch(
+      userLogin({
+        userInfo: {
+          id: '',
+          email: '',
+          country: '',
+          age: 0,
+          gender: 'none',
+          occupation: 'none',
+          aboutme: ``,
+        },
+        sns: '',
+        authentication: false,
+      })
+    );
+  } catch (error: any) {
+    const errorMessage: string =
+      error.response?.data?.message ||
+      error.message ||
+      'Exceptional error occurred';
+    dispatch(
+      showAlert({
+        message: errorMessage,
+        type: 'error',
+        id: Date.now().toString(),
+      })
+    );
+  } finally {
+    dispatch(setIsLoading(false));
+  }
+};
 
 // ==============================  User  ==============================
 
@@ -218,6 +269,7 @@ export const SearchQuestion = () => async (dispatch: any) => {
 export const PostQuestion = (data: any) => async (dispatch: any) => {
   try {
     dispatch(setIsLoading(true));
+    await api.post('question/create', data);
   } catch (error: any) {
     const errorMessage: string =
       error.response?.data?.message ||

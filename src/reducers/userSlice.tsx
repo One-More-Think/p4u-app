@@ -51,10 +51,11 @@ const usersSlice = createSlice({
     },
 
     userLogin: (state: any, action: OAuth2Action) => {
-      const { userInfo, sns } = action.payload;
+      const { userInfo, sns, authentication = null } = action.payload;
       state.userInfo = { ...state.userInfo, ...userInfo };
       if (sns) state.sns = sns;
-      state.isAuthenticated = true;
+      if (authentication !== null) state.isAuthenticated = authentication;
+      else state.isAuthenticated = true;
     },
 
     userLogOut: (state: any, action: any) => {
