@@ -29,36 +29,25 @@ api.interceptors.request.use(
   (error) => {
     const navigation: any = useNavigation();
     if (error.response.status === 401) {
+      store.dispatch(LogoutUser());
       navigation.navigate('LoginPage');
     }
-    store.dispatch(
-      showAlert({
-        message: error,
-        type: 'error',
-        id: Date.now().toString(),
-      })
-    );
   }
 );
 
 api.interceptors.response.use(
   (res) => res,
   async (err) => {
-    store.dispatch(
-      showAlert({
-        message: err?.message || 'Network Error',
-        type: 'error',
-        id: Date.now().toString(),
-      })
-    );
     if (err.response.status === 401 || err.response.status === 403) {
       try {
         store.dispatch(LogoutUser());
+        const navigation: any = useNavigation();
+        navigation.navigate('LoginPage');
       } catch (_error) {
         return Promise.reject(_error);
       }
     }
-    return Promise.reject(err);
+    return Promise.reject(new Error('Invalid data'));
   }
 );
 

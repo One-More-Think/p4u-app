@@ -4,7 +4,9 @@ import { UserBoxStyle } from 'style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CountryFlag from 'components/CountryFlag';
 import store from 'reducers/index';
+import { useNavigation } from '@react-navigation/native';
 const QuestionComment = ({ data = null }: any): React.JSX.Element => {
+  const navigation: any = useNavigation();
   const { country, gender, age, occupation, timestamp, comment, like } = data;
   const GenderColor = (gender: string) => {
     if (gender === 'male') return '#7dc9e0';
@@ -24,11 +26,12 @@ const QuestionComment = ({ data = null }: any): React.JSX.Element => {
         borderBottomWidth: 0.2,
       }}
     >
-      <View
+      <TouchableOpacity
         style={{
           ...UserBoxStyle.HeaderBox,
           marginTop: 20,
         }}
+        onPress={() => navigation.navigate('UserDetailScreen', { id: 7 })}
       >
         <CountryFlag
           isoCode={country}
@@ -114,7 +117,7 @@ const QuestionComment = ({ data = null }: any): React.JSX.Element => {
             {timestamp}
           </Text>
         </View>
-      </View>
+      </TouchableOpacity>
       <Text style={{ fontFamily: 'Rubik', marginBottom: 10 }}>{comment}</Text>
     </View>
   );

@@ -437,7 +437,7 @@ export const UserPageStyle = StyleSheet.create({
     display: 'flex',
     flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-between',
   },
   SafeAreaText: {
     fontSize: 20,

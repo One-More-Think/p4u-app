@@ -13,9 +13,11 @@ import SupportScreen from 'screens/settings/SupportScreen';
 import AccountScreen from 'screens/settings/AccountScreen';
 import SearchScreen from 'screens/SearchScreen';
 import NewMemberScreen from 'screens/NewMemberScreen';
+import EditUserScreen from 'screens/EditUserScreen';
 import SettingPage from 'pages/SettingPage';
 import PostPage from 'pages/PostPage';
 import { useSelector } from 'react-redux';
+import UserDetailScreen from 'screens/UserDetailScreen';
 export const MainPage = (): React.JSX.Element => {
   const MainStack = createNativeStackNavigator();
 
@@ -33,6 +35,8 @@ export const MainPage = (): React.JSX.Element => {
       { name: 'SettingPage', component: SettingPage },
       { name: 'SearchScreen', component: SearchScreen },
       { name: 'PostScreen', component: PostPage },
+      { name: 'EditUserScreen', component: EditUserScreen },
+      { name: 'UserDetailScreen', component: UserDetailScreen },
     ];
   }, []);
 

@@ -11,7 +11,7 @@ import Common from 'components/Common';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CountryFlag from 'components/CountryFlag';
 import { UserPageStyle } from 'style';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   BannerAd,
   BannerAdSize,
@@ -19,10 +19,12 @@ import {
 } from 'react-native-google-mobile-ads';
 import CommentBox from 'components/CommentBox';
 import SkeletonBar from 'components/SkeletonBar';
-const UserPage = ({ route, navigation }: any): React.JSX.Element => {
-  const dispatch: any = useDispatch();
+import store from 'reducers/index';
+import { GetUserDetail } from 'reducers/actions/UserAction';
+const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
+  const { id } = route.params;
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const userInfo = useSelector((state: any) => state.user.userInfo);
+  const [userInfo, setUserInfo] = useState<any>(null);
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const MockData = [
     {
@@ -50,25 +52,16 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
       title: 'This is serious problem',
     },
   ];
+
   useEffect(() => {
     // dispatch
-    const testLoading = async () => {
-      setIsLoading(true);
-      try {
-        await new Promise((resolve: any) =>
-          setTimeout(() => {
-            console.log('refresh main page');
-            resolve();
-          }, 3000)
-        );
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
+    const getUserInfo = async () => {
+      const userData = await store.dispatch(GetUserDetail(id));
+      setUserInfo(userData);
     };
-    testLoading();
+    getUserInfo();
   }, []);
+
   const GenderColor = (gender: string) => {
     if (gender === 'male') return '#7dc9e0';
     else if (gender === 'female') return '#ee92ba';
@@ -224,4 +217,4 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
   );
 };
 
-export default React.memo(UserPage);
+export default React.memo(UserDetailScreen);

@@ -49,7 +49,6 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
         option,
       };
       store.dispatch(PostQuestion(post_data));
-      navigation.goBack();
     } else {
       Alert.alert('Please fill out every options', '', [
         { text: 'OK', style: 'cancel' },
