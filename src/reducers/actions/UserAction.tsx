@@ -6,27 +6,53 @@ import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   GoogleSignin,
   isSuccessResponse,
+  SignInResponse,
 } from '@react-native-google-signin/google-signin';
+import { appleAuth } from '@invertase/react-native-apple-authentication';
 import axios from 'axios';
 import api from 'utils/api';
-import { userLogin } from 'reducers/userSlice';
+import { userLogin, UserInfoType } from 'reducers/userSlice';
+const GoogleButtonPress = async () => {
+  const scopes = process.env.GOOGLE_SCOPE?.split(' ').map((scope) =>
+    scope.trim()
+  );
+
+  GoogleSignin.configure({
+    webClientId: process.env.GOOGLE_WEB_CLNT_ID,
+    scopes,
+    offlineAccess: true,
+    iosClientId: process.env.GOOGLE_IOS_CLNT_ID,
+    forceCodeForRefreshToken: true,
+  });
+
+  await GoogleSignin.hasPlayServices();
+
+  const signData: SignInResponse = await GoogleSignin.signIn();
+  return signData;
+};
+
+const AppleButtonPress = async () => {
+  const appleAuthRequestResponse = await appleAuth.performRequest({
+    requestedOperation: appleAuth.Operation.LOGIN,
+    // Note: it appears putting FULL_NAME first is important, see issue #293
+    requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+  });
+
+  // get current authentication state for user
+  // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
+  const credentialState = await appleAuth.getCredentialStateForUser(
+    appleAuthRequestResponse.user
+  );
+
+  // use credentialState response to ensure the user is authenticated
+  if (credentialState === appleAuth.State.AUTHORIZED) {
+    // user is authenticated
+  }
+};
 export const OAuth2Login = (sns: string) => async (dispatch: any) => {
   try {
-    const scopes = process.env.GOOGLE_SCOPE?.split(' ').map((scope) =>
-      scope.trim()
-    );
-
-    GoogleSignin.configure({
-      webClientId: process.env.GOOGLE_WEB_CLNT_ID,
-      scopes,
-      offlineAccess: true,
-      iosClientId: process.env.GOOGLE_IOS_CLNT_ID,
-      forceCodeForRefreshToken: true,
-    });
-
-    await GoogleSignin.hasPlayServices();
-
-    const response: any = await GoogleSignin.signIn();
+    const response: any =
+      sns === 'google' ? await GoogleButtonPress() : await AppleButtonPress();
 
     if (!response.data) throw new Error('Fail to login');
 
@@ -46,22 +72,23 @@ export const OAuth2Login = (sns: string) => async (dispatch: any) => {
     );
 
     const userData = await axios.post(
-      `${process.env.API_URL}user/login/${sns}`,
+      `${process.env.API_URL}users/sign-in/${sns}`,
       {
-        serverAuthCode: response.data.serverAuthCode,
+        idToken: response.data?.idToken,
         country: current_country.data.toLowerCase(),
       },
       config
     );
+    console.log(userData?.data);
 
     if (!userData.data) throw new Error('Fail to login');
 
-    await EncryptedStorage.setItem('token', userData.data?.access_token);
+    await EncryptedStorage.setItem('token', userData.data?.accessToken);
 
     await AsyncStorage.setItem('sns', sns);
 
-    const userInfo: any = {
-      id: userData.data?.sns_id || '',
+    const userInfo: UserInfoType = {
+      id: userData.data?.user?.id || '',
       email: response.data.user.email || '',
       gender: userData.data?.gender || '',
       language: userData.data?.language || '',
@@ -69,9 +96,11 @@ export const OAuth2Login = (sns: string) => async (dispatch: any) => {
       age: userData.data?.age || 0,
     };
 
+    console.log(userInfo);
+
     dispatch(userLogin({ userInfo, sns }));
 
-    if (isSuccessResponse(response)) userLogin({ data: response.data });
+    if (isSuccessResponse(response)) userLogin({ userInfo, sns });
     else throw new Error('Fail to login');
   } catch (error: any) {
     const errorMessage: string =

@@ -2,7 +2,6 @@ import axios from 'axios';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import AsyncStorage from '@react-native-async-storage/async-storage';
 import store from 'reducers/index';
-import { showAlert } from 'reducers/alertSlice';
 import { useNavigation } from '@react-navigation/native';
 import { LogoutUser } from 'reducers/actions/UserAction';
 const api = axios.create({

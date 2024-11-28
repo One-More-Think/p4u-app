@@ -1,12 +1,12 @@
-import React, {useState, useCallback, useMemo, useEffect} from 'react';
-import {View, Text, TouchableOpacity, FlatList} from 'react-native';
-import BottomSheet, {BottomSheetView} from '@gorhom/bottom-sheet';
-import {useSelector} from 'react-redux';
+import React, { useState, useCallback, useMemo, useEffect } from 'react';
+import { View, Text, TouchableOpacity, FlatList } from 'react-native';
+import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
+import { useSelector } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {SearchBar} from '@rneui/themed';
+import { SearchBar } from '@rneui/themed';
 import CountryBox from './CountryBox';
 
-const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
+const FilterSheet = ({ bottomSheetRef }: any): React.JSX.Element => {
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const snapPoints = useMemo<string[]>(() => ['65%'], []);
   const [filter, setFilter] = useState<string>('Category');
@@ -20,26 +20,26 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
 
   const FilterList = useMemo<string[]>(
     () => ['Category', 'Sort', 'Age', 'Country', 'Gender'],
-    [],
+    []
   );
   const CategoryList = useMemo<string[]>(
     () => ['Living', 'Career', 'Food', 'RelationShip'],
-    [],
+    []
   );
   const AgeList = useMemo<string[]>(
     () => ['10s', '20s', '30s', '40s', '50s'],
-    [],
+    []
   );
   const SortList = useMemo<string[]>(
-    () => ['Recent', 'View', 'Comment', 'Progressing'],
-    [],
+    () => ['Recent', 'View', 'Comment', 'Progress'],
+    []
   );
   const GenderList = useMemo<string[]>(() => ['Male', 'Female', 'None'], []);
   const onFilter = useCallback(
     (item: any) => {
       setFilter(item);
     },
-    [filter],
+    [filter]
   );
 
   const handleSearch = useCallback((text: string) => {
@@ -50,31 +50,31 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
     (item: string) => {
       setCategory(item);
     },
-    [category],
+    [category]
   );
   const onAge = useCallback(
     (item: string) => {
       setAge(item);
     },
-    [age],
+    [age]
   );
   const onGender = useCallback(
     (item: string) => {
       setGender(item);
     },
-    [gender],
+    [gender]
   );
   const onCountry = useCallback(
     (item: string) => {
       setCountry(item);
     },
-    [country],
+    [country]
   );
   const onSort = useCallback(
     (item: string) => {
       setSort(item);
     },
-    [sort],
+    [sort]
   );
   const handleCloseModal = useCallback(() => {
     bottomSheetRef.current?.close();
@@ -86,7 +86,7 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
   const FilterBox = (
     filterList: string[],
     action: any,
-    onChange: any,
+    onChange: any
   ): React.JSX.Element => {
     return (
       <>
@@ -100,26 +100,28 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
               flexDirection: 'row',
               alignItems: 'center',
               justifyContent: 'space-between',
-            }}>
+            }}
+          >
             <Text
               style={{
                 fontSize: 20,
                 fontWeight: 'bold',
                 color: isDarkMode ? 'white' : '#222428',
-              }}>
+              }}
+            >
               {item}
             </Text>
             {action === item ? (
               <Ionicons
                 name="radio-button-on"
                 size={30}
-                style={{color: isDarkMode ? 'white' : '#222428'}}
+                style={{ color: isDarkMode ? 'white' : '#222428' }}
               />
             ) : (
               <Ionicons
                 name="radio-button-off"
                 size={30}
-                style={{color: isDarkMode ? 'white' : '#222428'}}
+                style={{ color: isDarkMode ? 'white' : '#222428' }}
               />
             )}
           </TouchableOpacity>
@@ -152,7 +154,7 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
                 height: 40,
                 backgroundColor: isDarkMode ? '#4e4f52' : '#e1e9fc',
               }}
-              onChangeText={text => handleSearch(text)}
+              onChangeText={(text) => handleSearch(text)}
               value={search}
             />
             <CountryBox
@@ -169,14 +171,15 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
     }
   }, [filter, category, country, age, gender, sort, isDarkMode, search]);
   const renderItem = useCallback(
-    ({item}: any) => (
+    ({ item }: any) => (
       <View
         style={{
           width: '100%',
           borderBottomWidth: 0.2,
           borderColor: isDarkMode ? 'white' : '#222428',
           height: 50,
-        }}>
+        }}
+      >
         <TouchableOpacity
           style={{
             width: '100%',
@@ -184,7 +187,8 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
             display: 'flex',
             justifyContent: 'center',
           }}
-          onPress={() => onFilter(item)}>
+          onPress={() => onFilter(item)}
+        >
           <Text
             style={{
               textAlign: 'center',
@@ -197,13 +201,14 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
                 : filter === item
                 ? '#2d2e32'
                 : '#cad1e2',
-            }}>
+            }}
+          >
             {item}
           </Text>
         </TouchableOpacity>
       </View>
     ),
-    [isDarkMode, filter],
+    [isDarkMode, filter]
   );
 
   const handleReset = useCallback(() => {
@@ -219,25 +224,27 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
 
   useEffect(() => {
     const selectedCount = [category, age, gender, country, sort].filter(
-      value => value !== '',
+      (value) => value !== ''
     ).length;
     setSelected(selectedCount);
   }, [category, age, gender, country, sort]);
   return (
     <BottomSheet
-      backgroundStyle={{backgroundColor: isDarkMode ? '#222428' : 'white'}}
+      backgroundStyle={{ backgroundColor: isDarkMode ? '#222428' : 'white' }}
       snapPoints={snapPoints}
       ref={bottomSheetRef}
       index={-1}
       onChange={() => handleReset()}
-      enablePanDownToClose>
+      enablePanDownToClose
+    >
       <BottomSheetView
         style={{
           display: 'flex',
           flexDirection: 'column',
           width: '100%',
           height: '92%',
-        }}>
+        }}
+      >
         <BottomSheetView
           style={{
             display: 'flex',
@@ -247,19 +254,22 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
             borderBottomColor: isDarkMode ? 'white' : '#222428',
             height: '10%',
             width: '100%',
-          }}>
+          }}
+        >
           <Text
             style={{
               fontSize: 20,
               fontWeight: 'bold',
               color: isDarkMode ? 'white' : '#222428',
               marginLeft: 20,
-            }}>
+            }}
+          >
             Filter
           </Text>
           <TouchableOpacity
-            style={{marginRight: 20}}
-            onPress={handleCloseModal}>
+            style={{ marginRight: 20 }}
+            onPress={handleCloseModal}
+          >
             <Ionicons name="close-circle" size={20} color="gray" />
           </TouchableOpacity>
         </BottomSheetView>
@@ -268,17 +278,19 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
             display: 'flex',
             flexDirection: 'row',
             height: '75%',
-          }}>
+          }}
+        >
           <BottomSheetView
             style={{
               width: '30%',
               borderRightColor: isDarkMode ? 'white' : '#222428',
               borderRightWidth: 0.2,
-            }}>
+            }}
+          >
             <FlatList
               data={FilterList}
               renderItem={renderItem}
-              keyExtractor={item => item}
+              keyExtractor={(item) => item}
               showsVerticalScrollIndicator={false}
             />
           </BottomSheetView>
@@ -289,7 +301,8 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
               alignItems: 'center',
               justifyContent: 'center',
               width: '70%',
-            }}>
+            }}
+          >
             <BottomSheetView
               style={{
                 display: 'flex',
@@ -297,7 +310,8 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
                 height: '90%',
                 flexDirection: 'column',
                 justifyContent: 'space-evenly',
-              }}>
+              }}
+            >
               {FilterDetail}
             </BottomSheetView>
           </BottomSheetView>
@@ -312,7 +326,8 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
             height: '15%',
             borderTopWidth: 0.2,
             borderColor: isDarkMode ? 'white' : '#222428',
-          }}>
+          }}
+        >
           <TouchableOpacity
             style={{
               display: 'flex',
@@ -323,13 +338,15 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
               backgroundColor: isDarkMode ? 'white' : '#e1e9fc',
               borderRadius: 10,
             }}
-            onPress={handleReset}>
+            onPress={handleReset}
+          >
             <Text
               style={{
                 fontSize: 15,
                 fontWeight: 'bold',
                 color: '#222428',
-              }}>
+              }}
+            >
               Reset
             </Text>
           </TouchableOpacity>
@@ -344,7 +361,8 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
               height: '50%',
               backgroundColor: isDarkMode ? 'white' : '#e1e9fc',
               borderRadius: 10,
-            }}>
+            }}
+          >
             <Text
               style={{
                 fontSize: 15,
@@ -354,7 +372,8 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
                 textAlign: 'center',
                 color: isDarkMode ? 'white' : '#222428',
                 marginRight: 5,
-              }}>
+              }}
+            >
               {selected}
             </Text>
             <Text
@@ -362,7 +381,8 @@ const FilterSheet = ({bottomSheetRef}: any): React.JSX.Element => {
                 fontSize: 15,
                 fontWeight: 'bold',
                 color: '#222428',
-              }}>
+              }}
+            >
               Filter
             </Text>
           </TouchableOpacity>
