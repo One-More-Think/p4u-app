@@ -8,7 +8,7 @@ import { useNavigation } from '@react-navigation/native';
 import SkeletonBar from './SkeletonBar';
 const CommentBox = ({ data, isLoading }: any): React.JSX.Element => {
   const navigation: any = useNavigation();
-  const { country, gender, age, title } = data;
+  const { id, title, writer } = data;
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const GenderColor = (gender: string) => {
     if (gender === 'male') return '#7dc9e0';
@@ -23,16 +23,32 @@ const CommentBox = ({ data, isLoading }: any): React.JSX.Element => {
         ...CommentBoxStyle.Container,
         backgroundColor: isDarkMode ? '#222428' : 'white',
       }}
-      onPress={() => navigation.navigate('QuestionDetailScreen', { data })}
+      onPress={() =>
+        navigation.navigate('QuestionDetailScreen', {
+          data: {
+            id,
+            country: writer?.country,
+            gender: writer?.gender,
+            age: writer?.age,
+            occupation: writer?.occupation,
+            title,
+            writerId: writer?.id,
+          },
+        })
+      }
     >
       <View style={CommentBoxStyle.ViewContainer}>
         <View style={CommentBoxStyle.UserBox}>
           <CountryFlag
-            isoCode={country}
+            isoCode={writer.country}
             size={25}
             style={{ borderWidth: 0.5, borderColor: 'black' }}
           />
-          <Ionicons name={gender} size={20} color={GenderColor(gender)} />
+          <Ionicons
+            name={writer.gender}
+            size={20}
+            color={GenderColor(writer.gender)}
+          />
           <Text
             style={{
               fontWeight: 'bold',
@@ -40,7 +56,7 @@ const CommentBox = ({ data, isLoading }: any): React.JSX.Element => {
               fontSize: 20,
             }}
           >
-            {age}
+            {writer.age}
           </Text>
         </View>
         <Text

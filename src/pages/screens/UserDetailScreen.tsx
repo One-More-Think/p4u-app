@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Text,
   View,
@@ -21,47 +21,32 @@ import CommentBox from 'components/CommentBox';
 import SkeletonBar from 'components/SkeletonBar';
 import store from 'reducers/index';
 import { GetUserDetail } from 'reducers/actions/UserAction';
+import { useFocusEffect } from '@react-navigation/native';
+
 const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
-  const { id } = route.params;
+  const { userId } = route.params;
   const [isLoading, setIsLoading] = useState<boolean>(false);
-  const [userInfo, setUserInfo] = useState<any>(null);
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
-  const MockData = [
-    {
-      id: '11',
-      country: 'kr',
-      age: 23,
-      gender: 'male',
-      occupation: 'programmer',
-      title: 'This is serious problem',
-    },
-    {
-      id: '12',
-      country: 'jp',
-      age: 21,
-      gender: 'female',
-      occupation: 'teacher',
-      title: 'This is serious problem',
-    },
-    {
-      id: '13',
-      country: 'kr',
-      age: 25,
-      gender: 'male',
-      occupation: 'none',
-      title: 'This is serious problem',
-    },
-  ];
+  const [userData, setUserData] = useState<any>(null);
 
-  useEffect(() => {
-    // dispatch
-    const getUserInfo = async () => {
-      const userData = await store.dispatch(GetUserDetail(id));
-      setUserInfo(userData);
-    };
-    getUserInfo();
-  }, []);
+  useFocusEffect(
+    useCallback(() => {
+      const getUserInfo = async () => {
+        setIsLoading(true);
+        const data = await store.dispatch(GetUserDetail(userId));
+        setUserData(data);
+      };
+      getUserInfo();
+      setIsLoading(false);
+    }, [userId])
+  );
 
+  const renderItem = useCallback(
+    ({ item }: any) => {
+      return <CommentBox data={item} isLoading={isLoading} />;
+    },
+    [isLoading]
+  );
   const GenderColor = (gender: string) => {
     if (gender === 'male') return '#7dc9e0';
     else if (gender === 'female') return '#ee92ba';
@@ -69,24 +54,20 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
   };
   return (
     <Common>
-      <SafeAreaView style={UserPageStyle.SafeArea}>
+      <SafeAreaView
+        style={{ ...UserPageStyle.SafeArea, justifyContent: 'center' }}
+      >
         <StatusBar
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
           backgroundColor={isDarkMode ? '#222428' : 'white'}
         />
         <TouchableOpacity
-          style={{ marginLeft: 20 }}
-          onPress={() => navigation.navigate('EditUserScreen')}
+          style={{ marginLeft: 20, position: 'absolute', left: 0 }}
+          onPress={() => navigation.goBack()}
         >
-          <Ionicons name="pencil" size={30} />
+          <Ionicons name="chevron-back" size={30} />
         </TouchableOpacity>
         <Text style={UserPageStyle.SafeAreaText}>Profile</Text>
-        <TouchableOpacity
-          style={{ marginRight: 20 }}
-          onPress={() => navigation.navigate('SettingPage')}
-        >
-          <Ionicons name="settings" size={30} />
-        </TouchableOpacity>
       </SafeAreaView>
       <View style={{ display: 'flex', marginTop: 16 }}>
         <BannerAd
@@ -122,7 +103,7 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
                     color: isDarkMode ? 'white' : '#222428',
                   }}
                 >
-                  {userInfo.email}
+                  {userData?.email}
                 </Text>
               </View>
               <View style={UserPageStyle.TextContainer}>
@@ -135,7 +116,7 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
                   I'm From
                 </Text>
                 <CountryFlag
-                  isoCode={userInfo.country}
+                  isoCode={userData?.country}
                   size={20}
                   style={{
                     marginLeft: 10,
@@ -151,15 +132,15 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
                     color: isDarkMode ? 'white' : '#222428',
                   }}
                 >
-                  I'm <Text style={{ color: '#79699a' }}>{userInfo.age}</Text>{' '}
+                  I'm <Text style={{ color: '#79699a' }}>{userData?.age}</Text>{' '}
                   old{' '}
-                  <Text style={{ color: GenderColor(userInfo.gender) }}>
-                    {userInfo.gender.at(0).toUpperCase() +
-                      userInfo.gender.slice(1)}
+                  <Text style={{ color: GenderColor(userData?.gender) }}>
+                    {userData?.gender.at(0).toUpperCase() +
+                      userData?.gender.slice(1)}
                   </Text>{' '}
                   <Text style={{ color: '#9a7969' }}>
-                    {userInfo.occupation.at(0).toUpperCase() +
-                      userInfo.occupation.slice(1)}
+                    {userData?.occupation.at(0).toUpperCase() +
+                      userData?.occupation.slice(1)}
                   </Text>
                 </Text>
               </View>
@@ -184,7 +165,7 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
                     flexWrap: 'wrap',
                   }}
                 >
-                  {userInfo.aboutme}
+                  {userData?.aboutMe}
                 </Text>
               </View>
             </View>
@@ -194,10 +175,8 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
         <View style={UserPageStyle.WrittenQuestionList}>
           <FlatList
             horizontal
-            data={MockData}
-            renderItem={({ item }) => (
-              <CommentBox data={item} isLoading={isLoading} />
-            )}
+            data={userData?.writtenQuestions}
+            renderItem={renderItem}
             showsHorizontalScrollIndicator={false}
           />
         </View>
@@ -205,10 +184,8 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
         <View style={UserPageStyle.CommentedQuestionList}>
           <FlatList
             horizontal
-            data={MockData}
-            renderItem={({ item }) => (
-              <CommentBox data={item} isLoading={isLoading} />
-            )}
+            data={userData?.commentedQuestions}
+            renderItem={renderItem}
             showsHorizontalScrollIndicator={false}
           />
         </View>

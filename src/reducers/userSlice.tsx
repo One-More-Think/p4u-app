@@ -1,5 +1,5 @@
 import { createSlice } from '@reduxjs/toolkit';
-import { User } from '@react-native-google-signin/google-signin';
+
 export interface UserInfoType {
   id?: string;
   name?: string;
@@ -8,7 +8,7 @@ export interface UserInfoType {
   questions?: [];
   gender?: string;
   occupation?: string;
-  aboutme?: string;
+  aboutMe?: string;
   age?: number;
   language?: string;
 }
@@ -17,12 +17,12 @@ interface userInitType {
   isAuthenticated: boolean;
   userInfo: UserInfoType;
   darkmode: boolean;
-  sns?: string;
+  snsType?: string;
 }
 
 interface OAuth2Type {
   userInfo: UserInfoType;
-  sns?: string;
+  snsType?: string;
   authentication?: boolean;
 }
 
@@ -35,10 +35,10 @@ const initialState: userInitType = {
     age: 0,
     gender: '',
     occupation: '',
-    aboutme: ``,
+    aboutMe: ``,
   },
   darkmode: false,
-  sns: '',
+  snsType: '',
 };
 
 type Action<T> = {
@@ -50,7 +50,9 @@ interface DarkModeAction extends Action<boolean> {}
 
 interface OAuth2Action extends Action<OAuth2Type> {}
 
-interface LogOutAction extends Action<null> {}
+interface LogOutAction {
+  type: string;
+}
 
 const usersSlice = createSlice({
   name: 'user',
@@ -61,9 +63,9 @@ const usersSlice = createSlice({
     },
 
     userLogin: (state: any, action: OAuth2Action) => {
-      const { userInfo, sns, authentication = null } = action.payload;
+      const { userInfo, snsType, authentication = null } = action.payload;
       state.userInfo = { ...state.userInfo, ...userInfo };
-      if (sns) state.sns = sns;
+      if (snsType) state.sns = snsType;
       if (authentication !== null) state.isAuthenticated = authentication;
       else state.isAuthenticated = true;
     },

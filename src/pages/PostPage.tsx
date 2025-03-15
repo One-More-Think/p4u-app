@@ -28,7 +28,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
   const [time, setTime] = useState<string>('none');
   const [title, setTitle] = useState<string>('');
   const [description, setDescription] = useState<string>('');
-  const [option, setOption] = useState<string[]>([]);
+  const [options, setOption] = useState<string[]>([]);
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const handleSubmit = useCallback(async () => {
     const hasSavedChanges: boolean = Boolean(
@@ -36,25 +36,46 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
         time !== 'none' &&
         title &&
         description &&
-        option.length > 0 &&
-        option.every((opt) => opt.trim() !== '')
+        options.length > 0 &&
+        options.every((opt) => opt.trim() !== '')
     );
 
     if (hasSavedChanges) {
+      enum CategoryEnum {
+        LIVING,
+        CAREER,
+        FOOD,
+        RELATIONSHIP,
+      }
+
+      enum TimeoutEnum {
+        'none' = 0,
+        '5 min' = 300000,
+        '30 min' = 1800000,
+        '1 hr' = 3600000,
+        '1 day' = 86400000,
+      }
+
+      const categoryNumber =
+        CategoryEnum[category.toUpperCase() as keyof typeof CategoryEnum];
+
+      const timeoutNumber = TimeoutEnum[time as keyof typeof TimeoutEnum];
+
       const post_data = {
-        category,
+        category: categoryNumber,
         title,
-        time,
+        timeout: timeoutNumber,
         description,
-        option,
+        options,
       };
-      store.dispatch(PostQuestion(post_data));
+
+      await store.dispatch(PostQuestion(post_data, navigation));
     } else {
       Alert.alert('Please fill out every options', '', [
         { text: 'OK', style: 'cancel' },
       ]);
     }
-  }, [category, time, title, description, option]);
+  }, [category, time, title, description, options]);
 
   const onCategory = useCallback(
     (text: string) => {
@@ -73,23 +94,23 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
     (text: string) => {
       setTitle(text);
     },
-    [time]
+    [title]
   );
 
   const onDescription = useCallback(
     (text: string) => {
       setDescription(text);
     },
-    [time]
+    [description]
   );
 
   const handleAddOption = useCallback(() => {
     setOption((prev) => [...prev, '']);
-  }, [option]);
+  }, [options]);
 
   const handleClose = useCallback(() => {
     const hasUnsavedChanges: boolean = Boolean(
-      category || time !== 'none' || title || description || option.length
+      category || time !== 'none' || title || description || options.length
     );
 
     if (hasUnsavedChanges) {
@@ -108,13 +129,13 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
     } else {
       navigation.goBack();
     }
-  }, [category, time, title, description, option]);
+  }, [category, time, title, description, options]);
 
   const handleRemoveOption = useCallback(
     (index: number) => {
       setOption((prev) => prev.filter((_, idx) => idx !== index));
     },
-    [option]
+    [options]
   );
 
   const handleUpdateOption = useCallback((index: number, newValue: string) => {
@@ -133,7 +154,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
     });
   }, []);
 
-  const categoryList = useMemo(() => {
+  const categoryList = useMemo((): string[] => {
     return ['Living', 'Career', 'Food', 'RelationShip'];
   }, []);
 
@@ -344,7 +365,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
         >
           Options
         </Text>
-        {option.map((item, idx) => (
+        {options.map((item, idx) => (
           <Input
             scrollEnabled={false}
             key={`option-${idx}`}
@@ -364,10 +385,10 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
               position: 'absolute',
               left: 0,
             }}
-            value={option[idx]}
+            value={options[idx]}
             onChangeText={(text) => handleUpdateOption(idx, text)}
             leftIcon={
-              option[idx] ? (
+              options[idx] ? (
                 <Ionicons
                   name="close-circle"
                   onPress={() => handleClearOption(idx)}
@@ -386,7 +407,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
             }
           />
         ))}
-        {option.length < 3 && (
+        {options.length < 3 && (
           <TouchableOpacity
             onPress={handleAddOption}
             style={{

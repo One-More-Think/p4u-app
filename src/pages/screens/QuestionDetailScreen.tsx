@@ -1,6 +1,7 @@
 import React, { useEffect, useState, useCallback, useRef } from 'react';
 import { MenuView } from '@react-native-menu/menu';
 import Ionicons from 'react-native-vector-icons/Ionicons';
+import CATEGORY_MAP from 'utils/category';
 import {
   BannerAd,
   BannerAdSize,
@@ -16,6 +17,8 @@ import {
   Platform,
   StatusBar,
   RefreshControl,
+  Alert,
+  Share,
 } from 'react-native';
 import Common from 'components/Common';
 import { useSelector } from 'react-redux';
@@ -25,6 +28,16 @@ import FilterBox from 'components/FilterBox';
 import Chart from 'components/Chart';
 import UserBox from 'components/UserBox';
 import QuestionComment from 'components/QuestionComment';
+import store from 'reducers/index';
+import {
+  DeleteQuestion,
+  GetQuestionDetail,
+  PostComment,
+  ReportQuestion,
+  SelectOption,
+} from 'reducers/actions/UserAction';
+import { useFocusEffect } from '@react-navigation/native';
+import { setIsLoading } from 'reducers/configSlice';
 
 const QuestionDetailScreen = ({
   route,
@@ -34,45 +47,78 @@ const QuestionDetailScreen = ({
   const title = data?.title || '';
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const userInfo = useSelector((state: any) => state.user.userInfo);
+  const [detailInfo, setDetailInfo] = useState<any>(null);
   const [refreshing, setRefreshing] = useState<boolean>(false);
-  const [selected, setSelected] = useState<string>('');
+  const [selected, setSelected] = useState<number>(-1);
   const [filtered, setFiltered] = useState<string>('');
   const [checked, setChecked] = useState<boolean>(false);
   const [search, setSeacrh] = useState<string>('');
+  const [comment, setComment] = useState<string>('');
+
+  useEffect(() => {
+    const getQuestionDetail = async () => {
+      const details = await store.dispatch(GetQuestionDetail(data.id));
+      data['timestamp'] = details?.createdAt.replace('T', ' ').slice(0, -5);
+      setDetailInfo(details);
+      details?.options.forEach((opt: any) => {
+        if (opt.selectedUsers.length > 0) {
+          opt.selectedUsers.forEach((sct: any) => {
+            if (sct.userId === userInfo.id) setSelected(sct.optionId);
+          });
+        }
+      });
+    };
+    if (detailInfo === null) {
+      getQuestionDetail();
+    }
+  });
+
+  useEffect(() => {
+    const unsubscribe = navigation.addListener('focus', () => {
+      refreshMainPage();
+    });
+
+    return unsubscribe;
+  }, [navigation]);
 
   const filterList = ['Country', 'Gender', 'Age'];
-  const MockData = {
-    content: `I graduated in BCIT school but I can not find a job for a long time I don't know what should I do give let me know If I need to go school for master or keep it up for job hunting?`,
-    choose: ['Go to get master degree', 'Keep it up', 'Find antoher job'],
-    category: 'school', //home-sharp, fast-food, heart
-    timeout: false,
-    comments: [
-      {
-        id: 1,
-        country: 'cn',
-        gender: 'female',
-        age: 24,
-        occupation: 'professor',
-        comment: `I think it's better to go school again`,
-        timestamp: '10/26 03:40',
-        like: 3,
-      },
-      {
-        id: 2,
-        country: 'ca',
-        gender: 'male',
-        age: 22,
-        occupation: 'none',
-        comment: `Just do what ever you like`,
-        timestamp: '11/26 10:20',
-        like: 5,
-      },
-    ],
+
+  const refreshMainPage = async () => {
+    try {
+      const detailInfo = await store.dispatch(GetQuestionDetail(data.id));
+      detailInfo?.options.forEach((opt: any) => {
+        if (opt.selectedUsers.length > 0) {
+          opt.selectedUsers.forEach((sct: any) => {
+            if (sct.userId === userInfo.id) setSelected(sct.optionId);
+          });
+        }
+      });
+      await new Promise((resolve) => setTimeout(resolve, 1000));
+      setDetailInfo(detailInfo);
+    } catch (err) {
+      console.error('Error refreshing the page:', err);
+    } finally {
+      setRefreshing(false);
+    }
   };
 
   const handleChange = (text: string) => {
     setSeacrh(text);
   };
+
+  const handleComment = async () => {
+    await store.dispatch(PostComment(data.id, comment));
+    refreshMainPage();
+    setComment('');
+  };
+
+  const onComment = useCallback(
+    (text: string) => {
+      setComment(text);
+    },
+    [comment]
+  );
+
   const bannerRef = useRef<BannerAd>(null);
 
   const onRefresh = () => {
@@ -80,8 +126,9 @@ const QuestionDetailScreen = ({
   };
 
   const onSelect = useCallback(
-    (question: any) => {
-      setSelected(question);
+    async (questionId: any, optionId: any) => {
+      await store.dispatch(SelectOption(questionId, optionId));
+      setSelected(optionId);
     },
     [selected]
   );
@@ -100,32 +147,10 @@ const QuestionDetailScreen = ({
     return 'gray';
   };
   useEffect(() => {
-    const refreshMainPage = async () => {
-      try {
-        await new Promise((resolve: any) =>
-          setTimeout(() => {
-            console.log('refresh Question Detail page');
-            resolve();
-          }, 1000)
-        );
-        console.log('refresh done');
-        // dispatch to get list of problems
-      } catch (err) {
-        console.error('Error refreshing the page:', err);
-      } finally {
-        console.log('set refreshing');
-        setRefreshing(false);
-      }
-    };
     if (refreshing) {
       refreshMainPage();
     }
-  }, [refreshing]);
-
-  useEffect(() => {
-    // dispatch to get the information about the Questions
-    // the
-  }, []);
+  }, [refreshing, selected]);
 
   return (
     <Common>
@@ -144,42 +169,148 @@ const QuestionDetailScreen = ({
         <View>
           <MenuView
             title="Options"
-            onPressAction={({ nativeEvent }) => {
-              console.log(JSON.stringify(nativeEvent));
+            onPressAction={async ({ nativeEvent }) => {
+              switch (JSON.parse(JSON.stringify(nativeEvent)).event) {
+                case 'delete':
+                  Alert.alert(
+                    'Delete question',
+                    'Are you sure to delete this question?',
+                    [
+                      { text: 'Cancel', style: 'cancel' },
+                      {
+                        text: 'Ok',
+                        style: 'destructive',
+                        onPress: async () => {
+                          await store.dispatch(DeleteQuestion(data.id)),
+                            navigation.goBack();
+                        },
+                      },
+                    ]
+                  );
+                  break;
+                case 'edit':
+                  navigation.navigate('EditQuestionScreen', {
+                    data: {
+                      id: data?.id,
+                      title: data?.title,
+                      description: detailInfo?.description,
+                      options: detailInfo?.options,
+                      category: detailInfo?.category,
+                    },
+                  });
+                  break;
+                case 'report':
+                  Alert.alert(
+                    'Report Question',
+                    'Do you want to report this question?',
+                    [
+                      {
+                        text: 'Cancel',
+                        style: 'destructive',
+                      },
+                      {
+                        text: 'OK',
+                        onPress: async () =>
+                          await store.dispatch(ReportQuestion(data.id)),
+                      },
+                    ]
+                  );
+                  break;
+                  // case 'share':
+                  //   const result = await Share.share({
+                  //     title: 'App link',
+                  //     message:
+                  //       Platform.OS === 'android'
+                  //         ? 'Please install this app and stay safe , AppLink :https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en'
+                  //         : 'Please install this app and stay safe , AppLink :https://play.google.com/store/apps/details?id=nic.goi.aarogyasetu&hl=en',
+                  //     url: 'itms-apps://apps.apple.com/id/app/younghoonyu/id1492671277?l=id',
+                  //   });
+                  break;
+                default:
+                  break;
+              }
             }}
-            actions={[
-              {
-                id: 'edit', // only when the writerId is same as userId
-                title: 'Edit',
-                titleColor: '#2367A2',
-                image: Platform.select({
-                  ios: 'pencil',
-                  android: 'ic_menu_pencil',
-                }),
-                imageColor: '#2367A2',
-              },
-              {
-                id: 'share',
-                title: 'Share',
-                titleColor: '#46F289',
-                image: Platform.select({
-                  ios: 'square.and.arrow.up',
-                  android: 'ic_menu_share',
-                }),
-                imageColor: '#46F289',
-              },
-              {
-                id: 'delete', // writer == user if not only
-                title: 'Delete', // Report
-                attributes: {
-                  destructive: true,
-                },
-                image: Platform.select({
-                  ios: 'trash', // bell
-                  android: 'ic_menu_delete',
-                }),
-              },
-            ]}
+            actions={
+              data.writerId === userInfo.id
+                ? detailInfo && detailInfo?.timeout > Math.round(Date.now())
+                  ? [
+                      {
+                        id: 'edit',
+                        title: 'Edit',
+                        titleColor: '#2367A2',
+                        image: Platform.select({
+                          ios: 'pencil',
+                          android: 'ic_menu_pencil',
+                        }),
+                        imageColor: '#2367A2',
+                      },
+                      // {
+                      //   id: 'share',
+                      //   title: 'Share',
+                      //   titleColor: '#46F289',
+                      //   image: Platform.select({
+                      //     ios: 'square.and.arrow.up',
+                      //     android: 'ic_menu_share',
+                      //   }),
+                      //   imageColor: '#46F289',
+                      // },
+                      {
+                        id: 'delete',
+                        title: 'Delete',
+                        attributes: {
+                          destructive: true,
+                        },
+                        image: Platform.select({
+                          ios: 'trash',
+                          android: 'ic_menu_delete',
+                        }),
+                      },
+                    ]
+                  : [
+                      // {
+                      //   id: 'share',
+                      //   title: 'Share',
+                      //   titleColor: '#46F289',
+                      //   image: Platform.select({
+                      //     ios: 'square.and.arrow.up',
+                      //     android: 'ic_menu_share',
+                      //   }),
+                      //   imageColor: '#46F289',
+                      // },
+                      {
+                        id: 'delete',
+                        title: 'Delete',
+                        attributes: {
+                          destructive: true,
+                        },
+                        image: Platform.select({
+                          ios: 'trash',
+                          android: 'ic_menu_delete',
+                        }),
+                      },
+                    ]
+                : [
+                    // {
+                    //   id: 'share',
+                    //   title: 'Share',
+                    //   titleColor: '#46F289',
+                    //   image: Platform.select({
+                    //     ios: 'square.and.arrow.up',
+                    //     android: 'ic_menu_share',
+                    //   }),
+                    //   imageColor: '#46F289',
+                    // },
+                    {
+                      id: 'report',
+                      title: 'Report',
+                      image: Platform.select({
+                        ios: 'flag',
+                        android: 'ic_menu_report_image',
+                      }),
+                      imageColor: 'red',
+                    },
+                  ]
+            }
             shouldOpenOnLongPress={false}
           >
             <TouchableOpacity style={{ marginRight: 10 }}>
@@ -203,38 +334,62 @@ const QuestionDetailScreen = ({
           />
         }
       >
-        <View style={QuestionDetailStyle.Container}>
-          <View style={QuestionDetailStyle.HeaderBox}>
-            <UserBox data={data} />
-            <View style={QuestionDetailStyle.CategoryBox}>
-              <Ionicons name={MockData.category} size={35} color="#222428" />
-            </View>
-          </View>
-          <Text
-            style={{
-              ...QuestionDetailStyle.Title,
-              color: '#222428',
-            }}
-          >
-            {title}
-          </Text>
-          <Text style={QuestionDetailStyle.Content}>{MockData.content}</Text>
-          <View style={QuestionDetailStyle.ChooseBox}>
-            {MockData.choose.map((question, idx) => (
-              <ChooseBox
-                question={`A${idx + 1}. ${question}`}
-                key={`${idx}-choosebox`}
-                onSelect={onSelect}
-                selected={selected}
+        {detailInfo && (
+          <View style={QuestionDetailStyle.Container}>
+            <View style={QuestionDetailStyle.HeaderBox}>
+              <UserBox
+                data={data}
+                timeout={detailInfo?.timeout}
+                timestamp={data.timestamp}
               />
-            ))}
-          </View>
-          <View style={QuestionDetailStyle.CommentContainer}>
-            {MockData.comments.map((data: any, idx) => (
-              <QuestionComment key={`${idx}-userbox`} data={data} />
-            ))}
-          </View>
-          {MockData.timeout && (
+              <View style={QuestionDetailStyle.CategoryBox}>
+                <Ionicons
+                  name={CATEGORY_MAP[detailInfo?.category]}
+                  size={35}
+                  color="#222428"
+                />
+              </View>
+            </View>
+            <Text
+              style={{
+                ...QuestionDetailStyle.Title,
+                color: '#222428',
+              }}
+            >
+              {title}
+            </Text>
+            <Text style={QuestionDetailStyle.Content}>
+              {detailInfo?.description}
+            </Text>
+            <View style={QuestionDetailStyle.ChooseBox}>
+              {detailInfo?.options.map((option: any, idx: number) => (
+                <ChooseBox
+                  question={`A${idx + 1}. ${option?.context}`}
+                  key={`${idx}-choosebox`}
+                  onSelect={onSelect}
+                  selected={selected}
+                  disabled={
+                    data.writerId === userInfo.id ||
+                    detailInfo?.timeout >= Math.floor(Date.now()) / 1000
+                  }
+                  data={{
+                    questionId: option?.questionId,
+                    optionId: option?.id,
+                  }}
+                />
+              ))}
+            </View>
+            <View style={QuestionDetailStyle.CommentContainer}>
+              {detailInfo?.comments.map((data: any, idx: number) => (
+                <QuestionComment
+                  key={`${idx}-userbox`}
+                  data={data}
+                  timestamp={data.createdAt.replace('T', ' ').slice(0, -5)}
+                  refreshMainPage={refreshMainPage}
+                />
+              ))}
+            </View>
+            {/* {MockData.timeout && (
             <View style={QuestionDetailStyle.BottomBox}>
               <View style={QuestionDetailStyle.FilterBox}>
                 {filterList.map((filter) => (
@@ -252,15 +407,19 @@ const QuestionDetailScreen = ({
                 </View>
               )}
             </View>
-          )}
-        </View>
+          )} */}
+          </View>
+        )}
       </ScrollView>
       <SafeAreaView style={{ width: '100%' }}>
         <Input
           placeholder="Comment"
           placeholderTextColor={isDarkMode ? 'white' : '#222428'}
           rightIcon={
-            <TouchableOpacity style={{ marginRight: 10 }}>
+            <TouchableOpacity
+              style={{ marginRight: 10 }}
+              onPress={handleComment}
+            >
               <Ionicons
                 name="paper-plane-outline"
                 size={25}
@@ -272,6 +431,7 @@ const QuestionDetailScreen = ({
             display: 'flex',
             alignItems: 'center',
             justifyContent: 'center',
+            opacity: 0.4,
           }}
           inputContainerStyle={{
             borderWidth: 0,
@@ -285,6 +445,8 @@ const QuestionDetailScreen = ({
             justifyContent: 'center',
             color: isDarkMode ? 'white' : '#222428',
           }}
+          value={comment}
+          onChangeText={(text) => onComment(text)}
         />
       </SafeAreaView>
     </Common>

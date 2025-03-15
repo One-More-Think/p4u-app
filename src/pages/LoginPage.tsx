@@ -6,8 +6,8 @@ import SocialLoginButton from 'components/SocialLoginButton';
 import store from 'reducers/index';
 import { OAuth2Login } from 'reducers/actions/UserAction';
 const LoginPage = (): React.JSX.Element => {
-  const onPress = useCallback((sns: string) => {
-    store.dispatch(OAuth2Login(sns));
+  const onPress = useCallback((snsType: string) => {
+    store.dispatch(OAuth2Login(snsType));
   }, []);
 
   return (
@@ -18,11 +18,15 @@ const LoginPage = (): React.JSX.Element => {
           resizeMode="contain"
           style={LoginPageStyle.topBodyLogo}
         />
-        <Text style={LoginPageStyle.topBodyText}>Pick For You</Text>
+        {/* <Text style={LoginPageStyle.topBodyText}>Pick For You</Text> */}
       </View>
       <View style={LoginPageStyle.bottomBodyContainer}>
         <SocialLoginButton title="Google" onPress={() => onPress('google')} />
-        <SocialLoginButton title="Apple" onPress={() => onPress('apple')} />
+        {/* <SocialLoginButton title="Apple" onPress={() => onPress('apple')} /> */}
+        {/* <Text>
+          By clicking Log in, you agree to Terms. Learn how we process your data
+          in our Privacy Policy.
+        </Text> */}
       </View>
     </Common>
   );

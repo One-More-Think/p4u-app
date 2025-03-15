@@ -29,7 +29,7 @@ const NewMemberScreen = (): React.JSX.Element => {
   const [age, setAge] = useState<number>(15);
   const [gender, setGender] = useState<string>('none');
   const [occupation, setOccupation] = useState<string>('none');
-  const [aboutme, setAboutMe] = useState<string>('');
+  const [aboutMe, setAboutMe] = useState<string>('');
   const ageList = useMemo(() => {
     return Array.from({ length: 100 - 15 + 1 }, (_, i) => i + 15);
   }, []);
@@ -60,20 +60,22 @@ const NewMemberScreen = (): React.JSX.Element => {
     (text: string) => {
       setAboutMe(text);
     },
-    [aboutme]
+    [aboutMe]
   );
 
   const handleNewMember = useCallback(() => {
+    const country = userInfo.country;
     const userData: any = {
+      country,
       age,
       gender,
       occupation,
-      aboutme,
+      aboutMe,
     };
 
-    store.dispatch(UpdateUser(userInfo?.id, userData));
+    store.dispatch(UpdateUser(userData, userInfo.id));
     store.dispatch(userLogin({ userInfo: userData }));
-  }, [age, gender, occupation, aboutme]);
+  }, [age, gender, occupation, aboutMe]);
 
   return (
     <>
@@ -246,7 +248,7 @@ const NewMemberScreen = (): React.JSX.Element => {
               top: -8,
             }}
             leftIcon={
-              aboutme ? (
+              aboutMe ? (
                 <Ionicons
                   name="close-circle"
                   onPress={() => setAboutMe('')}
@@ -266,7 +268,7 @@ const NewMemberScreen = (): React.JSX.Element => {
               backgroundColor: isDarkMode ? '#70747e' : 'white',
               flexWrap: 'wrap',
             }}
-            value={aboutme}
+            value={aboutMe}
             onChangeText={(text) => onAboutMe(text)}
           />
         </View>

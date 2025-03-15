@@ -1,17 +1,17 @@
-import React, {useState, useCallback, useEffect} from 'react';
-import {Text, View} from 'react-native';
+import React, { useState, useCallback, useEffect } from 'react';
+import { Text, View } from 'react-native';
 import SettingCommonHeader from 'components/SettingCommonHeader';
-import {SearchBar} from '@rneui/themed';
-import {CommonHeaderStyle} from 'screens/settings/style';
-import {useSelector} from 'react-redux';
+import { SearchBar } from '@rneui/themed';
+import { CommonHeaderStyle } from 'screens/settings/style';
+import { useSelector } from 'react-redux';
 import LanguageButton from 'components/LanguageButton';
 
-const LanguageScreen = ({route, navigation}: any): React.JSX.Element => {
+const LanguageScreen = ({ route, navigation }: any): React.JSX.Element => {
   const [search, setSearch] = useState<string>('');
   const language = useSelector((state: any) => state.config.language);
   const [filteredLanguage, setFilteredLanguage] = useState([]);
   const [selected, setSelected] = useState<string>(language);
-  const {title} = route.params;
+  const { title } = route.params;
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const handleChange = (text: any) => {
     setSearch(text);
@@ -20,19 +20,19 @@ const LanguageScreen = ({route, navigation}: any): React.JSX.Element => {
     (name: string) => {
       setSelected(name);
     },
-    [selected],
+    [selected]
   );
   const LanguageList: any = [
-    {name: 'us', title: 'English'},
-    {name: 'es', title: 'Español'},
-    {name: 'kr', title: '한국어'},
-    {name: 'jp', title: '日本語'},
-    {name: 'cn', title: '中國語'},
+    { name: 'us', title: 'English' },
+    // {name: 'es', title: 'Español'},
+    // {name: 'kr', title: '한국어'},
+    // {name: 'jp', title: '日本語'},
+    // {name: 'cn', title: '中國語'},
   ];
 
   useEffect(() => {
     setFilteredLanguage(
-      LanguageList.filter((lan: any) => lan.title.includes(search)),
+      LanguageList.filter((lan: any) => lan.title.includes(search))
     );
   }, [search]);
 

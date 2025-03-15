@@ -1,4 +1,4 @@
-import {configureStore, ThunkAction, Action} from '@reduxjs/toolkit';
+import { configureStore, ThunkAction, Action } from '@reduxjs/toolkit';
 import userReducer from 'reducers/userSlice';
 import configReducer from 'reducers/configSlice';
 import alertReducer from 'reducers/alertSlice';
@@ -8,6 +8,11 @@ const store = configureStore({
     config: configReducer,
     alert: alertReducer,
   },
+  middleware: (getDefaultMiddleware) =>
+    getDefaultMiddleware({
+      immutableCheck: { warnAfter: 128 },
+      serializableCheck: { warnAfter: 128 },
+    }),
 });
 
 export default store;

@@ -1,17 +1,20 @@
-import { Platform } from 'react-native';
 import { showAlert } from 'reducers/alertSlice';
 import { setIsLoading } from 'reducers/configSlice';
 import EncryptedStorage from 'react-native-encrypted-storage';
-import AsyncStorage from '@react-native-async-storage/async-storage';
 import {
   GoogleSignin,
   isSuccessResponse,
   SignInResponse,
 } from '@react-native-google-signin/google-signin';
-import { appleAuth } from '@invertase/react-native-apple-authentication';
+import {
+  appleAuth,
+  appleAuthAndroid,
+} from '@invertase/react-native-apple-authentication';
 import axios from 'axios';
 import api from 'utils/api';
-import { userLogin, UserInfoType } from 'reducers/userSlice';
+import { v4 as uuid } from 'uuid';
+import { userLogin, UserInfoType, userLogOut } from 'reducers/userSlice';
+import { Platform } from 'react-native';
 const GoogleButtonPress = async () => {
   const scopes = process.env.GOOGLE_SCOPE?.split(' ').map((scope) =>
     scope.trim()
@@ -21,6 +24,7 @@ const GoogleButtonPress = async () => {
     webClientId: process.env.GOOGLE_WEB_CLNT_ID,
     scopes,
     offlineAccess: true,
+    // androidClientId: process.env.GOOGLE_ANDROID_CLNT_ID,
     iosClientId: process.env.GOOGLE_IOS_CLNT_ID,
     forceCodeForRefreshToken: true,
   });
@@ -32,27 +36,52 @@ const GoogleButtonPress = async () => {
 };
 
 const AppleButtonPress = async () => {
-  const appleAuthRequestResponse = await appleAuth.performRequest({
-    requestedOperation: appleAuth.Operation.LOGIN,
-    // Note: it appears putting FULL_NAME first is important, see issue #293
-    requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
-  });
+  if (Platform.OS === 'ios') {
+    const appleAuthRequestResponse = await appleAuth.performRequest({
+      requestedOperation: appleAuth.Operation.LOGIN,
+      requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+    });
 
-  // get current authentication state for user
-  // /!\ This method must be tested on a real device. On the iOS simulator it always throws an error.
-  const credentialState = await appleAuth.getCredentialStateForUser(
-    appleAuthRequestResponse.user
-  );
+    const credentialState = await appleAuth.getCredentialStateForUser(
+      appleAuthRequestResponse.user
+    );
 
-  // use credentialState response to ensure the user is authenticated
-  if (credentialState === appleAuth.State.AUTHORIZED) {
-    // user is authenticated
+    if (credentialState === appleAuth.State.AUTHORIZED) {
+      // user is authenticated
+    }
+  } else if (Platform.OS === 'android') {
+    const rawNonce = uuid();
+    const state = uuid();
+
+    // Configure the request
+    appleAuthAndroid.configure({
+      // The Service ID you registered with Apple
+      clientId: 'com.example.client-android',
+
+      // Return URL added to your Apple dev console. We intercept this redirect, but it must still match
+      // the URL you provided to Apple. It can be an empty route on your backend as it's never called.
+      redirectUri: `${process.env.API_URL}users/sign-in/apple`,
+
+      // The type of response requested - code, id_token, or both.
+      responseType: appleAuthAndroid.ResponseType.ALL,
+
+      // The amount of user information requested from Apple.
+      scope: appleAuthAndroid.Scope.ALL,
+
+      // Random nonce value that will be SHA256 hashed before sending to Apple.
+      nonce: rawNonce,
+
+      // Unique state value used to prevent CSRF attacks. A UUID will be generated if nothing is provided.
+      state,
+    });
   }
 };
-export const OAuth2Login = (sns: string) => async (dispatch: any) => {
+export const OAuth2Login = (snsType: string) => async (dispatch: any) => {
   try {
     const response: any =
-      sns === 'google' ? await GoogleButtonPress() : await AppleButtonPress();
+      snsType === 'google'
+        ? await GoogleButtonPress()
+        : await AppleButtonPress();
 
     if (!response.data) throw new Error('Fail to login');
 
@@ -72,35 +101,29 @@ export const OAuth2Login = (sns: string) => async (dispatch: any) => {
     );
 
     const userData = await axios.post(
-      `${process.env.API_URL}users/sign-in/${sns}`,
+      `${process.env.API_URL}users/sign-in/${snsType}`,
       {
         idToken: response.data?.idToken,
-        country: current_country.data.toLowerCase(),
       },
       config
     );
-    console.log(userData?.data);
 
     if (!userData.data) throw new Error('Fail to login');
 
     await EncryptedStorage.setItem('token', userData.data?.accessToken);
-
-    await AsyncStorage.setItem('sns', sns);
+    await EncryptedStorage.setItem('sns', snsType);
 
     const userInfo: UserInfoType = {
-      id: userData.data?.user?.id || '',
-      email: response.data.user.email || '',
-      gender: userData.data?.gender || '',
-      language: userData.data?.language || '',
-      country: current_country?.data.toLowerCase() || '',
-      age: userData.data?.age || 0,
+      id: userData.data?.userInfo?.id,
+      email: response.data?.user?.email,
+      gender: userData.data?.userInfo?.gender,
+      occupation: userData.data?.userInfo?.occupation,
+      aboutMe: userData.data?.userInfo?.aboutMe,
+      country: current_country?.data.toLowerCase(),
+      age: userData.data?.userInfo?.age,
     };
 
-    console.log(userInfo);
-
-    dispatch(userLogin({ userInfo, sns }));
-
-    if (isSuccessResponse(response)) userLogin({ userInfo, sns });
+    if (isSuccessResponse(response)) dispatch(userLogin({ userInfo, snsType }));
     else throw new Error('Fail to login');
   } catch (error: any) {
     const errorMessage: string =
@@ -124,35 +147,37 @@ export const LoginUser = () => async (dispatch: any) => {
     dispatch(setIsLoading(true));
     const token = await EncryptedStorage.getItem('token');
     if (!token) return;
-    const sns = await AsyncStorage.getItem('sns');
-    if (!sns) return;
-    const userData = await api.get(`user/login/${sns}`);
+    const snsType = await EncryptedStorage.getItem('sns');
+    if (!snsType) return;
+    const userData = await api.get(`auth/me`);
     if (!userData.data) throw new Error('Fail to login');
-    const userInfo: any = {
-      id: userData.data?.sns_id || '',
-      email: userData.data?.email || '',
-      gender: userData.data?.gender || '',
-      language: userData.data?.language || '',
-      country: userData.data?.country || '',
-      occupation: userData.data?.occupation || '',
-      aboutme: userData.data?.aboutme || '',
-      age: userData.data?.age || 0,
-    };
-    dispatch(userLogin({ userInfo, sns }));
+
+    const userInfo: UserInfoType = userData.data?.userInfo;
+
+    dispatch(userLogin({ userInfo, snsType }));
   } catch (error: any) {
     const errorMessage: string =
       error.response?.data?.message ||
       error.message ||
       'Exceptional error occurred';
     console.log(errorMessage);
+    await EncryptedStorage.clear();
+    // dispatch(
+    //   showAlert({
+    //     message: errorMessage,
+    //     type: 'error',
+    //     id: Date.now().toString(),
+    //   })
+    // );
   } finally {
     dispatch(setIsLoading(false));
   }
 };
 
-export const GetUserDetail = (id: string) => async (dispatch: any) => {
+export const GetUserDetail = (id: number) => async (dispatch: any) => {
   try {
-    const userData = await api.get(`user/detail/${id}`);
+    dispatch(setIsLoading(true));
+    const userData = await api.get(`users/${id}`);
     if (!userData.data) throw new Error('Fail to get user info');
     return userData.data;
   } catch (error: any) {
@@ -167,21 +192,26 @@ export const GetUserDetail = (id: string) => async (dispatch: any) => {
         id: Date.now().toString(),
       })
     );
+  } finally {
+    dispatch(setIsLoading(false));
   }
 };
 
 export const UpdateUser =
-  (user_id: string, data: any) => async (dispatch: any) => {
+  (data: any, userId: number) => async (dispatch: any) => {
     try {
       dispatch(setIsLoading(true));
-      const { age, gender, occupation, aboutme } = data;
-      const res = await api.patch(`/user/new/${user_id}`, {
+
+      const { country, age, gender, occupation, aboutMe } = data;
+
+      const res = await api.put(`users/${userId}`, {
+        country,
         age,
         occupation,
         gender,
-        aboutme,
+        aboutMe,
       });
-      if (res.status !== 200) throw new Error('Fail to Login');
+      if (res.status !== 204) throw new Error('Fail to Login');
     } catch (error: any) {
       const errorMessage: string =
         error.response?.data?.message ||
@@ -202,23 +232,48 @@ export const UpdateUser =
 export const LogoutUser = () => async (dispatch: any) => {
   try {
     dispatch(setIsLoading(true));
-    await api.get('/user/logout');
-    await EncryptedStorage.removeItem('token');
+    // await api.get('/user/logout');
+    await EncryptedStorage.clear();
+    dispatch(userLogOut());
     dispatch(
-      userLogin({
-        userInfo: {
-          id: '',
-          email: '',
-          country: '',
-          age: 0,
-          gender: 'none',
-          occupation: 'none',
-          aboutme: ``,
-        },
-        sns: '',
-        authentication: false,
+      showAlert({
+        message: 'User logout',
+        type: 'info',
+        id: Date.now().toString(),
       })
     );
+  } catch (error: any) {
+    const errorMessage: string =
+      error.response?.data?.message ||
+      error.message ||
+      'Exceptional error occurred';
+    dispatch(
+      showAlert({
+        message: errorMessage,
+        type: 'error',
+        id: Date.now().toString(),
+      })
+    );
+  } finally {
+    dispatch(setIsLoading(false));
+  }
+};
+
+export const DeleteUser = (userId: number) => async (dispatch: any) => {
+  try {
+    dispatch(setIsLoading(true));
+    const res = await api.delete(`users/${userId}`);
+    if (res.status === 200) {
+      dispatch(
+        showAlert({
+          message: 'Delete Account',
+          type: 'success',
+          id: Date.now().toString(),
+        })
+      );
+      await EncryptedStorage.clear();
+      dispatch(userLogOut());
+    }
   } catch (error: any) {
     const errorMessage: string =
       error.response?.data?.message ||
@@ -239,8 +294,29 @@ export const LogoutUser = () => async (dispatch: any) => {
 // ==============================  User  ==============================
 
 export const GetQuestions =
-  (page: number, filter?: string) => async (dispatch: any) => {
+  (
+    page: number,
+    search: any = null,
+    category: any = null,
+    sort: any = null,
+    age: any = null,
+    gender: any = null,
+    country: any = null
+  ) =>
+  async (dispatch: any) => {
     try {
+      if (page === 0) dispatch(setIsLoading(true));
+      let queryString: string = `questions?offset=${page}`;
+      if (search) queryString += `&search=${search}`;
+      else {
+        if (category) queryString += `&category=${category}`;
+        if (sort) queryString += `&sort=${sort}`;
+        if (age) queryString += `&age=${age}`;
+        if (gender) queryString += `&gender=${gender}`;
+        if (country) queryString += `&country=${country}`;
+      }
+      const questions = (await api.get(queryString)) || [];
+      return questions.data;
     } catch (error: any) {
       const errorMessage: string =
         error.response?.data?.message ||
@@ -260,24 +336,9 @@ export const GetQuestions =
 
 export const GetQuestionDetail = (id: string) => async (dispatch: any) => {
   try {
-  } catch (error: any) {
-    const errorMessage: string =
-      error.response?.data?.message ||
-      error.message ||
-      'Exceptional error occurred';
-    dispatch(
-      showAlert({
-        message: errorMessage,
-        type: 'error',
-        id: Date.now().toString(),
-      })
-    );
-  }
-};
-
-export const SearchQuestion = () => async (dispatch: any) => {
-  try {
     dispatch(setIsLoading(true));
+    const res = await api.get(`questions/${id}`);
+    return res.data;
   } catch (error: any) {
     const errorMessage: string =
       error.response?.data?.message ||
@@ -295,10 +356,43 @@ export const SearchQuestion = () => async (dispatch: any) => {
   }
 };
 
-export const PostQuestion = (data: any) => async (dispatch: any) => {
+export const PostQuestion =
+  (data: any, navigation: any) => async (dispatch: any) => {
+    try {
+      dispatch(setIsLoading(true));
+      const res = await api.post('questions', data);
+
+      if (res.status !== 201) throw new Error('Fail to create question');
+      else
+        dispatch(
+          showAlert({
+            message: 'Question created',
+            type: 'success',
+            id: Date.now().toString(),
+          })
+        );
+      navigation.goBack();
+    } catch (error: any) {
+      const errorMessage: string =
+        error.response?.data?.message ||
+        error.message ||
+        'Exceptional error occurred';
+      dispatch(
+        showAlert({
+          message: errorMessage,
+          type: 'error',
+          id: Date.now().toString(),
+        })
+      );
+    } finally {
+      dispatch(setIsLoading(false));
+    }
+  };
+
+export const DeleteQuestion = (id: number) => async (dispatch: any) => {
   try {
     dispatch(setIsLoading(true));
-    await api.post('question/create', data);
+    await api.delete(`questions/${id}`);
   } catch (error: any) {
     const errorMessage: string =
       error.response?.data?.message ||
@@ -316,9 +410,20 @@ export const PostQuestion = (data: any) => async (dispatch: any) => {
   }
 };
 
-export const DeleteQuestion = () => async (dispatch: any) => {
+export const ReportQuestion = (questionId: number) => async (dispatch: any) => {
   try {
     dispatch(setIsLoading(true));
+    const res = await api.post(`questions/${questionId}/report`);
+    console.log(res.status);
+    if (res.status === 201) {
+      dispatch(
+        showAlert({
+          message: 'Reported Question',
+          type: 'info',
+          id: Date.now().toString(),
+        })
+      );
+    }
   } catch (error: any) {
     const errorMessage: string =
       error.response?.data?.message ||
@@ -335,12 +440,73 @@ export const DeleteQuestion = () => async (dispatch: any) => {
     dispatch(setIsLoading(false));
   }
 };
+
+export const SelectOption =
+  (questionId: number, optionId: number) => async (dispatch: any) => {
+    try {
+      await api.post('user-options', { questionId, optionId });
+      dispatch(setIsLoading(true));
+    } catch (error: any) {
+      const errorMessage: string =
+        error.response?.data?.message ||
+        error.message ||
+        'Exceptional error occurred';
+      dispatch(
+        showAlert({
+          message: errorMessage,
+          type: 'error',
+          id: Date.now().toString(),
+        })
+      );
+    } finally {
+      dispatch(setIsLoading(false));
+    }
+  };
+
+export const UpdateQuestion =
+  (data: any, id: number) => async (dispatch: any) => {
+    try {
+      console.log(data, id);
+      dispatch(setIsLoading(true));
+      const res = await api.put(`questions/${id}`, {
+        category: data.category,
+        title: data.title,
+        description: data.description,
+      });
+      if (res.status !== 200) throw new Error('Fail to update');
+      return res.status;
+    } catch (error: any) {
+      const errorMessage: string =
+        error.response?.data?.message ||
+        error.message ||
+        'Exceptional error occurred';
+      dispatch(
+        showAlert({
+          message: errorMessage,
+          type: 'error',
+          id: Date.now().toString(),
+        })
+      );
+    } finally {
+      dispatch(setIsLoading(false));
+    }
+  };
 
 // ==============================  Question  ==============================
 
-export const ReportQuestion = () => async (dispatch: any) => {
+export const ReportComment = (commentId: number) => async (dispatch: any) => {
   try {
     dispatch(setIsLoading(true));
+    const res = await api.post(`comments/${commentId}/report`);
+    if (res.status === 201) {
+      dispatch(
+        showAlert({
+          message: 'Reported Comment',
+          type: 'info',
+          id: Date.now().toString(),
+        })
+      );
+    }
   } catch (error: any) {
     const errorMessage: string =
       error.response?.data?.message ||
@@ -357,9 +523,40 @@ export const ReportQuestion = () => async (dispatch: any) => {
     dispatch(setIsLoading(false));
   }
 };
-export const ReportComment = () => async (dispatch: any) => {
+export const PostComment =
+  (questionId: number, context: string) => async (dispatch: any) => {
+    try {
+      dispatch(setIsLoading(true));
+      await api.post(`questions/${questionId}/comments`, { context });
+    } catch (error: any) {
+      const errorMessage: string =
+        error.response?.data?.message ||
+        error.message ||
+        'Exceptional error occurred';
+      dispatch(
+        showAlert({
+          message: errorMessage,
+          type: 'error',
+          id: Date.now().toString(),
+        })
+      );
+    } finally {
+      dispatch(setIsLoading(false));
+    }
+  };
+export const DeleteComment = (commentId: number) => async (dispatch: any) => {
   try {
     dispatch(setIsLoading(true));
+    const res = await api.delete(`comments/${commentId}`);
+    if (res.status === 200) {
+      dispatch(
+        showAlert({
+          message: 'Comment deleted',
+          type: 'success',
+          id: Date.now().toString(),
+        })
+      );
+    }
   } catch (error: any) {
     const errorMessage: string =
       error.response?.data?.message ||
@@ -376,81 +573,53 @@ export const ReportComment = () => async (dispatch: any) => {
     dispatch(setIsLoading(false));
   }
 };
-export const PostComment = () => async (dispatch: any) => {
-  try {
-    dispatch(setIsLoading(true));
-  } catch (error: any) {
-    const errorMessage: string =
-      error.response?.data?.message ||
-      error.message ||
-      'Exceptional error occurred';
-    dispatch(
-      showAlert({
-        message: errorMessage,
-        type: 'error',
-        id: Date.now().toString(),
-      })
-    );
-  } finally {
-    dispatch(setIsLoading(false));
-  }
-};
-export const DeleteComment = () => async (dispatch: any) => {
-  try {
-    dispatch(setIsLoading(true));
-  } catch (error: any) {
-    const errorMessage: string =
-      error.response?.data?.message ||
-      error.message ||
-      'Exceptional error occurred';
-    dispatch(
-      showAlert({
-        message: errorMessage,
-        type: 'error',
-        id: Date.now().toString(),
-      })
-    );
-  } finally {
-    dispatch(setIsLoading(false));
-  }
-};
-export const UpdateComment = () => async (dispatch: any) => {
-  try {
-    dispatch(setIsLoading(true));
-  } catch (error: any) {
-    const errorMessage: string =
-      error.response?.data?.message ||
-      error.message ||
-      'Exceptional error occurred';
-    dispatch(
-      showAlert({
-        message: errorMessage,
-        type: 'error',
-        id: Date.now().toString(),
-      })
-    );
-  } finally {
-    dispatch(setIsLoading(false));
-  }
-};
-export const LikeComment = () => async (dispatch: any) => {
-  try {
-    dispatch(setIsLoading(true));
-  } catch (error: any) {
-    const errorMessage: string =
-      error.response?.data?.message ||
-      error.message ||
-      'Exceptional error occurred';
-    dispatch(
-      showAlert({
-        message: errorMessage,
-        type: 'error',
-        id: Date.now().toString(),
-      })
-    );
-  } finally {
-    dispatch(setIsLoading(false));
-  }
-};
+// export const UpdateComment = () => async (dispatch: any) => {
+//   try {
+//     dispatch(setIsLoading(true));
+//   } catch (error: any) {
+//     const errorMessage: string =
+//       error.response?.data?.message ||
+//       error.message ||
+//       'Exceptional error occurred';
+//     dispatch(
+//       showAlert({
+//         message: errorMessage,
+//         type: 'error',
+//         id: Date.now().toString(),
+//       })
+//     );
+//   } finally {
+//     dispatch(setIsLoading(false));
+//   }
+// };
+export const LikeComment =
+  (id: number, reaction: string) => async (dispatch: any) => {
+    try {
+      dispatch(setIsLoading(true));
+      reaction === 'isLike'
+        ? await api.put(`comments/${id}/reactions`, {
+            isLike: true,
+            isDislike: false,
+          })
+        : await api.put(`comments/${id}/reactions`, {
+            isLike: false,
+            isDislike: true,
+          });
+    } catch (error: any) {
+      const errorMessage: string =
+        error.response?.data?.message ||
+        error.message ||
+        'Exceptional error occurred';
+      dispatch(
+        showAlert({
+          message: errorMessage,
+          type: 'error',
+          id: Date.now().toString(),
+        })
+      );
+    } finally {
+      dispatch(setIsLoading(false));
+    }
+  };
 
 // ==============================  Comment  ==============================

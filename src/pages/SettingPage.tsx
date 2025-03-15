@@ -14,6 +14,13 @@ import { SettingPageStyle } from 'style';
 import { useSelector } from 'react-redux';
 import store from 'reducers/index';
 import { LogoutUser } from 'reducers/actions/UserAction';
+import {
+  BannerAd,
+  BannerAdSize,
+  TestIds,
+} from 'react-native-google-mobile-ads';
+import { CommonActions } from '@react-navigation/native';
+import { userLogOut } from 'reducers/userSlice';
 
 const SettingPage = ({ route, navigation }: any): React.JSX.Element => {
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
@@ -30,12 +37,12 @@ const SettingPage = ({ route, navigation }: any): React.JSX.Element => {
       description: userInfo.email,
       page: 'Account',
     },
-    {
-      name: 'notifications-sharp',
-      title: 'Notification',
-      description: '',
-      page: 'Notification',
-    },
+    // {
+    //   name: 'notifications-sharp',
+    //   title: 'Notification',
+    //   description: '',
+    //   page: 'Notification',
+    // },
     {
       name: 'lock-closed',
       title: 'Privacy & Security',
@@ -54,12 +61,12 @@ const SettingPage = ({ route, navigation }: any): React.JSX.Element => {
       description: language,
       page: 'Language',
     },
-    {
-      name: 'headset',
-      title: 'Help and Support',
-      description: '',
-      page: 'Support',
-    },
+    // {
+    //   name: 'headset',
+    //   title: 'Help and Support',
+    //   description: '',
+    //   page: 'Support',
+    // },
     {
       name: 'information-circle-outline',
       title: 'About',
@@ -76,7 +83,14 @@ const SettingPage = ({ route, navigation }: any): React.JSX.Element => {
           { text: 'Cancel', style: 'cancel' },
           {
             text: 'OK',
-            onPress: () => store.dispatch(LogoutUser()),
+            onPress: () => {
+              store.dispatch(LogoutUser());
+              navigation.reset({
+                key: 'Login',
+                index: 0,
+                routes: [{ name: 'LoginPage' }],
+              });
+            },
           },
         ]),
     },
@@ -125,6 +139,10 @@ const SettingPage = ({ route, navigation }: any): React.JSX.Element => {
           />
         ))}
       </ScrollView>
+      <BannerAd
+        unitId={TestIds.BANNER}
+        size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+      />
     </Common>
   );
 };

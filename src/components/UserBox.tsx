@@ -1,20 +1,37 @@
-import React from 'react';
-import { View, Text } from 'react-native';
+import React, { useEffect, useMemo, useState, PropsWithChildren } from 'react';
+import { View, Text, TouchableOpacity } from 'react-native';
 import { UserBoxStyle } from 'style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CountryFlag from 'components/CountryFlag';
-const UserBox = ({ data = null }: any): React.JSX.Element => {
-  const { country, gender, age, occupation, timestamp } = data;
+import { useNavigation } from '@react-navigation/native';
+import CountdownTimer from 'components/CountdownTimer';
+
+type UserBoxProps = PropsWithChildren<{
+  data: any;
+  timestamp: any;
+  timeout: number;
+}>;
+
+const UserBox = ({
+  data,
+  timestamp,
+  timeout,
+}: UserBoxProps): React.JSX.Element => {
+  const navigation: any = useNavigation();
+  const { country, gender, age, occupation, writerId } = data;
   const GenderColor = (gender: string) => {
     if (gender === 'male') return '#7dc9e0';
     else if (gender === 'female') return '#ee92ba';
     return 'gray';
   };
   return (
-    <View
+    <TouchableOpacity
       style={{
         ...UserBoxStyle.HeaderBox,
       }}
+      onPress={() =>
+        navigation.navigate('UserDetailScreen', { userId: writerId })
+      }
     >
       <CountryFlag
         isoCode={country}
@@ -51,17 +68,19 @@ const UserBox = ({ data = null }: any): React.JSX.Element => {
             </Text>
           </View>
         </View>
-        <Text
-          style={{
-            ...UserBoxStyle.TimeStamp,
-            fontSize: 12,
-          }}
-        >
-          {timestamp}
-        </Text>
+        <View style={{ display: 'flex', flexDirection: 'row' }}>
+          <Text
+            style={{
+              ...UserBoxStyle.TimeStamp,
+              fontSize: 12,
+            }}
+          >
+            {timestamp}
+          </Text>
+          <CountdownTimer initialTime={timeout} />
+        </View>
       </View>
-    </View>
+    </TouchableOpacity>
   );
 };
-
 export default React.memo(UserBox);

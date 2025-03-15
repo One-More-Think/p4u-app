@@ -32,6 +32,7 @@ export const LoginPageStyle = StyleSheet.create({
     height: '20%',
     fontSize: 50,
     fontWeight: 'bold',
+    fontFamily: 'lucida grande',
     color: '#8672a5',
   },
   bottomBodyContainer: {
@@ -114,6 +115,7 @@ export const QuestionStyle = StyleSheet.create({
     fontWeight: '500',
     fontSize: 15,
     fontFamily: 'Rubik',
+    flexWrap: 'wrap',
   },
   TextContainer: {
     width: '90%',
@@ -171,7 +173,7 @@ export const QuestionDetailStyle = StyleSheet.create({
     marginBottom: 30,
   },
   CategoryBox: {
-    marginLeft: 20,
+    // marginLeft: 20,
   },
   Title: {
     width: '85%',
@@ -189,7 +191,7 @@ export const QuestionDetailStyle = StyleSheet.create({
     display: 'flex',
     flexDirection: 'column',
     justifyContent: 'space-evenly',
-    width: '80%',
+    width: '85%',
     marginBottom: 20,
   },
   FilterBox: {
@@ -201,7 +203,7 @@ export const QuestionDetailStyle = StyleSheet.create({
   CommentContainer: {
     display: 'flex',
     flexDirection: 'column',
-    width: '80%',
+    width: '85%',
     marginTop: 10,
     marginBottom: 40,
   },
@@ -284,6 +286,8 @@ export const SettingBlockStyle = StyleSheet.create({
   Description: {
     marginRight: 20,
     color: '#7a7b7e',
+    height: '100%',
+    textAlignVertical: 'center',
   },
 });
 
@@ -496,6 +500,7 @@ export const CommentBoxStyle = StyleSheet.create({
     height: 100,
     borderRadius: 10,
     marginRight: 20,
+    backgroundColor: '#222428',
   },
   ViewContainer: {
     display: 'flex',
@@ -687,5 +692,46 @@ export const NewMemberScreenStyle = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+  },
+});
+
+export const LockPageStyle = StyleSheet.create({
+  SafeArea: {
+    width: '100%',
+    height: '100%',
+    display: 'flex',
+    flexDirection: 'column',
+    alignItems: 'center',
+    justifyContent: 'center',
+  },
+  PasswordContainer: {
+    flexDirection: 'row',
+    justifyContent: 'center',
+    alignItems: 'center',
+    gap: 50,
+    height: '20%',
+  },
+  PasswordEmpty: {
+    width: 20,
+    height: 20,
+    borderRadius: 10,
+  },
+  NumberContainer: {
+    height: '65%',
+    width: '80%',
+    gap: '50%',
+  },
+  NumberTouchContainer: {
+    alignSelf: 'center',
+    width: 80,
+    height: 75,
+    backgroundColor: 'lightgrey',
+    borderRadius: 10,
+  },
+  NumberText: {
+    textAlign: 'center',
+    textAlignVertical: 'center',
+    fontSize: 35,
+    lineHeight: 75,
   },
 });

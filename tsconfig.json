@@ -9,7 +9,8 @@
       "pages/*": ["pages/*"],
       "screens/*": ["pages/screens/*"],
       "utils/*": ["utils/*"],
-      "style": ["style.ts"]
+      "style": ["style.ts"],
+      "hooks": ["hooks/*"]
     }
   }
 }

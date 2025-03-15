@@ -5,6 +5,9 @@ interface configSliceInitType {
   language: string;
   appInfo: any;
   mode: string;
+  appStateInactive: boolean;
+  isLockOn: boolean;
+  LockPassword: number;
 }
 
 const initialState: configSliceInitType = {
@@ -12,13 +15,23 @@ const initialState: configSliceInitType = {
   language: 'English',
   mode: 'System Mode',
   appInfo: {
-    version: '1.0.0',
+    version: '0.0.0',
   },
+  appStateInactive: false,
+  isLockOn: false,
+  LockPassword: 0,
 };
 
-type IsLoadingProps = {
-  payload: boolean;
+type Action<T> = {
+  type: string;
+  payload: T;
 };
+
+interface IsLoadingProps extends Action<boolean> {}
+
+interface IsAppStateProps extends Action<boolean> {}
+
+interface IsLockOnProps extends Action<boolean> {}
 
 const configSlice = createSlice({
   name: 'config',
@@ -39,9 +52,15 @@ const configSlice = createSlice({
     setIsLoading: (state: any, action: IsLoadingProps) => {
       state.isLoading = action.payload;
     },
+    setAppState: (state: any, action: IsAppStateProps) => {
+      state.appState = action.payload;
+    },
+    setIsLockOn: (state: any, action: IsLockOnProps) => {
+      state.isLockOn = action.payload;
+    },
   },
 });
-export const { setLanguage, setAppInfo, setMode, setIsLoading } =
+export const { setLanguage, setAppInfo, setMode, setIsLoading, setAppState } =
   configSlice.actions;
 
 export default configSlice.reducer;

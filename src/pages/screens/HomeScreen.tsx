@@ -1,4 +1,10 @@
-import React, { useState, useEffect, useRef, useCallback } from 'react';
+import React, {
+  useState,
+  useEffect,
+  useRef,
+  useCallback,
+  useMemo,
+} from 'react';
 import {
   SafeAreaView,
   StatusBar,
@@ -12,7 +18,7 @@ import {
 import Common from 'components/Common';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
 import BottomSheet from '@gorhom/bottom-sheet';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import { HomeScreenStyle } from 'style';
 import Question from 'components/Question';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -22,193 +28,76 @@ import {
   TestIds,
 } from 'react-native-google-mobile-ads';
 import FilterSheet from 'components/FilterSheet';
-import SkeletonBar from 'components/SkeletonBar';
+import store from 'reducers/index';
+import { GetQuestions } from 'reducers/actions/UserAction';
 
 const HomeScreen = ({ navigation }: any): React.JSX.Element => {
-  const dispatch: any = useDispatch();
   const [isLoading, setIsLoading] = useState(false);
-  const nextPageIdentifierRef = useRef();
-  const [isFirstPageReceived, setIsFirstPageReceived] = useState(false);
-  const LIMIT = 10;
+  const [page, setPage] = useState<number>(0);
+  const [endOfPage, isEndOfPage] = useState<boolean>(false);
   const bottomSheetRef = useRef<BottomSheet>(null);
-
-  const MockData = [
-    {
-      id: '1',
-      country: 'kr',
-      gender: 'male',
-      age: 27,
-      occupation: 'programmer',
-      title: 'I have a question something about my career',
-      timestamp: '10/26 03:40',
-    },
-    {
-      id: '2',
-      country: 'de',
-      gender: 'female',
-      age: 21,
-      occupation: 'teacher',
-      title: 'Why my student does not like to do their',
-      timestamp: '10/26 03:40',
-    },
-    {
-      id: '3',
-      country: 'jp',
-      gender: 'male',
-      age: 22,
-      occupation: 'student',
-      title: `I don't know what to eat for today's lunch please `,
-      timestamp: '10/26 03:40',
-    },
-    {
-      id: '4',
-      country: 'ca',
-      gender: 'female',
-      age: 24,
-      occupation: 'none',
-      title: 'Canada rent fee is getting higher',
-      timestamp: '10/26 03:40',
-    },
-    {
-      id: '5',
-      country: 'ca',
-      gender: 'female',
-      age: 24,
-      occupation: 'none',
-      title: 'Canada rent fee is getting higher',
-      timestamp: '10/26 03:40',
-    },
-    {
-      id: '6',
-      country: 'ca',
-      gender: 'female',
-      age: 24,
-      occupation: 'none',
-      title: 'Canada rent fee is getting higher',
-      timestamp: '10/26 03:40',
-    },
-    {
-      id: '7',
-      country: 'ca',
-      gender: 'female',
-      age: 24,
-      occupation: 'none',
-      title: 'Canada rent fee is getting higher',
-      timestamp: '10/26 03:40',
-    },
-    {
-      id: '8',
-      country: 'ca',
-      gender: 'female',
-      age: 24,
-      occupation: 'none',
-      title: 'Canada rent fee is getting higher',
-      timestamp: '10/26 03:40',
-    },
-    {
-      id: '9',
-      country: 'ca',
-      gender: 'female',
-      age: 24,
-      occupation: 'none',
-      title: 'Canada rent fee is getting higher',
-      timestamp: '10/26 03:40',
-    },
-    {
-      id: '10',
-      country: 'ca',
-      gender: 'female',
-      age: 24,
-      occupation: 'none',
-      title: 'Canada rent fee is getting higher',
-      timestamp: '10/26 03:40',
-    },
-    {
-      id: '11',
-      country: 'ca',
-      gender: 'female',
-      age: 24,
-      occupation: 'none',
-      title: 'Canada rent fee is getting higher',
-      timestamp: '10/26 03:40',
-    },
-  ];
-  const [data, setData] = useState<any>(MockData);
+  const [data, setData] = useState<any[]>([]);
   const [refreshing, setRefreshing] = useState(false);
-
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const onRefresh = () => {
     setRefreshing(true);
   };
-  const fetchData = async () => {
-    // pagination implement
-    setIsLoading(true);
-    await new Promise((resolve: any) =>
-      setTimeout(() => {
-        console.log('refresh main page');
-        resolve();
-      }, 3000)
-    );
-    // await fecth data
-    // const newData: any = data[Math.round(Math.random() % data.length)];
-    // console.log(Math.round(Math.random() % data.length));
-    // console.log(data[Math.round(Math.random() % data.length)]);
-    // newData['id'] = `unique-${Math.random().toString()}`;
-    // console.log(newData);
-    // setData([...data, newData]);
-    // getDataFromApi(nextPageIdentifierRef.current).then(response => {
-    // const {data: newData, nextPageIdentifier} = parseResponse(response);
-    // setData([...data, newData]);
-    //   nextPageIdentifierRef.current = nextPageIdentifier;
-    !isFirstPageReceived && setIsFirstPageReceived(true);
-    console.log('get data');
-    setIsLoading(false);
-    //   !isFirstPageReceived && setIsFirstPageReceived(true);
-    // });
-  };
-  const fetchNextProblem = () => {
-    // if (nextPageIdentifierRef.current == null) {
-    //   // End of data.
-    //   return;
-    // }
-    fetchData();
-  };
+  const fetchData: (current_page: number) => Promise<void> = useCallback(
+    async (current_page: number): Promise<void> => {
+      if (isLoading || endOfPage) return;
+      setIsLoading(true);
+      try {
+        if (!endOfPage) {
+          const questionList = await store.dispatch(GetQuestions(current_page));
+          if (questionList.length === 10) setPage(current_page + 1);
+          else isEndOfPage(true);
+          current_page === 0
+            ? setData(questionList)
+            : setData((prevData) => [...prevData, ...questionList]);
+        } else console.log('reached end of page');
+      } catch (error: any) {
+        console.error('error fetching data', error);
+      } finally {
+        setIsLoading(false);
+      }
+    },
+    [endOfPage, page, isLoading]
+  );
 
   const handlePresentModal = useCallback(() => {
     bottomSheetRef.current?.expand();
   }, []);
 
+  const handleScroll: (event: any) => void = (event: any): void => {
+    const contentHeight: any = event.nativeEvent.contentSize.height;
+    const contentOffsetY: any = event.nativeEvent.contentOffset.y;
+    const layoutHeight: any = event.nativeEvent.layoutMeasurement.height;
+
+    if (contentHeight - contentOffsetY <= layoutHeight + 20) {
+      fetchData(page);
+    }
+  };
+
   useEffect(() => {
     const refreshMainPage = async () => {
       try {
-        await new Promise((resolve: any) =>
-          setTimeout(() => {
-            console.log('refresh HomeScreen page');
-            resolve();
-          }, 1000)
-        );
-        console.log('refresh done');
-        // dispatch to get list of problems
+        await fetchData(0);
       } catch (err) {
         console.error('Error refreshing the page:', err);
       } finally {
-        console.log('set refreshing');
         setRefreshing(false);
+        isEndOfPage(false);
       }
     };
-    if (refreshing) {
-      refreshMainPage();
-    }
+    if (refreshing) refreshMainPage();
   }, [refreshing]);
 
   useEffect(() => {
-    // dispatch()
-    // fetchData();
+    const unsubscribe = navigation.addListener('focus', async () => {
+      await fetchData(0);
+    });
+    return unsubscribe;
   }, [navigation]);
-
-  useEffect(() => {
-    fetchData();
-  }, []);
 
   return (
     <Common>
@@ -231,14 +120,13 @@ const HomeScreen = ({ navigation }: any): React.JSX.Element => {
           <Ionicons name="filter" size={30} color="#222428" />
         </TouchableOpacity>
       </SafeAreaView>
-      <GestureHandlerRootView style={{ width: '100%' }}>
+      <GestureHandlerRootView style={{ width: '100%', height: '100%' }}>
         <FlatList
           style={HomeScreenStyle.ScrollView}
           showsVerticalScrollIndicator={false}
           data={data}
-          keyExtractor={(item) => item.id.toString()}
-          onEndReachedThreshold={0.5}
-          onEndReached={fetchNextProblem}
+          keyExtractor={(item: any, index: number): any => index.toString()}
+          onScroll={handleScroll}
           refreshControl={
             <RefreshControl
               refreshing={refreshing}
@@ -246,20 +134,23 @@ const HomeScreen = ({ navigation }: any): React.JSX.Element => {
               tintColor="black"
             />
           }
-          renderItem={({ item }) => (
-            <Question
-              isLoading={isLoading}
-              navigation={navigation}
-              country={item.country}
-              gender={item.gender}
-              age={item.age}
-              occupation={item.occupation}
-              title={item.title}
-              timestamp={item.timestamp}
-              id={item.id}
-            />
-          )}
-          scrollEventThrottle={16}
+          renderItem={({ item }) => {
+            return (
+              <Question
+                isLoading={isLoading}
+                navigation={navigation}
+                country={item.writer.country}
+                gender={item.writer.gender}
+                age={item.writer.age}
+                occupation={item.writer.occupation}
+                title={item.title}
+                writerId={item.writer.id}
+                id={item.id}
+                key={`${item.id}-${Date.now()}`}
+              />
+            );
+          }}
+          scrollEventThrottle={400}
           ListHeaderComponent={
             <View style={HomeScreenStyle.Container}>
               <BannerAd
@@ -269,10 +160,10 @@ const HomeScreen = ({ navigation }: any): React.JSX.Element => {
             </View>
           }
           ListFooterComponent={
-            isLoading ? <ActivityIndicator size="small" /> : null
+            isLoading ? <ActivityIndicator animating size="large" /> : null
           }
         />
-        <FilterSheet bottomSheetRef={bottomSheetRef} />
+        <FilterSheet bottomSheetRef={bottomSheetRef} setData={setData} />
       </GestureHandlerRootView>
     </Common>
   );

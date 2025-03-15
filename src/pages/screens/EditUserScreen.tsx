@@ -29,7 +29,7 @@ const EditUserScreen = ({ navigation }: any): React.JSX.Element => {
   const [age, setAge] = useState<number>(userInfo.age);
   const [gender, setGender] = useState<string>(userInfo.gender);
   const [occupation, setOccupation] = useState<string>(userInfo.occupation);
-  const [aboutme, setAboutMe] = useState<string>(userInfo.aboutme);
+  const [aboutMe, setAboutMe] = useState<string>(userInfo.aboutMe);
   const ageList = useMemo(() => {
     return Array.from({ length: 100 - 15 + 1 }, (_, i) => i + 15);
   }, []);
@@ -60,22 +60,24 @@ const EditUserScreen = ({ navigation }: any): React.JSX.Element => {
     (text: string) => {
       setAboutMe(text);
     },
-    [aboutme]
+    [aboutMe]
   );
 
-  const handleNewMember = useCallback(() => {
+  const handleEditUser = useCallback(() => {
+    const country = userInfo.country;
     const userData: any = {
+      country,
       age,
       gender,
       occupation,
-      aboutme,
+      aboutMe,
     };
     console.log(userData);
 
-    store.dispatch(UpdateUser(userInfo?.id, userData));
+    store.dispatch(UpdateUser(userData, userInfo.id));
     store.dispatch(userLogin({ userInfo: userData }));
     navigation.goBack();
-  }, [age, gender, occupation, aboutme]);
+  }, [age, gender, occupation, aboutMe]);
 
   return (
     <>
@@ -254,7 +256,7 @@ const EditUserScreen = ({ navigation }: any): React.JSX.Element => {
               top: -8,
             }}
             leftIcon={
-              aboutme ? (
+              aboutMe ? (
                 <Ionicons
                   name="close-circle"
                   onPress={() => setAboutMe('')}
@@ -274,13 +276,13 @@ const EditUserScreen = ({ navigation }: any): React.JSX.Element => {
               backgroundColor: isDarkMode ? '#70747e' : 'white',
               flexWrap: 'wrap',
             }}
-            value={aboutme}
+            value={aboutMe}
             onChangeText={(text) => onAboutMe(text)}
           />
         </View>
         <TouchableOpacity
           style={NewMemberScreenStyle.ConfirmButton}
-          onPress={handleNewMember}
+          onPress={handleEditUser}
         >
           <Text
             style={{
@@ -292,6 +294,10 @@ const EditUserScreen = ({ navigation }: any): React.JSX.Element => {
             Confirm
           </Text>
         </TouchableOpacity>
+        <BannerAd
+          unitId={TestIds.BANNER}
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        />
       </Common>
     </>
   );

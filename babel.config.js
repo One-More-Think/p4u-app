@@ -14,6 +14,7 @@ module.exports = {
           screens: './src/pages/screens',
           style: './src/style.tsx',
           utils: './src/utils',
+          hooks: './src/hooks',
         },
       },
     ],

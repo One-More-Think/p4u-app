@@ -4,9 +4,17 @@ import BottomSheet, { BottomSheetView } from '@gorhom/bottom-sheet';
 import { useSelector } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { SearchBar } from '@rneui/themed';
-import CountryBox from './CountryBox';
+import CountryBox, { countryCodes } from './CountryBox';
+import store from 'reducers/index';
+import { GetQuestions } from 'reducers/actions/UserAction';
 
-const FilterSheet = ({ bottomSheetRef }: any): React.JSX.Element => {
+const FilterSheet = ({ bottomSheetRef, setData }: any): React.JSX.Element => {
+  enum CategoryEnum {
+    'Living' = 0,
+    'Career' = 1,
+    'Food' = 2,
+    'RelationShip' = 3,
+  }
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const snapPoints = useMemo<string[]>(() => ['65%'], []);
   const [filter, setFilter] = useState<string>('Category');
@@ -17,9 +25,10 @@ const FilterSheet = ({ bottomSheetRef }: any): React.JSX.Element => {
   const [country, setCountry] = useState<string>('');
   const [search, setSearch] = useState<string>('');
   const [selected, setSelected] = useState<number>(0);
+  const [currentPage, setCurrentPage] = useState<number>(0);
 
   const FilterList = useMemo<string[]>(
-    () => ['Category', 'Sort', 'Age', 'Country', 'Gender'],
+    () => ['Category', 'Age', 'Country', 'Gender'], // Sort next release
     []
   );
   const CategoryList = useMemo<string[]>(
@@ -30,10 +39,10 @@ const FilterSheet = ({ bottomSheetRef }: any): React.JSX.Element => {
     () => ['10s', '20s', '30s', '40s', '50s'],
     []
   );
-  const SortList = useMemo<string[]>(
-    () => ['Recent', 'View', 'Comment', 'Progress'],
-    []
-  );
+  // const SortList = useMemo<string[]>(
+  //   () => ['Recent', 'View', 'Comment', 'Progress'],
+  //   []
+  // );
   const GenderList = useMemo<string[]>(() => ['Male', 'Female', 'None'], []);
   const onFilter = useCallback(
     (item: any) => {
@@ -79,9 +88,40 @@ const FilterSheet = ({ bottomSheetRef }: any): React.JSX.Element => {
   const handleCloseModal = useCallback(() => {
     bottomSheetRef.current?.close();
   }, []);
+
+  const filterCountry = useCallback(
+    (country: string) => {
+      return (
+        countryCodes.find((item: any) =>
+          Object.values(item).includes(country)
+        ) &&
+        Object.keys(
+          countryCodes.find((item: any) =>
+            Object.values(item).includes(country)
+          )!
+        )[0]
+      );
+    },
+    [country]
+  );
+
   const handleFilter = async () => {
     // dispatch search from api
     bottomSheetRef.current?.close();
+    const categoryNumber = CategoryEnum[category as keyof typeof CategoryEnum];
+    const countryCode = filterCountry(country);
+    const questions = await store.dispatch(
+      GetQuestions(
+        currentPage,
+        null,
+        categoryNumber || null,
+        sort || null,
+        age || null,
+        gender || null,
+        country ? countryCode.toLowerCase() : null
+      )
+    );
+    setData(questions);
   };
   const FilterBox = (
     filterList: string[],
@@ -133,8 +173,8 @@ const FilterSheet = ({ bottomSheetRef }: any): React.JSX.Element => {
     switch (filter) {
       case 'Category':
         return FilterBox(CategoryList, category, onCategory);
-      case 'Sort':
-        return FilterBox(SortList, sort, onSort);
+      // case 'Sort':
+      //   return FilterBox(SortList, sort, onSort);
       case 'Age':
         return FilterBox(AgeList, age, onAge);
       case 'Country':

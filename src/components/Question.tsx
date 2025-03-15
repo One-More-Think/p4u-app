@@ -13,10 +13,10 @@ type QuestionProps = PropsWithChildren<{
   age: number;
   occupation: string;
   title: string;
-  timestamp: string;
   navigation: any;
   search?: boolean;
   isLoading?: boolean;
+  writerId?: string;
 }>;
 const Question = (props: QuestionProps): React.JSX.Element => {
   const dispatch = useDispatch();
@@ -28,11 +28,12 @@ const Question = (props: QuestionProps): React.JSX.Element => {
     age = 0,
     occupation = 'none',
     title = '',
-    timestamp,
     navigation,
     search = false,
     isLoading = false,
+    writerId,
   } = props;
+
   const data = {
     id,
     country,
@@ -40,7 +41,7 @@ const Question = (props: QuestionProps): React.JSX.Element => {
     age,
     occupation,
     title,
-    timestamp,
+    writerId,
   };
 
   const GenderColor = useCallback((gender: string) => {
@@ -50,10 +51,8 @@ const Question = (props: QuestionProps): React.JSX.Element => {
   }, []);
 
   const handleQuestion = async () => {
-    // const data = dispatch({}); get real data
     if (search) navigation.goBack();
     navigation.navigate('QuestionDetailScreen', { data });
-    console.log('press');
   };
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   return isLoading ? (

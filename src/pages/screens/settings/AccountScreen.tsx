@@ -5,6 +5,8 @@ import { CommonHeaderStyle } from './style';
 import SettingBlock from 'components/SettingBlock';
 import CountryFlag from 'components/CountryFlag';
 import { useSelector } from 'react-redux';
+import store from 'reducers/index';
+import { DeleteUser } from 'reducers/actions/UserAction';
 
 const AccountScreen = ({ route, navigation }: any): React.JSX.Element => {
   const { title } = route.params;
@@ -20,13 +22,11 @@ const AccountScreen = ({ route, navigation }: any): React.JSX.Element => {
           style={{ borderWidth: 0.5, borderColor: 'black' }}
         />
       ),
-      onPress: () => console.log('show pop up to change country'),
     },
     {
       title: 'Gender',
       description:
         userInfo.gender.at(0).toUpperCase() + userInfo.gender.slice(1),
-      onPress: () => console.log('show pop up to change country'),
     },
     {
       title: 'Occupation',
@@ -34,7 +34,7 @@ const AccountScreen = ({ route, navigation }: any): React.JSX.Element => {
         userInfo.occupation.at(0).toUpperCase() + userInfo.occupation.slice(1),
     },
     {
-      title: 'Delete',
+      title: 'Delete Account',
       onPress: () =>
         Alert.alert('Delete Account', 'Are you sure delete your account?', [
           {
@@ -42,7 +42,17 @@ const AccountScreen = ({ route, navigation }: any): React.JSX.Element => {
             onPress: () => console.log('Cancel Pressed'),
             style: 'cancel',
           },
-          { text: 'OK', onPress: () => console.log('OK Pressed') },
+          {
+            text: 'OK',
+            onPress: async () => {
+              await store.dispatch(DeleteUser(userInfo.id));
+              navigation.reset({
+                key: 'Login',
+                index: 0,
+                routes: [{ name: 'LoginPage' }],
+              });
+            },
+          },
         ]),
       fontColor: '#e06666',
     },

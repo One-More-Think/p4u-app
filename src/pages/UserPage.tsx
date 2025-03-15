@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useCallback } from 'react';
 import {
   Text,
   View,
@@ -11,7 +11,7 @@ import Common from 'components/Common';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CountryFlag from 'components/CountryFlag';
 import { UserPageStyle } from 'style';
-import { useDispatch, useSelector } from 'react-redux';
+import { useSelector } from 'react-redux';
 import {
   BannerAd,
   BannerAdSize,
@@ -19,56 +19,35 @@ import {
 } from 'react-native-google-mobile-ads';
 import CommentBox from 'components/CommentBox';
 import SkeletonBar from 'components/SkeletonBar';
+import store from 'reducers/index';
+import { GetUserDetail } from 'reducers/actions/UserAction';
+import { useFocusEffect } from '@react-navigation/native';
+
 const UserPage = ({ route, navigation }: any): React.JSX.Element => {
-  const dispatch: any = useDispatch();
+  const { userId } = route.params;
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const userInfo = useSelector((state: any) => state.user.userInfo);
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
-  const MockData = [
-    {
-      id: '11',
-      country: 'kr',
-      age: 23,
-      gender: 'male',
-      occupation: 'programmer',
-      title: 'This is serious problem',
+  const [userData, setUserData] = useState<any>(null);
+
+  useFocusEffect(
+    useCallback(() => {
+      const getUserInfo = async () => {
+        setIsLoading(true);
+        const data = await store.dispatch(GetUserDetail(userId));
+        setUserData(data);
+      };
+      getUserInfo();
+      setIsLoading(false);
+    }, [userId])
+  );
+
+  const renderItem = useCallback(
+    ({ item }: any) => {
+      return <CommentBox data={item} isLoading={isLoading} />;
     },
-    {
-      id: '12',
-      country: 'jp',
-      age: 21,
-      gender: 'female',
-      occupation: 'teacher',
-      title: 'This is serious problem',
-    },
-    {
-      id: '13',
-      country: 'kr',
-      age: 25,
-      gender: 'male',
-      occupation: 'none',
-      title: 'This is serious problem',
-    },
-  ];
-  useEffect(() => {
-    // dispatch
-    const testLoading = async () => {
-      setIsLoading(true);
-      try {
-        await new Promise((resolve: any) =>
-          setTimeout(() => {
-            console.log('refresh main page');
-            resolve();
-          }, 3000)
-        );
-      } catch (error) {
-        console.error(error);
-      } finally {
-        setIsLoading(false);
-      }
-    };
-    testLoading();
-  }, []);
+    [isLoading]
+  );
   const GenderColor = (gender: string) => {
     if (gender === 'male') return '#7dc9e0';
     else if (gender === 'female') return '#ee92ba';
@@ -81,19 +60,23 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
           backgroundColor={isDarkMode ? '#222428' : 'white'}
         />
-        <TouchableOpacity
-          style={{ marginLeft: 20 }}
-          onPress={() => navigation.navigate('EditUserScreen')}
-        >
-          <Ionicons name="pencil" size={30} />
-        </TouchableOpacity>
+        {userId === userInfo.id && (
+          <TouchableOpacity
+            style={{ marginLeft: 20 }}
+            onPress={() => navigation.navigate('EditUserScreen')}
+          >
+            <Ionicons name="pencil" size={30} />
+          </TouchableOpacity>
+        )}
         <Text style={UserPageStyle.SafeAreaText}>Profile</Text>
-        <TouchableOpacity
-          style={{ marginRight: 20 }}
-          onPress={() => navigation.navigate('SettingPage')}
-        >
-          <Ionicons name="settings" size={30} />
-        </TouchableOpacity>
+        {userId === userInfo.id && (
+          <TouchableOpacity
+            style={{ marginRight: 20 }}
+            onPress={() => navigation.navigate('SettingPage')}
+          >
+            <Ionicons name="settings" size={30} />
+          </TouchableOpacity>
+        )}
       </SafeAreaView>
       <View style={{ display: 'flex', marginTop: 16 }}>
         <BannerAd
@@ -191,7 +174,7 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
                     flexWrap: 'wrap',
                   }}
                 >
-                  {userInfo.aboutme}
+                  {userInfo.aboutMe}
                 </Text>
               </View>
             </View>
@@ -201,10 +184,8 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
         <View style={UserPageStyle.WrittenQuestionList}>
           <FlatList
             horizontal
-            data={MockData}
-            renderItem={({ item }) => (
-              <CommentBox data={item} isLoading={isLoading} />
-            )}
+            data={userData?.writtenQuestions}
+            renderItem={renderItem}
             showsHorizontalScrollIndicator={false}
           />
         </View>
@@ -212,10 +193,8 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
         <View style={UserPageStyle.CommentedQuestionList}>
           <FlatList
             horizontal
-            data={MockData}
-            renderItem={({ item }) => (
-              <CommentBox data={item} isLoading={isLoading} />
-            )}
+            data={userData?.commentedQuestions}
+            renderItem={renderItem}
             showsHorizontalScrollIndicator={false}
           />
         </View>

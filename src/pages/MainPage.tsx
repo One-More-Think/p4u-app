@@ -1,4 +1,4 @@
-import React, { useMemo } from 'react';
+import React, { useEffect, useMemo } from 'react';
 import { NavigationContainer } from '@react-navigation/native';
 import { createNativeStackNavigator } from '@react-navigation/native-stack';
 import LandingPage from 'pages/LandingPage';
@@ -18,8 +18,14 @@ import SettingPage from 'pages/SettingPage';
 import PostPage from 'pages/PostPage';
 import { useSelector } from 'react-redux';
 import UserDetailScreen from 'screens/UserDetailScreen';
+import LockPage from 'pages/LockPage';
+import EditQuestionScreen from 'pages/screens/EditQuestionScreen';
+// import PrivacyPolicyScreen from 'pages/screens/settings/policy/PrivacyPolicy';
 export const MainPage = (): React.JSX.Element => {
   const MainStack = createNativeStackNavigator();
+  const isAuthenticated = useSelector(
+    (state: any) => state.user.isAuthenticated
+  );
 
   const ScreenList = useMemo(() => {
     return [
@@ -32,24 +38,25 @@ export const MainPage = (): React.JSX.Element => {
       { name: 'SupportScreen', component: SupportScreen },
       { name: 'AboutScreen', component: AboutScreen },
       { name: 'AccountScreen', component: AccountScreen },
+      // { name: 'PrivacyPolicyScreen', component: PrivacyPolicyScreen },
       { name: 'SettingPage', component: SettingPage },
       { name: 'SearchScreen', component: SearchScreen },
       { name: 'PostScreen', component: PostPage },
       { name: 'EditUserScreen', component: EditUserScreen },
       { name: 'UserDetailScreen', component: UserDetailScreen },
+      { name: 'EditQuestionScreen', component: EditQuestionScreen },
+      { name: 'LockPage', component: LockPage },
+      { name: 'LoginPage', component: LoginPage },
     ];
   }, []);
 
   const MainStackScreen = () => {
-    const isAuthenticated = useSelector(
-      (state: any) => state.user.isAuthenticated
-    );
     const userInfo = useSelector((state: any) => state.user.userInfo);
 
     return (
       <NavigationContainer>
         <MainStack.Navigator
-          initialRouteName="LandingPage"
+          initialRouteName={isAuthenticated ? 'LandingPage' : 'LoginPage'}
           screenOptions={({ route }) => ({
             gestureEnabled:
               route.name === 'QuestionDetail' || route.name.includes('Screen'),
@@ -71,7 +78,9 @@ export const MainPage = (): React.JSX.Element => {
                   options={{
                     headerShown: false,
                     ...(screen.name === 'SearchScreen' ||
-                    screen.name === 'PostScreen'
+                    screen.name === 'PostScreen' ||
+                    screen.name === 'LockPage' ||
+                    screen.name === 'EditQuestionScreen'
                       ? { presentation: 'containedModal' }
                       : {}),
                   }}
