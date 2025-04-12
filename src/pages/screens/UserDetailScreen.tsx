@@ -6,6 +6,7 @@ import {
   StatusBar,
   TouchableOpacity,
   FlatList,
+  Platform,
 } from 'react-native';
 import Common from 'components/Common';
 import Ionicons from 'react-native-vector-icons/Ionicons';
@@ -71,7 +72,11 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
       </SafeAreaView>
       <View style={{ display: 'flex', marginTop: 16 }}>
         <BannerAd
-          unitId={TestIds.BANNER}
+          unitId={
+            Platform.OS === 'ios'
+              ? process.env.BANNER_IOS_UNIT_ID || ''
+              : process.env.BANNER_ANDROID_UNIT_ID || ''
+          }
           size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
         />
       </View>

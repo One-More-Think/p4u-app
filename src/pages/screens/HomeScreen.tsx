@@ -14,6 +14,7 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import Common from 'components/Common';
 import { GestureHandlerRootView } from 'react-native-gesture-handler';
@@ -150,11 +151,15 @@ const HomeScreen = ({ navigation }: any): React.JSX.Element => {
               />
             );
           }}
-          scrollEventThrottle={400}
+          scrollEventThrottle={40}
           ListHeaderComponent={
             <View style={HomeScreenStyle.Container}>
               <BannerAd
-                unitId={TestIds.BANNER}
+                unitId={
+                  Platform.OS === 'ios'
+                    ? process.env.BANNER_IOS_UNIT_ID || ''
+                    : process.env.BANNER_ANDROID_UNIT_ID || ''
+                }
                 size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
               />
             </View>

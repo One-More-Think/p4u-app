@@ -6,6 +6,7 @@ import {
   View,
   Platform,
   TouchableOpacity,
+  Keyboard,
 } from 'react-native';
 import Common from 'components/Common';
 import { useDispatch, useSelector } from 'react-redux';
@@ -237,6 +238,7 @@ const EditUserScreen = ({ navigation }: any): React.JSX.Element => {
             }}
             value={occupation}
             onChangeText={(text) => onOccupation(text)}
+            onSubmitEditing={() => Keyboard.dismiss()}
           />
           <Text
             style={{
@@ -278,6 +280,7 @@ const EditUserScreen = ({ navigation }: any): React.JSX.Element => {
             }}
             value={aboutMe}
             onChangeText={(text) => onAboutMe(text)}
+            onSubmitEditing={() => Keyboard.dismiss()}
           />
         </View>
         <TouchableOpacity
@@ -295,7 +298,11 @@ const EditUserScreen = ({ navigation }: any): React.JSX.Element => {
           </Text>
         </TouchableOpacity>
         <BannerAd
-          unitId={TestIds.BANNER}
+          unitId={
+            Platform.OS === 'ios'
+              ? process.env.BANNER_IOS_UNIT_ID || ''
+              : process.env.BANNER_ANDROID_UNIT_ID || ''
+          }
           size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
         />
       </Common>

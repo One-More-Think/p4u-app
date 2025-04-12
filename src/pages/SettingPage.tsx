@@ -6,6 +6,7 @@ import {
   ScrollView,
   TouchableOpacity,
   Alert,
+  Platform,
 } from 'react-native';
 import Common from 'components/Common';
 import SettingBlock from 'components/SettingBlock';
@@ -140,7 +141,11 @@ const SettingPage = ({ route, navigation }: any): React.JSX.Element => {
         ))}
       </ScrollView>
       <BannerAd
-        unitId={TestIds.BANNER}
+        unitId={
+          Platform.OS === 'ios'
+            ? process.env.BANNER_IOS_UNIT_ID || ''
+            : process.env.BANNER_ANDROID_UNIT_ID || ''
+        }
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
       />
     </Common>

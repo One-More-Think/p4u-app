@@ -5,20 +5,28 @@ import store from './src/reducers/index';
 import { setDarkMode } from './src/reducers/userSlice';
 import MainPage from 'pages/MainPage';
 import { LoginUser } from 'reducers/actions/UserAction';
-// import mobileAds from 'react-native-google-mobile-ads';
+import mobileAds from 'react-native-google-mobile-ads';
+import SplashScreen from 'react-native-splash-screen';
 
 const App = (): React.JSX.Element => {
   const isDarkMode: any = useColorScheme() === 'dark';
+
+  useEffect(() => {
+    setTimeout(() => {
+      SplashScreen.hide();
+    }, 1000);
+  });
+
   useEffect(() => {
     store.dispatch(setDarkMode(isDarkMode));
     const cacheLogin = async () => {
       await store.dispatch(LoginUser());
     };
     cacheLogin();
-    // const AdMobInit = async () => {
-    //   await mobileAds().initialize();
-    // };
-    // AdMobInit();
+    const AdMobInit = async () => {
+      await mobileAds().initialize();
+    };
+    AdMobInit();
   }, []);
   return (
     <Provider store={store}>

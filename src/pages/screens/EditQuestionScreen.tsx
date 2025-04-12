@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Platform,
+  Keyboard,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Common from 'components/Common';
@@ -271,6 +272,7 @@ const EditQuestionScreen = ({ navigation, route }: any): React.JSX.Element => {
           }}
           scrollEnabled={false}
           onChangeText={(text) => onTitle(text)}
+          onSubmitEditing={() => Keyboard.dismiss()}
           leftIconContainerStyle={{
             position: 'absolute',
             left: 0,
@@ -323,6 +325,7 @@ const EditQuestionScreen = ({ navigation, route }: any): React.JSX.Element => {
           }}
           value={description}
           onChangeText={(text) => onDescription(text)}
+          onSubmitEditing={() => Keyboard.dismiss()}
         />
         {/* <Text
           style={{ ...PostScreenStyle.Text, marginTop: 10, marginBottom: 10 }}
@@ -388,7 +391,11 @@ const EditQuestionScreen = ({ navigation, route }: any): React.JSX.Element => {
         )} */}
       </ScrollView>
       <BannerAd
-        unitId={TestIds.BANNER}
+        unitId={
+          Platform.OS === 'ios'
+            ? process.env.BANNER_IOS_UNIT_ID || ''
+            : process.env.BANNER_ANDROID_UNIT_ID || ''
+        }
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
       />
     </Common>

@@ -7,6 +7,7 @@ import {
   TouchableOpacity,
   FlatList,
   ActivityIndicator,
+  Platform,
 } from 'react-native';
 import { useSelector } from 'react-redux';
 import { SearchScreenStyle } from 'style';
@@ -94,7 +95,11 @@ const SearhScreen = ({ navigation }: any): React.JSX.Element => {
         scrollEventThrottle={16}
         ListHeaderComponent={
           <BannerAd
-            unitId={TestIds.BANNER}
+            unitId={
+              Platform.OS === 'ios'
+                ? process.env.BANNER_IOS_UNIT_ID || ''
+                : process.env.BANNER_ANDROID_UNIT_ID || ''
+            }
             size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
           />
         }

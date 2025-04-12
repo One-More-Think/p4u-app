@@ -47,16 +47,23 @@ export const LoginPageStyle = StyleSheet.create({
 
 export const SocialButtonStyle = StyleSheet.create({
   Container: {
-    width: '80%',
-    height: 50,
+    width: 300,
+    height: 54,
     display: 'flex',
+    flexDirection: 'row',
     alignItems: 'center',
-    justifyContent: 'center',
+    justifyContent: 'space-around',
     marginTop: 40,
+    borderRadius: 15,
+    borderWidth: 0.5,
+  },
+  TextContainer: {
+    width: 170,
   },
   Image: {
-    height: '100%',
-    width: '70%',
+    height: 50,
+    width: 50,
+    marginLeft: 15,
   },
 });
 
@@ -286,8 +293,6 @@ export const SettingBlockStyle = StyleSheet.create({
   Description: {
     marginRight: 20,
     color: '#7a7b7e',
-    height: '100%',
-    textAlignVertical: 'center',
   },
 });
 

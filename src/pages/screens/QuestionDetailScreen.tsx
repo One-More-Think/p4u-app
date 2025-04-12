@@ -18,6 +18,7 @@ import {
   StatusBar,
   RefreshControl,
   Alert,
+  Keyboard,
   Share,
 } from 'react-native';
 import Common from 'components/Common';
@@ -321,7 +322,11 @@ const QuestionDetailScreen = ({
       </SafeAreaView>
       <BannerAd
         ref={bannerRef}
-        unitId={TestIds.BANNER}
+        unitId={
+          Platform.OS === 'ios'
+            ? process.env.BANNER_IOS_UNIT_ID || ''
+            : process.env.BANNER_ANDROID_UNIT_ID || ''
+        }
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
       />
       <ScrollView
@@ -447,6 +452,7 @@ const QuestionDetailScreen = ({
           }}
           value={comment}
           onChangeText={(text) => onComment(text)}
+          onSubmitEditing={() => Keyboard.dismiss()}
         />
       </SafeAreaView>
     </Common>

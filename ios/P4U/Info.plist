@@ -30,6 +30,7 @@
 				<string>com.googleusercontent.apps.542779791325-3dnrlt0m1ddjdi25gn0vfoi9ljgilne7</string>
 			</array>
 		</dict>
+		<dict/>
 	</array>
 	<key>CFBundleVersion</key>
 	<string>$(CURRENT_PROJECT_VERSION)</string>
@@ -69,9 +70,5 @@
 	</array>
 	<key>UIViewControllerBasedStatusBarAppearance</key>
 	<false/>
-	<!-- <key>LSApplicationQueriesSchemes</key>
-	<array>
-    	<string>itms-apps</string>
-	</array> -->
 </dict>
 </plist>

@@ -1,6 +1,12 @@
 import React from 'react';
 import type { PropsWithChildren } from 'react';
-import { TouchableOpacity, Image, useColorScheme } from 'react-native';
+import {
+  TouchableOpacity,
+  Image,
+  useColorScheme,
+  Text,
+  View,
+} from 'react-native';
 import { SocialButtonStyle } from '../style';
 
 type SocialLoginButtonProps = PropsWithChildren<{
@@ -11,30 +17,41 @@ const SocialLoginButton = ({
   title,
   onPress,
 }: SocialLoginButtonProps): React.JSX.Element => {
-  const isDark = useColorScheme() === 'dark';
-  const LogoImage = (title: string, isDark: Boolean) => {
+  const LogoImage = (title: string) => {
     switch (title) {
       case 'Google':
-        return isDark
-          ? require('assets/images/google_dark.png')
-          : require('assets/images/google_light.png');
+        return require('assets/images/google_light.png');
       case 'Apple':
-        return isDark
-          ? require('assets/images/apple_dark.png')
-          : require('assets/images/apple_light.png');
+        return require('assets/images/apple_light.png');
       default:
-        return isDark
-          ? require('assets/images/google_dark.png')
-          : require('assets/images/google_light.png');
+        return require('assets/images/google_light.png');
     }
   };
   return (
-    <TouchableOpacity style={SocialButtonStyle.Container} onPress={onPress}>
+    <TouchableOpacity
+      style={{
+        ...SocialButtonStyle.Container,
+        backgroundColor: 'white',
+      }}
+      onPress={onPress}
+    >
       <Image
-        source={LogoImage(title, isDark)}
+        source={LogoImage(title)}
+        resizeMode="center"
         style={SocialButtonStyle.Image}
-        resizeMode="stretch"
       />
+      <View style={SocialButtonStyle.TextContainer}>
+        <Text
+          style={{
+            fontSize: 15,
+            color: 'black',
+            fontFamily: 'Robot',
+            fontWeight: 'bold',
+          }}
+        >
+          Sign In with {title}
+        </Text>
+      </View>
     </TouchableOpacity>
   );
 };

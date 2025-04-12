@@ -4,11 +4,13 @@ import EncryptedStorage from 'react-native-encrypted-storage';
 import {
   GoogleSignin,
   isSuccessResponse,
+  isCancelledResponse,
   SignInResponse,
 } from '@react-native-google-signin/google-signin';
 import {
   appleAuth,
   appleAuthAndroid,
+  AppleRequestResponse,
 } from '@invertase/react-native-apple-authentication';
 import axios from 'axios';
 import api from 'utils/api';
@@ -37,53 +39,51 @@ const GoogleButtonPress = async () => {
 
 const AppleButtonPress = async () => {
   if (Platform.OS === 'ios') {
-    const appleAuthRequestResponse = await appleAuth.performRequest({
-      requestedOperation: appleAuth.Operation.LOGIN,
-      requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
-    });
+    const appleAuthRequestResponse: AppleRequestResponse =
+      await appleAuth.performRequest({
+        requestedOperation: appleAuth.Operation.LOGIN,
+        requestedScopes: [appleAuth.Scope.FULL_NAME, appleAuth.Scope.EMAIL],
+      });
 
     const credentialState = await appleAuth.getCredentialStateForUser(
       appleAuthRequestResponse.user
     );
 
     if (credentialState === appleAuth.State.AUTHORIZED) {
-      // user is authenticated
+      return { data: { idToken: appleAuthRequestResponse.identityToken } };
     }
   } else if (Platform.OS === 'android') {
     const rawNonce = uuid();
     const state = uuid();
 
-    // Configure the request
     appleAuthAndroid.configure({
-      // The Service ID you registered with Apple
       clientId: 'com.example.client-android',
-
-      // Return URL added to your Apple dev console. We intercept this redirect, but it must still match
-      // the URL you provided to Apple. It can be an empty route on your backend as it's never called.
       redirectUri: `${process.env.API_URL}users/sign-in/apple`,
-
-      // The type of response requested - code, id_token, or both.
       responseType: appleAuthAndroid.ResponseType.ALL,
-
-      // The amount of user information requested from Apple.
       scope: appleAuthAndroid.Scope.ALL,
-
-      // Random nonce value that will be SHA256 hashed before sending to Apple.
-      nonce: rawNonce,
-
-      // Unique state value used to prevent CSRF attacks. A UUID will be generated if nothing is provided.
-      state,
+      // nonce: rawNonce,
+      // state,
     });
   }
 };
 export const OAuth2Login = (snsType: string) => async (dispatch: any) => {
   try {
-    const response: any =
-      snsType === 'google'
-        ? await GoogleButtonPress()
-        : await AppleButtonPress();
+    let response: any = null;
+    switch (snsType) {
+      case 'google':
+        response = await GoogleButtonPress();
+        if (isCancelledResponse(response)) return;
+        break;
+      case 'apple':
+        response = await AppleButtonPress();
+        console.log(response);
+        break;
+      default:
+        break;
+    }
 
-    if (!response.data) throw new Error('Fail to login');
+    if (!response || !response.data)
+      throw new Error('No response from Social Login');
 
     dispatch(setIsLoading(true));
 
@@ -108,6 +108,7 @@ export const OAuth2Login = (snsType: string) => async (dispatch: any) => {
       config
     );
 
+    console.log(userData.data);
     if (!userData.data) throw new Error('Fail to login');
 
     await EncryptedStorage.setItem('token', userData.data?.accessToken);
@@ -115,21 +116,24 @@ export const OAuth2Login = (snsType: string) => async (dispatch: any) => {
 
     const userInfo: UserInfoType = {
       id: userData.data?.userInfo?.id,
-      email: response.data?.user?.email,
-      gender: userData.data?.userInfo?.gender,
-      occupation: userData.data?.userInfo?.occupation,
-      aboutMe: userData.data?.userInfo?.aboutMe,
+      email: userData.data?.userInfo?.email,
+      gender: userData.data?.userInfo?.gender || 'None',
+      occupation: userData.data?.userInfo?.occupation || '',
+      aboutMe: userData.data?.userInfo?.aboutMe || '',
       country: current_country?.data.toLowerCase(),
       age: userData.data?.userInfo?.age,
     };
 
-    if (isSuccessResponse(response)) dispatch(userLogin({ userInfo, snsType }));
+    if (snsType === 'google' && isSuccessResponse(response))
+      dispatch(userLogin({ userInfo, snsType }));
+    else if (snsType === 'apple') dispatch(userLogin({ userInfo, snsType }));
     else throw new Error('Fail to login');
   } catch (error: any) {
     const errorMessage: string =
       error.response?.data?.message ||
       error.message ||
       'Exceptional error occurred';
+    console.log(errorMessage);
     dispatch(
       showAlert({
         message: errorMessage,

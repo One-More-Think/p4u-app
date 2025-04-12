@@ -8,6 +8,7 @@ import {
   TouchableOpacity,
   ScrollView,
   Platform,
+  Keyboard,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Common from 'components/Common';
@@ -322,6 +323,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
             ) : undefined
           }
           value={title}
+          onSubmitEditing={() => Keyboard.dismiss()}
         />
         <Text
           style={{ ...PostScreenStyle.Text, marginTop: 10, marginBottom: 10 }}
@@ -359,6 +361,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
           }}
           value={description}
           onChangeText={(text) => onDescription(text)}
+          onSubmitEditing={() => Keyboard.dismiss()}
         />
         <Text
           style={{ ...PostScreenStyle.Text, marginTop: 10, marginBottom: 10 }}
@@ -387,6 +390,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
             }}
             value={options[idx]}
             onChangeText={(text) => handleUpdateOption(idx, text)}
+            onSubmitEditing={() => Keyboard.dismiss()}
             leftIcon={
               options[idx] ? (
                 <Ionicons
@@ -424,7 +428,11 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
         )}
       </ScrollView>
       <BannerAd
-        unitId={TestIds.BANNER}
+        unitId={
+          Platform.OS === 'ios'
+            ? process.env.BANNER_IOS_UNIT_ID || ''
+            : process.env.BANNER_ANDROID_UNIT_ID || ''
+        }
         size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
       />
     </Common>

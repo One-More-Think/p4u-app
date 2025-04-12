@@ -1,11 +1,16 @@
 #import "AppDelegate.h"
 #import <GoogleSignIn/GoogleSignIn.h>
 #import <React/RCTBundleURLProvider.h>
-
+#import "RNSplashScreen.h"
 @implementation AppDelegate
 
 // AppDelegate.m
 - (BOOL)application:(UIApplication *)application openURL:(nonnull NSURL *)url options:(nonnull NSDictionary<NSString *,id> *)options {
+//  if ([_currentAuthorizationFlow resumeExternalUserAgentFlowWithURL:url]) {
+//    _currentAuthorizationFlow = nil;
+//    return YES;
+//  }
+
   return [GIDSignIn.sharedInstance handleURL:url];
 }
 
@@ -16,7 +21,10 @@
   // They will be passed down to the ViewController used by React Native.
   self.initialProps = @{};
 
-  return [super application:application didFinishLaunchingWithOptions:launchOptions];
+  [super application:application didFinishLaunchingWithOptions:launchOptions];
+    [RNSplashScreen show];
+
+  return YES;
 }
 
 - (NSURL *)sourceURLForBridge:(RCTBridge *)bridge

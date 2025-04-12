@@ -6,6 +6,7 @@ import {
   View,
   Platform,
   TouchableOpacity,
+  Keyboard,
 } from 'react-native';
 import Common from 'components/Common';
 import { useDispatch, useSelector } from 'react-redux';
@@ -229,6 +230,7 @@ const NewMemberScreen = (): React.JSX.Element => {
             }}
             value={occupation}
             onChangeText={(text) => onOccupation(text)}
+            onSubmitEditing={() => Keyboard.dismiss()}
           />
           <Text
             style={{
@@ -270,6 +272,7 @@ const NewMemberScreen = (): React.JSX.Element => {
             }}
             value={aboutMe}
             onChangeText={(text) => onAboutMe(text)}
+            onSubmitEditing={() => Keyboard.dismiss()}
           />
         </View>
         <TouchableOpacity
