@@ -67,7 +67,7 @@ const QuestionComment = ({
           <View style={UserBoxStyle.InfoBox}>
             <View style={UserBoxStyle.IconWrapper}>
               <Ionicons
-                name={writer?.gender}
+                name={writer.gender === 'none' ? 'remove' : writer.gender}
                 color={GenderColor(writer?.gender)}
                 size={18}
               />

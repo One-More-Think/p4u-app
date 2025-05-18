@@ -13,38 +13,6 @@ export const CommonStyle = StyleSheet.create({
   },
 });
 
-export const LoginPageStyle = StyleSheet.create({
-  topBodyContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '50%',
-    width: '100%',
-    marginTop: '20%',
-  },
-  topBodyLogo: {
-    width: '100%',
-    height: '80%',
-    marginRight: 20,
-  },
-  topBodyText: {
-    height: '20%',
-    fontSize: 50,
-    fontWeight: 'bold',
-    fontFamily: 'lucida grande',
-    color: '#8672a5',
-  },
-  bottomBodyContainer: {
-    display: 'flex',
-    flexDirection: 'column',
-    alignItems: 'center',
-    justifyContent: 'center',
-    height: '30%',
-    width: '100%',
-  },
-});
-
 export const SocialButtonStyle = StyleSheet.create({
   Container: {
     width: 300,
@@ -122,7 +90,7 @@ export const QuestionStyle = StyleSheet.create({
     fontWeight: '500',
     fontSize: 15,
     fontFamily: 'Rubik',
-    flexWrap: 'wrap',
+    flexShrink: 1,
   },
   TextContainer: {
     width: '90%',
@@ -429,6 +397,7 @@ export const UserBoxStyle = StyleSheet.create({
   IconText: {
     fontWeight: '500',
     fontFamily: 'Rubik',
+    flexWrap: 'wrap',
   },
 });
 

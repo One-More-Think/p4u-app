@@ -76,7 +76,6 @@ export const OAuth2Login = (snsType: string) => async (dispatch: any) => {
         break;
       case 'apple':
         response = await AppleButtonPress();
-        console.log(response);
         break;
       default:
         break;
@@ -100,6 +99,10 @@ export const OAuth2Login = (snsType: string) => async (dispatch: any) => {
       `https://ipapi.co/${current_ip.data?.ip}/country/`
     );
 
+    if (current_country.status !== 200) {
+      throw new Error(current_country?.data.reason);
+    }
+
     const userData = await axios.post(
       `${process.env.API_URL}users/sign-in/${snsType}`,
       {
@@ -108,7 +111,6 @@ export const OAuth2Login = (snsType: string) => async (dispatch: any) => {
       config
     );
 
-    console.log(userData.data);
     if (!userData.data) throw new Error('Fail to login');
 
     await EncryptedStorage.setItem('token', userData.data?.accessToken);
@@ -338,7 +340,7 @@ export const GetQuestions =
     }
   };
 
-export const GetQuestionDetail = (id: string) => async (dispatch: any) => {
+export const GetQuestionDetail = (id: number) => async (dispatch: any) => {
   try {
     dispatch(setIsLoading(true));
     const res = await api.get(`questions/${id}`);
@@ -396,7 +398,15 @@ export const PostQuestion =
 export const DeleteQuestion = (id: number) => async (dispatch: any) => {
   try {
     dispatch(setIsLoading(true));
-    await api.delete(`questions/${id}`);
+    const res = await api.delete(`questions/${id}`);
+    if (res.status === 200)
+      dispatch(
+        showAlert({
+          message: 'Question deleted',
+          type: 'success',
+          id: Date.now().toString(),
+        })
+      );
   } catch (error: any) {
     const errorMessage: string =
       error.response?.data?.message ||
@@ -418,7 +428,6 @@ export const ReportQuestion = (questionId: number) => async (dispatch: any) => {
   try {
     dispatch(setIsLoading(true));
     const res = await api.post(`questions/${questionId}/report`);
-    console.log(res.status);
     if (res.status === 201) {
       dispatch(
         showAlert({
@@ -470,7 +479,6 @@ export const SelectOption =
 export const UpdateQuestion =
   (data: any, id: number) => async (dispatch: any) => {
     try {
-      console.log(data, id);
       dispatch(setIsLoading(true));
       const res = await api.put(`questions/${id}`, {
         category: data.category,

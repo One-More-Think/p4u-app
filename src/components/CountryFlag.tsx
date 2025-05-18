@@ -1,6 +1,6 @@
-import React, {useMemo} from 'react';
-import type {PropsWithChildren} from 'react';
-import {Image} from 'react-native';
+import React, { useMemo } from 'react';
+import type { PropsWithChildren } from 'react';
+import { Image } from 'react-native';
 
 type CountryProps = PropsWithChildren<{
   isoCode: string;
@@ -215,13 +215,14 @@ const CountryFlag = ({
       ye: require('assets/images/w80/ye.png'),
       zm: require('assets/images/w80/zm.png'),
       zw: require('assets/images/w80/zw.png'),
+      null: require('assets/images/w80/null.png'),
     };
   }, []);
   const IMAGE_PATH = imageMap[isoCode];
   return (
     <Image
       source={IMAGE_PATH}
-      style={{width: size * 1.6, height: size, ...style}}
+      style={{ width: size * 1.6, height: size, ...style }}
     />
   );
 };

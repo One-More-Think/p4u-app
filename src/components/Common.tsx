@@ -1,6 +1,12 @@
 import React, { useEffect } from 'react';
 import type { PropsWithChildren } from 'react';
-import { SafeAreaView, StatusBar, View } from 'react-native';
+import {
+  SafeAreaView,
+  StatusBar,
+  View,
+  KeyboardAvoidingView,
+  Platform,
+} from 'react-native';
 import { CommonStyle } from 'style';
 import { useSelector } from 'react-redux';
 import LoadingIndicator from './LoadingIndicator';
@@ -37,15 +43,17 @@ const Common = ({ children, style = {} }: CommonProps): React.JSX.Element => {
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
           backgroundColor={backgroundStyle.backgroundColor}
         />
-        <View
+        <KeyboardAvoidingView
           style={{
             ...CommonStyle.mainContainer,
             backgroundColor: isDarkMode ? '#b4bac9' : '#e1e9fc',
             ...style,
           }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          keyboardVerticalOffset={48}
         >
           {children}
-        </View>
+        </KeyboardAvoidingView>
       </SafeAreaView>
     </>
   );

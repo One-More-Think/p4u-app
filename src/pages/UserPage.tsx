@@ -101,9 +101,9 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
             }}
           >
             <View style={UserPageStyle.UserInnerBox}>
-              <View style={UserPageStyle.TextContainer}>
-                {/* Email will be shown only for owner */}
-                <Text
+              {/* <View style={UserPageStyle.TextContainer}> */}
+              {/* Email will be shown only for owner */}
+              {/* <Text
                   style={{
                     ...UserPageStyle.UserText,
                     color: isDarkMode ? 'white' : '#222428',
@@ -118,8 +118,8 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
                   }}
                 >
                   {userInfo.email}
-                </Text>
-              </View>
+                </Text> */}
+              {/* </View> */}
               <View style={UserPageStyle.TextContainer}>
                 <Text
                   style={{

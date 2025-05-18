@@ -63,10 +63,10 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
           backgroundColor={isDarkMode ? '#222428' : 'white'}
         />
         <TouchableOpacity
-          style={{ marginLeft: 20, position: 'absolute', left: 0 }}
+          style={{ marginLeft: 10, position: 'absolute', left: 0 }}
           onPress={() => navigation.goBack()}
         >
-          <Ionicons name="chevron-back" size={30} />
+          <Ionicons name="chevron-back" size={40} />
         </TouchableOpacity>
         <Text style={UserPageStyle.SafeAreaText}>Profile</Text>
       </SafeAreaView>
@@ -92,9 +92,9 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
             }}
           >
             <View style={UserPageStyle.UserInnerBox}>
-              <View style={UserPageStyle.TextContainer}>
-                {/* Email will be shown only for owner */}
-                <Text
+              {/* <View style={UserPageStyle.TextContainer}> */}
+              {/* Email will be shown only for owner */}
+              {/* <Text
                   style={{
                     ...UserPageStyle.UserText,
                     color: isDarkMode ? 'white' : '#222428',
@@ -109,8 +109,8 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
                   }}
                 >
                   {userData?.email}
-                </Text>
-              </View>
+                </Text> */}
+              {/* </View> */}
               <View style={UserPageStyle.TextContainer}>
                 <Text
                   style={{

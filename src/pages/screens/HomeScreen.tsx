@@ -82,7 +82,12 @@ const HomeScreen = ({ navigation }: any): React.JSX.Element => {
   useEffect(() => {
     const refreshMainPage = async () => {
       try {
-        await fetchData(0);
+        await new Promise<void>((resolve) => {
+          setTimeout(async () => {
+            await fetchData(0);
+            resolve();
+          }, 500);
+        });
       } catch (err) {
         console.error('Error refreshing the page:', err);
       } finally {

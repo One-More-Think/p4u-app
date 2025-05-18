@@ -55,19 +55,23 @@ const QuestionDetailScreen = ({
   const [checked, setChecked] = useState<boolean>(false);
   const [search, setSeacrh] = useState<string>('');
   const [comment, setComment] = useState<string>('');
+  const [totalChoose, setTotalChoose] = useState<number>(0);
 
   useEffect(() => {
     const getQuestionDetail = async () => {
       const details = await store.dispatch(GetQuestionDetail(data.id));
       data['timestamp'] = details?.createdAt.replace('T', ' ').slice(0, -5);
       setDetailInfo(details);
+      let total = 0;
       details?.options.forEach((opt: any) => {
         if (opt.selectedUsers.length > 0) {
           opt.selectedUsers.forEach((sct: any) => {
             if (sct.userId === userInfo.id) setSelected(sct.optionId);
           });
         }
+        total += opt.selectedUsers.length;
       });
+      setTotalChoose(total);
     };
     if (detailInfo === null) {
       getQuestionDetail();
@@ -76,7 +80,9 @@ const QuestionDetailScreen = ({
 
   useEffect(() => {
     const unsubscribe = navigation.addListener('focus', () => {
-      refreshMainPage();
+      if (detailInfo === null) {
+        refreshMainPage();
+      }
     });
 
     return unsubscribe;
@@ -94,7 +100,6 @@ const QuestionDetailScreen = ({
           });
         }
       });
-      await new Promise((resolve) => setTimeout(resolve, 1000));
       setDetailInfo(detailInfo);
     } catch (err) {
       console.error('Error refreshing the page:', err);
@@ -129,9 +134,21 @@ const QuestionDetailScreen = ({
   const onSelect = useCallback(
     async (questionId: any, optionId: any) => {
       await store.dispatch(SelectOption(questionId, optionId));
+      const details = await store.dispatch(GetQuestionDetail(data.id));
+      setDetailInfo({ ...detailInfo, options: details?.options });
+      let total = 0;
+      details?.options.forEach((opt: any) => {
+        if (opt.selectedUsers.length > 0) {
+          opt.selectedUsers.forEach((sct: any) => {
+            if (sct.userId === userInfo.id) setSelected(sct.optionId);
+          });
+        }
+        total += opt.selectedUsers.length;
+      });
+      setTotalChoose(total);
       setSelected(optionId);
     },
-    [selected]
+    [totalChoose]
   );
   const onFilter = useCallback(
     (filter: any) => {
@@ -321,7 +338,6 @@ const QuestionDetailScreen = ({
         </View>
       </SafeAreaView>
       <BannerAd
-        ref={bannerRef}
         unitId={
           Platform.OS === 'ios'
             ? process.env.BANNER_IOS_UNIT_ID || ''
@@ -375,11 +391,20 @@ const QuestionDetailScreen = ({
                   selected={selected}
                   disabled={
                     data.writerId === userInfo.id ||
-                    detailInfo?.timeout >= Math.floor(Date.now()) / 1000
+                    detailInfo?.timeout <= Math.floor(Date.now())
                   }
                   data={{
                     questionId: option?.questionId,
                     optionId: option?.id,
+                    percentage: totalChoose
+                      ? (
+                          100 *
+                          (option.selectedUsers.length / totalChoose)
+                        ).toFixed(2)
+                      : '0.0',
+                    timeout: Boolean(
+                      detailInfo?.timeout <= Math.round(Date.now())
+                    ),
                   }}
                 />
               ))}
@@ -394,25 +419,6 @@ const QuestionDetailScreen = ({
                 />
               ))}
             </View>
-            {/* {MockData.timeout && (
-            <View style={QuestionDetailStyle.BottomBox}>
-              <View style={QuestionDetailStyle.FilterBox}>
-                {filterList.map((filter) => (
-                  <FilterBox
-                    key={`${filter}-filterBox`}
-                    title={filter}
-                    onFilter={onFilter}
-                    filtered={filtered}
-                  />
-                ))}
-              </View>
-              {filtered && (
-                <View style={QuestionDetailStyle.ChartBox}>
-                  <Chart data={''} filtered={filtered} />
-                </View>
-              )}
-            </View>
-          )} */}
           </View>
         )}
       </ScrollView>
@@ -452,7 +458,7 @@ const QuestionDetailScreen = ({
           }}
           value={comment}
           onChangeText={(text) => onComment(text)}
-          onSubmitEditing={() => Keyboard.dismiss()}
+          // onSubmitEditing={() => Keyboard.dismiss()}
         />
       </SafeAreaView>
     </Common>

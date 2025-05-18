@@ -37,7 +37,7 @@ const SocialLoginButton = ({
     >
       <Image
         source={LogoImage(title)}
-        resizeMode="center"
+        resizeMode="contain"
         style={SocialButtonStyle.Image}
       />
       <View style={SocialButtonStyle.TextContainer}>

@@ -11,6 +11,7 @@ export interface UserInfoType {
   aboutMe?: string;
   age?: number;
   language?: string;
+  isBlocked?: boolean;
 }
 
 interface userInitType {
@@ -36,6 +37,7 @@ const initialState: userInitType = {
     gender: '',
     occupation: '',
     aboutMe: ``,
+    isBlocked: false,
   },
   darkmode: false,
   snsType: '',

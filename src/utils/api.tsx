@@ -53,28 +53,50 @@ api.interceptors.response.use(
   async (err) => {
     if (err.response.status === 401 || err.response.status === 403) {
       try {
-        // store.dispatch(LogoutUser());
+        const message = err.response.data?.message || 'Unknown error';
+        store.dispatch(LogoutUser());
+        throw new Error(message);
         // const navigation: any = useNavigation();
         // navigation.reset({
         //   key: 'Login',
         //   index: 0,
         //   routes: [{ name: 'LoginPage' }],
         // });
+        store.dispatch(
+          showAlert({
+            message: message,
+            type: 'error',
+            id: Date.now().toString(),
+          })
+        );
       } catch (_error: any) {
         const errorMessage: string =
           _error.response?.data?.message ||
           _error.message ||
           'Exceptional error occurred';
-        console.log(errorMessage);
+        store.dispatch(
+          showAlert({
+            message: errorMessage,
+            type: 'error',
+            id: Date.now().toString(),
+          })
+        );
         return Promise.reject(new Error(errorMessage));
       }
+    } else {
+      const errorMessage: string =
+        err.response?.data?.message ||
+        err.message ||
+        'Exceptional error occurred';
+      store.dispatch(
+        showAlert({
+          message: errorMessage,
+          type: 'error',
+          id: Date.now().toString(),
+        })
+      );
+      return Promise.reject(new Error(errorMessage));
     }
-    const errorMessage: string =
-      err.response?.data?.message ||
-      err.message ||
-      'Exceptional error occurred';
-    console.log(errorMessage, err.response?.status);
-    return Promise.reject(new Error(errorMessage));
   }
 );
 

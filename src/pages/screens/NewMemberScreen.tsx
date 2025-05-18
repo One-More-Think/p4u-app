@@ -29,7 +29,7 @@ const NewMemberScreen = (): React.JSX.Element => {
   const userInfo = useSelector((state: any) => state.user.userInfo);
   const [age, setAge] = useState<number>(15);
   const [gender, setGender] = useState<string>('none');
-  const [occupation, setOccupation] = useState<string>('none');
+  const [occupation, setOccupation] = useState<string>('');
   const [aboutMe, setAboutMe] = useState<string>('');
   const ageList = useMemo(() => {
     return Array.from({ length: 100 - 15 + 1 }, (_, i) => i + 15);

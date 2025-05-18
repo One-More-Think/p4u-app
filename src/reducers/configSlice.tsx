@@ -15,7 +15,7 @@ const initialState: configSliceInitType = {
   language: 'English',
   mode: 'System Mode',
   appInfo: {
-    version: '0.0.0',
+    version: '1.0.1',
   },
   appStateInactive: false,
   isLockOn: false,

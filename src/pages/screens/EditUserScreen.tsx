@@ -7,6 +7,7 @@ import {
   Platform,
   TouchableOpacity,
   Keyboard,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Common from 'components/Common';
 import { useDispatch, useSelector } from 'react-redux';
@@ -73,7 +74,6 @@ const EditUserScreen = ({ navigation }: any): React.JSX.Element => {
       occupation,
       aboutMe,
     };
-    console.log(userData);
 
     store.dispatch(UpdateUser(userData, userInfo.id));
     store.dispatch(userLogin({ userInfo: userData }));
@@ -212,7 +212,6 @@ const EditUserScreen = ({ navigation }: any): React.JSX.Element => {
             leftIconContainerStyle={{
               position: 'absolute',
               left: 0,
-              top: -8,
             }}
             leftIcon={
               occupation ? (
@@ -224,7 +223,7 @@ const EditUserScreen = ({ navigation }: any): React.JSX.Element => {
                 />
               ) : undefined
             }
-            placeholderTextColor={isDarkMode ? 'white' : '#222428'}
+            placeholderTextColor="gray"
             inputStyle={{
               ...NewMemberScreenStyle.TextContainer,
               color: isDarkMode ? 'white' : '#222428',
@@ -251,11 +250,10 @@ const EditUserScreen = ({ navigation }: any): React.JSX.Element => {
           </Text>
           <Input
             placeholder="About Me..."
-            multiline
             leftIconContainerStyle={{
               position: 'absolute',
               left: 0,
-              top: -8,
+              top: -3,
             }}
             leftIcon={
               aboutMe ? (
@@ -267,7 +265,7 @@ const EditUserScreen = ({ navigation }: any): React.JSX.Element => {
                 />
               ) : undefined
             }
-            placeholderTextColor={isDarkMode ? 'white' : '#222428'}
+            placeholderTextColor="gray"
             inputStyle={{
               ...NewMemberScreenStyle.TextContainer,
               color: isDarkMode ? 'white' : '#222428',

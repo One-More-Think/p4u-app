@@ -62,6 +62,8 @@ const UserBox = ({
                 ...UserBoxStyle.IconText,
                 color: '#222428',
                 fontSize: 14,
+                width: 90,
+                textAlign: 'center',
               }}
             >
               {occupation}

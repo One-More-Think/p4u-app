@@ -24,7 +24,7 @@ const CommentBox = ({ data, isLoading }: any): React.JSX.Element => {
         backgroundColor: isDarkMode ? '#222428' : 'white',
       }}
       onPress={() =>
-        navigation.navigate('QuestionDetailScreen', {
+        navigation.push('QuestionDetailScreen', {
           data: {
             id,
             country: writer?.country,
@@ -45,7 +45,7 @@ const CommentBox = ({ data, isLoading }: any): React.JSX.Element => {
             style={{ borderWidth: 0.5, borderColor: 'black' }}
           />
           <Ionicons
-            name={writer.gender}
+            name={writer.gender === 'none' ? 'remove' : writer.gender}
             size={20}
             color={GenderColor(writer.gender)}
           />

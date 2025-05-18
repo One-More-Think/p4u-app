@@ -294,7 +294,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
           Title
         </Text>
         <Input
-          placeholder="Title"
+          placeholder="Posting Title..."
           placeholderTextColor={isDarkMode ? 'white' : '#222428'}
           inputStyle={{
             ...PostScreenStyle.TextContainer,
@@ -331,8 +331,8 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
           Description
         </Text>
         <Input
-          placeholder="Description"
-          multiline
+          placeholder="Description..."
+          // multiline
           leftIconContainerStyle={{
             position: 'absolute',
             left: 0,
@@ -373,7 +373,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
             scrollEnabled={false}
             key={`option-${idx}`}
             placeholder={`Option ${idx + 1}`}
-            multiline
+            // multiline
             placeholderTextColor={isDarkMode ? 'white' : '#222428'}
             inputStyle={{
               ...PostScreenStyle.TextContainer,
