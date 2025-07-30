@@ -1,4 +1,10 @@
-import React, { useCallback, useMemo, useState, useRef } from 'react';
+import React, {
+  useCallback,
+  useMemo,
+  useState,
+  useRef,
+  useEffect,
+} from 'react';
 import {
   View,
   Modal,
@@ -6,8 +12,8 @@ import {
   Text,
   ScrollView,
   TouchableOpacity,
-  Animated,
   Easing,
+  Animated,
 } from 'react-native';
 
 import { LoginPageStyle, ModalStyle } from 'pages/LoginPage.style';
@@ -18,22 +24,27 @@ import { OAuth2Login } from 'reducers/actions/UserAction';
 import { useSelector } from 'react-redux';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import EncryptedStorage from 'react-native-encrypted-storage';
+import { useTranslation } from 'react-i18next';
+import { getLocales } from 'react-native-localize';
+
 const LoginPage = (): React.JSX.Element => {
+  const { t, i18n } = useTranslation();
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const [isOpen, setIsOpen] = useState<boolean>(false);
   const [AgreeAll, setAgreeAll] = useState<boolean>(false);
   const [OAuthAgree, setOAuthAgree] = useState<boolean>(false);
   const [checkList, setCheckList] = useState<string[]>([]);
   const [seeDetail, setSeeDetail] = useState<any>({
-    gender: false,
-    country: false,
-    age: false,
+    Gender: false,
+    Country: false,
+    Age: false,
   });
+  const [language, setLanguage] = useState('en');
 
   const animations = useRef<any>({
-    gender: new Animated.Value(0),
-    country: new Animated.Value(0),
-    age: new Animated.Value(0),
+    Gender: new Animated.Value(0),
+    Country: new Animated.Value(0),
+    Age: new Animated.Value(0),
   }).current;
 
   const toggleCollapse = (item: any) => {
@@ -48,47 +59,14 @@ const LoginPage = (): React.JSX.Element => {
     setSeeDetail((prev: any) => ({ ...prev, [item]: !isOpen }));
   };
 
-  const nameList = useMemo(() => {
-    return ['gender', 'country', 'age'];
+  const nameList = useMemo((): string[] => {
+    return ['Gender', 'Country', 'Age'];
   }, []);
   const descriptionList = useMemo((): any => {
     return {
-      gender: `We may collect optional information about your gender, which may include "Male", "Female", or "None".
-
-Purpose of collection:
-- To better understand our user demographics.
-- To improve our services and user experience through analytics.
-- To ensure diversity and inclusion in our design and content decisions.
-
-Your choices:
-- Providing gender information is completely optional.
-- You may choose "None" or opt not to provide this data at all.
-- You can request to access, update, or delete your gender information at any time by contacting us.`,
-      country: `We may collect and use information about your location:
-
-We may collect location data via your device's IP address, Wi-Fi, or other technologies.
-
-To provide location-based services, enhance user experience, improve our services, and for analytics purposes.
-
-We do not share your precise location data with third parties without your explicit consent, except as required by law or to provide services you have requested.`,
-      age: `Age Data Collection
-We may collect your age as part of the registration process, and this information is used to tailor content, ads, and other services to better suit your preferences. Specifically, we may collect:
-
-Age Range: For analytics purposes, we may ask for your age or an age range to better understand the demographic composition of our users. This helps us to improve the user experience and deliver content that aligns with your interests.
-
-Personalized Content and Ads: Based on your age, we may personalize the content and advertisements you see within the app. This ensures that you are presented with relevant information, promotions, and recommendations.
-      
-How We Use Your Age Information
-Analytics: Your age data may be used in aggregate to generate reports for internal analysis. This helps us improve the app and ensure it meets the needs of all users.
-
-User Experience: By knowing your age or age group, we can customize app features, content, and ads to provide a more engaging experience tailored to your interests.
-      
-Data Security:
-We take the privacy and security of your personal information seriously. Any data, including your age, is stored securely and will not be shared with third parties without your explicit consent, except as required by law.
-      
-Your Rights:
-You have the right to update or delete any personal information you have shared with us, including age data. If you no longer wish to provide this data, you can update your profile settings within the app.
-      `,
+      Gender: t('Gender_Term'),
+      Country: t('Country_Term'),
+      Age: t('Age_Term'),
     };
   }, []);
 
@@ -103,7 +81,7 @@ You have the right to update or delete any personal information you have shared 
 
   const onAgreeAll = useCallback(() => {
     if (!EnalbeAgree) {
-      setCheckList(['gender', 'country', 'age']);
+      setCheckList(['Gender', 'Country', 'Age']);
       setOAuthAgree(true);
     } else {
       setCheckList([]);
@@ -127,9 +105,9 @@ You have the right to update or delete any personal information you have shared 
 
   const EnalbeAgree = useMemo(() => {
     return (
-      checkList.includes('gender') &&
-      checkList.includes('country') &&
-      checkList.includes('age') &&
+      checkList.includes('Gender') &&
+      checkList.includes('Country') &&
+      checkList.includes('Age') &&
       OAuthAgree
     );
   }, [checkList, OAuthAgree]);
@@ -161,10 +139,23 @@ You have the right to update or delete any personal information you have shared 
 
   const InterpolateValue: any = useMemo(() => {
     return {
-      gender: 330,
-      country: 220,
-      age: 740,
+      ko: { Gender: 240, Country: 200, Age: 420 },
+      en: { Gender: 330, Country: 220, Age: 740 },
+      es: { Gender: 360, Country: 280, Age: 880 },
+      ja: { Gender: 250, Country: 230, Age: 410 },
+      zh: { Gender: 230, Country: 200, Age: 390 },
+      vn: { Gender: 350, Country: 280, Age: 470 },
     };
+  }, [language]);
+
+  useEffect(() => {
+    const loadLanguage = async () => {
+      const storedLanguage =
+        (await EncryptedStorage.getItem('language')) ||
+        getLocales()[0].languageCode;
+      setLanguage(storedLanguage);
+    };
+    loadLanguage();
   }, []);
 
   return (
@@ -250,13 +241,10 @@ You have the right to update or delete any personal information you have shared 
                             }}
                           />
                         </TouchableOpacity>
-                        <Text style={{ marginLeft: 5 }}>
-                          Agree All Terms of Use
-                        </Text>
+                        <Text style={{ marginLeft: 5 }}>{t('All_Term')}</Text>
                       </View>
                       <Text style={{ marginLeft: 35 }}>
-                        Full consent means consent to all information provided
-                        by individual P4U
+                        {t('All_Term_message')}
                       </Text>
                     </View>
                     <BorderLine />
@@ -281,9 +269,9 @@ You have the right to update or delete any personal information you have shared 
                           width: '90%',
                         }}
                       >
-                        {`[Mandatory] Google/Apple`}
+                        {`[${t('Mandatory')}] Google/Apple`}
                         {'\n'}
-                        {`Third party consent to personal information`}
+                        {t('SNS_Term')}
                       </Text>
                     </View>
                     <BorderLine />
@@ -295,72 +283,79 @@ You have the right to update or delete any personal information you have shared 
                         marginLeft: 35,
                       }}
                     >
-                      <Text>{`[Mandatory] User Provided information\n`}</Text>
-                      <Text>{`User can report improper question or comment. The user who reported by 3 people will be block account as abuse user.`}</Text>
-                      {nameList.map((item: string) => (
-                        <View
-                          key={`${item}-nameList-key`}
-                          style={{
-                            display: 'flex',
-                            flexDirection: 'column',
-                            marginTop: 5,
-                          }}
-                        >
+                      <Text>{`[${t('Mandatory')}] ${t(
+                        'User_Provided_information'
+                      )}\n`}</Text>
+                      <Text>{t('User_Term')}</Text>
+                      {nameList.map((item: string) => {
+                        return (
                           <View
+                            key={`${item}-nameList-key`}
                             style={{
                               display: 'flex',
-                              flexDirection: 'row',
-                              alignItems: 'center',
+                              flexDirection: 'column',
+                              marginTop: 5,
                             }}
                           >
-                            <TouchableOpacity
-                              onPress={() => onAgreeCheck(item)}
-                            >
-                              <Ionicons
-                                name="checkmark-sharp"
-                                size={30}
-                                style={{
-                                  color: checkList.includes(item)
-                                    ? '#8373a2'
-                                    : 'gray',
-                                }}
-                              />
-                            </TouchableOpacity>
-                            <Text>{item}</Text>
-                            <TouchableOpacity
+                            <View
                               style={{
-                                position: 'absolute',
-                                right: 10,
+                                display: 'flex',
+                                flexDirection: 'row',
+                                alignItems: 'center',
                               }}
-                              onPress={() => toggleCollapse(item)}
                             >
-                              <Text
-                                style={{
-                                  color: 'gray',
-                                  textDecorationLine: 'underline',
-                                }}
+                              <TouchableOpacity
+                                onPress={() => onAgreeCheck(item)}
                               >
-                                See detail
+                                <Ionicons
+                                  name="checkmark-sharp"
+                                  size={30}
+                                  style={{
+                                    color: checkList.includes(item)
+                                      ? '#8373a2'
+                                      : 'gray',
+                                  }}
+                                />
+                              </TouchableOpacity>
+                              <Text>{t(item)}</Text>
+                              <TouchableOpacity
+                                style={{
+                                  position: 'absolute',
+                                  right: 10,
+                                }}
+                                onPress={() => toggleCollapse(item)}
+                              >
+                                <Text
+                                  style={{
+                                    color: 'gray',
+                                    textDecorationLine: 'underline',
+                                  }}
+                                >
+                                  {t('See_detail')}
+                                </Text>
+                              </TouchableOpacity>
+                            </View>
+                            <Animated.View
+                              style={{
+                                height: animations[item].interpolate({
+                                  inputRange: [0, 1],
+                                  outputRange: [
+                                    0,
+                                    InterpolateValue[language][item],
+                                  ],
+                                }),
+                              }}
+                            >
+                              <Text style={{ flexShrink: 1 }}>
+                                {descriptionList[item]}
                               </Text>
-                            </TouchableOpacity>
+                            </Animated.View>
                           </View>
-                          <Animated.View
-                            style={{
-                              height: animations[item].interpolate({
-                                inputRange: [0, 1],
-                                outputRange: [0, InterpolateValue[item]], // adjust height based on your content
-                              }),
-                            }}
-                          >
-                            <Text style={{ flexShrink: 1 }}>
-                              {descriptionList[item]}
-                            </Text>
-                          </Animated.View>
-                        </View>
-                      ))}
-                      <Text
-                        style={{ marginTop: 15 }}
-                      >{`User also can delete its account. After deletion, all question and comment will be deleted too.`}</Text>
+                        );
+                      })}
+                      <Text style={{ marginTop: 15 }}>
+                        {t('Term_bottom_message')}
+                      </Text>
                     </View>
                   </ScrollView>
                 </View>
@@ -387,7 +382,7 @@ You have the right to update or delete any personal information you have shared 
                       fontWeight: 'bold',
                     }}
                   >
-                    Agree to continue
+                    {t('Term_Button')}
                   </Text>
                 </TouchableOpacity>
               </View>
@@ -408,4 +403,4 @@ You have the right to update or delete any personal information you have shared 
   );
 };
 
-export default LoginPage;
+export default React.memo(LoginPage);

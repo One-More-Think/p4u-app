@@ -23,8 +23,10 @@ import SkeletonBar from 'components/SkeletonBar';
 import store from 'reducers/index';
 import { GetUserDetail } from 'reducers/actions/UserAction';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
+  const { t } = useTranslation();
   const { userId } = route.params;
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
@@ -48,11 +50,11 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
     },
     [isLoading]
   );
-  const GenderColor = (gender: string) => {
+  const GenderColor = useCallback((gender: string) => {
     if (gender === 'male') return '#7dc9e0';
     else if (gender === 'female') return '#ee92ba';
     return 'gray';
-  };
+  }, []);
   return (
     <Common>
       <SafeAreaView
@@ -68,7 +70,7 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
         >
           <Ionicons name="chevron-back" size={40} />
         </TouchableOpacity>
-        <Text style={UserPageStyle.SafeAreaText}>Profile</Text>
+        <Text style={UserPageStyle.SafeAreaText}>{t('Profile')}</Text>
       </SafeAreaView>
       <View style={{ display: 'flex', marginTop: 16 }}>
         <BannerAd
@@ -81,7 +83,7 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
         />
       </View>
       <View style={UserPageStyle.Container}>
-        <Text style={UserPageStyle.Text}>User Information</Text>
+        <Text style={UserPageStyle.Text}>{t('User_Information')}</Text>
         {isLoading ? (
           <SkeletonBar style={UserPageStyle.UserInfoBox} />
         ) : (
@@ -118,7 +120,7 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
                     color: isDarkMode ? 'white' : '#222428',
                   }}
                 >
-                  I'm From
+                  {t('Im_From')}
                 </Text>
                 <CountryFlag
                   isoCode={userData?.country}
@@ -137,15 +139,20 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
                     color: isDarkMode ? 'white' : '#222428',
                   }}
                 >
-                  I'm <Text style={{ color: '#79699a' }}>{userData?.age}</Text>{' '}
-                  old{' '}
+                  {t('Im')}{' '}
+                  <Text style={{ color: '#79699a' }}>{userData?.age}</Text>{' '}
+                  {t('old')}{' '}
                   <Text style={{ color: GenderColor(userData?.gender) }}>
-                    {userData?.gender.at(0).toUpperCase() +
-                      userData?.gender.slice(1)}
+                    {t(
+                      userData?.gender.at(0).toUpperCase() +
+                        userData?.gender.slice(1)
+                    )}
                   </Text>{' '}
                   <Text style={{ color: '#9a7969' }}>
-                    {userData?.occupation.at(0).toUpperCase() +
-                      userData?.occupation.slice(1)}
+                    {userData?.occupation
+                      ? userData?.occupation.at(0).toUpperCase() +
+                        userData?.occupation.slice(1)
+                      : ''}
                   </Text>
                 </Text>
               </View>
@@ -161,7 +168,7 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
                     color: isDarkMode ? 'white' : '#222428',
                   }}
                 >
-                  About Me
+                  {t('About_Me')}
                 </Text>
                 <Text
                   style={{
@@ -176,7 +183,7 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
             </View>
           </View>
         )}
-        <Text style={UserPageStyle.Text}>Written Questions</Text>
+        <Text style={UserPageStyle.Text}>{t('Written_Questions')}</Text>
         <View style={UserPageStyle.WrittenQuestionList}>
           <FlatList
             horizontal
@@ -185,7 +192,7 @@ const UserDetailScreen = ({ route, navigation }: any): React.JSX.Element => {
             showsHorizontalScrollIndicator={false}
           />
         </View>
-        <Text style={UserPageStyle.Text}>Commented Questions</Text>
+        <Text style={UserPageStyle.Text}>{t('Commented_Questions')}</Text>
         <View style={UserPageStyle.CommentedQuestionList}>
           <FlatList
             horizontal

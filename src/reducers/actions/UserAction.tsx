@@ -1,5 +1,5 @@
 import { showAlert } from 'reducers/alertSlice';
-import { setIsLoading } from 'reducers/configSlice';
+import { setIsLoading, setResetConfig } from 'reducers/configSlice';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import {
   GoogleSignin,
@@ -17,6 +17,7 @@ import api from 'utils/api';
 import { v4 as uuid } from 'uuid';
 import { userLogin, UserInfoType, userLogOut } from 'reducers/userSlice';
 import { Platform } from 'react-native';
+import i18n from 'i18next';
 const GoogleButtonPress = async () => {
   const scopes = process.env.GOOGLE_SCOPE?.split(' ').map((scope) =>
     scope.trim()
@@ -34,6 +35,7 @@ const GoogleButtonPress = async () => {
   await GoogleSignin.hasPlayServices();
 
   const signData: SignInResponse = await GoogleSignin.signIn();
+
   return signData;
 };
 
@@ -76,13 +78,14 @@ export const OAuth2Login = (snsType: string) => async (dispatch: any) => {
         break;
       case 'apple':
         response = await AppleButtonPress();
+        if (!response) return;
         break;
       default:
         break;
     }
 
     if (!response || !response.data)
-      throw new Error('No response from Social Login');
+      throw new Error(i18n.t('OAuth2Login_error_message'));
 
     dispatch(setIsLoading(true));
 
@@ -93,14 +96,15 @@ export const OAuth2Login = (snsType: string) => async (dispatch: any) => {
     const current_ip: any = await axios.get(
       'https://api.ipify.org/?format=json'
     );
-    if (!current_ip.data?.ip) throw new Error('Fail to login');
+    if (!current_ip.data?.ip)
+      throw new Error(i18n.t('QAuth2Login_error_login_message'));
 
     const current_country: any = await axios.get(
       `https://ipapi.co/${current_ip.data?.ip}/country/`
     );
 
     if (current_country.status !== 200) {
-      throw new Error(current_country?.data.reason);
+      throw new Error(i18n.t('QAuth2Login_error_login_message'));
     }
 
     const userData = await axios.post(
@@ -111,7 +115,8 @@ export const OAuth2Login = (snsType: string) => async (dispatch: any) => {
       config
     );
 
-    if (!userData.data) throw new Error('Fail to login');
+    if (!userData.data)
+      throw new Error(i18n.t('QAuth2Login_error_login_message'));
 
     await EncryptedStorage.setItem('token', userData.data?.accessToken);
     await EncryptedStorage.setItem('sns', snsType);
@@ -120,7 +125,7 @@ export const OAuth2Login = (snsType: string) => async (dispatch: any) => {
       id: userData.data?.userInfo?.id,
       email: userData.data?.userInfo?.email,
       gender: userData.data?.userInfo?.gender || 'None',
-      occupation: userData.data?.userInfo?.occupation || '',
+      occupation: userData.data?.userInfo?.occupation || 'None',
       aboutMe: userData.data?.userInfo?.aboutMe || '',
       country: current_country?.data.toLowerCase(),
       age: userData.data?.userInfo?.age,
@@ -129,7 +134,7 @@ export const OAuth2Login = (snsType: string) => async (dispatch: any) => {
     if (snsType === 'google' && isSuccessResponse(response))
       dispatch(userLogin({ userInfo, snsType }));
     else if (snsType === 'apple') dispatch(userLogin({ userInfo, snsType }));
-    else throw new Error('Fail to login');
+    else throw new Error(i18n.t('QAuth2Login_error_login_message'));
   } catch (error: any) {
     const errorMessage: string =
       error.response?.data?.message ||
@@ -156,7 +161,8 @@ export const LoginUser = () => async (dispatch: any) => {
     const snsType = await EncryptedStorage.getItem('sns');
     if (!snsType) return;
     const userData = await api.get(`auth/me`);
-    if (!userData.data) throw new Error('Fail to login');
+    if (!userData.data)
+      throw new Error(i18n.t('QAuth2Login_error_login_message'));
 
     const userInfo: UserInfoType = userData.data?.userInfo;
 
@@ -167,7 +173,7 @@ export const LoginUser = () => async (dispatch: any) => {
       error.message ||
       'Exceptional error occurred';
     console.log(errorMessage);
-    await EncryptedStorage.clear();
+    // await EncryptedStorage.clear();
     // dispatch(
     //   showAlert({
     //     message: errorMessage,
@@ -184,7 +190,7 @@ export const GetUserDetail = (id: number) => async (dispatch: any) => {
   try {
     dispatch(setIsLoading(true));
     const userData = await api.get(`users/${id}`);
-    if (!userData.data) throw new Error('Fail to get user info');
+    if (!userData.data) throw new Error(i18n.t('GetUserDetail_error_message'));
     return userData.data;
   } catch (error: any) {
     const errorMessage: string =
@@ -217,7 +223,8 @@ export const UpdateUser =
         gender,
         aboutMe,
       });
-      if (res.status !== 204) throw new Error('Fail to Login');
+      if (res.status !== 204)
+        throw new Error(i18n.t('QAuth2Login_error_login_message'));
     } catch (error: any) {
       const errorMessage: string =
         error.response?.data?.message ||
@@ -239,11 +246,20 @@ export const LogoutUser = () => async (dispatch: any) => {
   try {
     dispatch(setIsLoading(true));
     // await api.get('/user/logout');
+    const isAgreement =
+      (await EncryptedStorage.getItem('isAgreement')) || 'false';
+    const language = (await EncryptedStorage.getItem('language')) || 'en';
+
     await EncryptedStorage.clear();
+
+    await EncryptedStorage.setItem('isAgreement', isAgreement);
+    await EncryptedStorage.setItem('language', language);
+
     dispatch(userLogOut());
+    dispatch(setResetConfig());
     dispatch(
       showAlert({
-        message: 'User logout',
+        message: i18n.t('User_logout_message'),
         type: 'info',
         id: Date.now().toString(),
       })
@@ -272,13 +288,21 @@ export const DeleteUser = (userId: number) => async (dispatch: any) => {
     if (res.status === 200) {
       dispatch(
         showAlert({
-          message: 'Delete Account',
+          message: i18n.t('Account_deleted_message'),
           type: 'success',
           id: Date.now().toString(),
         })
       );
+      const isAgreement =
+        (await EncryptedStorage.getItem('isAgreement')) || 'false';
+      const language = (await EncryptedStorage.getItem('language')) || 'en';
+
       await EncryptedStorage.clear();
+
+      await EncryptedStorage.setItem('isAgreement', isAgreement);
+      await EncryptedStorage.setItem('language', language);
       dispatch(userLogOut());
+      dispatch(setResetConfig());
     }
   } catch (error: any) {
     const errorMessage: string =
@@ -368,11 +392,12 @@ export const PostQuestion =
       dispatch(setIsLoading(true));
       const res = await api.post('questions', data);
 
-      if (res.status !== 201) throw new Error('Fail to create question');
+      if (res.status !== 201)
+        throw new Error(i18n.t('Question_created_error_message'));
       else
         dispatch(
           showAlert({
-            message: 'Question created',
+            message: i18n.t('Question_created_message'),
             type: 'success',
             id: Date.now().toString(),
           })
@@ -402,7 +427,7 @@ export const DeleteQuestion = (id: number) => async (dispatch: any) => {
     if (res.status === 200)
       dispatch(
         showAlert({
-          message: 'Question deleted',
+          message: i18n.t('Question_deleted_message'),
           type: 'success',
           id: Date.now().toString(),
         })
@@ -431,7 +456,7 @@ export const ReportQuestion = (questionId: number) => async (dispatch: any) => {
     if (res.status === 201) {
       dispatch(
         showAlert({
-          message: 'Reported Question',
+          message: i18n.t('Reported_Question_message'),
           type: 'info',
           id: Date.now().toString(),
         })
@@ -485,7 +510,16 @@ export const UpdateQuestion =
         title: data.title,
         description: data.description,
       });
-      if (res.status !== 200) throw new Error('Fail to update');
+      if (res.status !== 200)
+        throw new Error(i18n.t('UpdateQuestion_error_message'));
+      else
+        dispatch(
+          showAlert({
+            message: i18n.t('Question_updated_message'),
+            type: 'success',
+            id: Date.now().toString(),
+          })
+        );
       return res.status;
     } catch (error: any) {
       const errorMessage: string =
@@ -513,7 +547,7 @@ export const ReportComment = (commentId: number) => async (dispatch: any) => {
     if (res.status === 201) {
       dispatch(
         showAlert({
-          message: 'Reported Comment',
+          message: i18n.t('Reported_Comment_message'),
           type: 'info',
           id: Date.now().toString(),
         })
@@ -539,7 +573,9 @@ export const PostComment =
   (questionId: number, context: string) => async (dispatch: any) => {
     try {
       dispatch(setIsLoading(true));
-      await api.post(`questions/${questionId}/comments`, { context });
+      await api.post(`questions/${questionId}/comments`, {
+        context,
+      });
     } catch (error: any) {
       const errorMessage: string =
         error.response?.data?.message ||
@@ -563,7 +599,7 @@ export const DeleteComment = (commentId: number) => async (dispatch: any) => {
     if (res.status === 200) {
       dispatch(
         showAlert({
-          message: 'Comment deleted',
+          message: i18n.t('Comment_deleted_message'),
           type: 'success',
           id: Date.now().toString(),
         })

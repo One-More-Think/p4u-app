@@ -7,10 +7,13 @@ import MainPage from 'pages/MainPage';
 import { LoginUser } from 'reducers/actions/UserAction';
 import mobileAds from 'react-native-google-mobile-ads';
 import SplashScreen from 'react-native-splash-screen';
+import { useTranslation } from 'react-i18next';
+import { getLocales } from 'react-native-localize';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 const App = (): React.JSX.Element => {
+  const { i18n } = useTranslation();
   const isDarkMode: any = useColorScheme() === 'dark';
-
   useEffect(() => {
     setTimeout(() => {
       SplashScreen.hide();
@@ -22,6 +25,14 @@ const App = (): React.JSX.Element => {
     const cacheLogin = async () => {
       await store.dispatch(LoginUser());
     };
+    const LanguageInit = async () => {
+      const language =
+        (await EncryptedStorage.getItem('language')) ||
+        getLocales()[0].languageCode;
+      await i18n.changeLanguage(language);
+    };
+    LanguageInit();
+
     cacheLogin();
     const AdMobInit = async () => {
       await mobileAds().initialize();

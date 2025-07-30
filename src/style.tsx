@@ -140,6 +140,7 @@ export const QuestionDetailStyle = StyleSheet.create({
     width: '85%',
     display: 'flex',
     flexDirection: 'row',
+    alignItems: 'center',
   },
   BottomBox: {
     width: '90%',
@@ -148,7 +149,9 @@ export const QuestionDetailStyle = StyleSheet.create({
     marginBottom: 30,
   },
   CategoryBox: {
-    // marginLeft: 20,
+    display: 'flex',
+    justifyContent: 'center',
+    width: '10%',
   },
   Title: {
     width: '85%',
@@ -367,15 +370,16 @@ export const RadioButtonStyle = StyleSheet.create({
 
 export const UserBoxStyle = StyleSheet.create({
   HeaderBox: {
-    width: '85%',
+    width: '100%',
     display: 'flex',
     flexDirection: 'row',
+    justifyContent: 'space-around',
+    alignItems: 'center',
   },
   UserBox: {
     display: 'flex',
     flexDirection: 'column',
     alignItems: 'flex-start',
-    width: '100%',
   },
   InfoBox: {
     display: 'flex',
@@ -623,9 +627,11 @@ export const NewMemberScreenStyle = StyleSheet.create({
   Container: {
     display: 'flex',
     flexDirection: 'column',
-    width: '95%',
-    height: '80%',
-    marginTop: 10,
+    // justifyContent: 'center',
+    // alignItems: 'center',
+    width: '100%',
+    height: '100%',
+    // marginTop: 10,
   },
   Text: {
     color: '#7a7b7e',
@@ -666,6 +672,7 @@ export const NewMemberScreenStyle = StyleSheet.create({
     display: 'flex',
     justifyContent: 'center',
     alignItems: 'center',
+    alignSelf: 'center',
   },
 });
 

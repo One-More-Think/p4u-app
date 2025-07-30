@@ -44,13 +44,12 @@ const Common = ({ children, style = {} }: CommonProps): React.JSX.Element => {
           backgroundColor={backgroundStyle.backgroundColor}
         />
         <KeyboardAvoidingView
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
           style={{
             ...CommonStyle.mainContainer,
             backgroundColor: isDarkMode ? '#b4bac9' : '#e1e9fc',
             ...style,
           }}
-          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
-          keyboardVerticalOffset={48}
         >
           {children}
         </KeyboardAvoidingView>

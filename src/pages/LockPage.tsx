@@ -1,5 +1,11 @@
 import React, { useCallback, useEffect, useState } from 'react';
-import { View, Text, SafeAreaView, TouchableOpacity } from 'react-native';
+import {
+  View,
+  Text,
+  SafeAreaView,
+  TouchableOpacity,
+  Vibration,
+} from 'react-native';
 import { LockPageStyle } from 'style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import { useNavigation } from '@react-navigation/native';
@@ -8,10 +14,12 @@ import { useSelector } from 'react-redux';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import store from 'reducers/index';
 import { showAlert } from 'reducers/alertSlice';
+import { useTranslation } from 'react-i18next';
 
 const LockPage = ({ route }: any): React.JSX.Element => {
+  const { t } = useTranslation();
   const navigation = useNavigation();
-  const { isSetPassword } = route.params;
+  const { isSetPassword, changePassword = false } = route.params;
   const passwordLength = Array(4).fill(-1);
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const [password, setPassword] = useState<number[]>([]);
@@ -67,6 +75,7 @@ const LockPage = ({ route }: any): React.JSX.Element => {
                 id: Date.now().toString(),
               })
             );
+            Vibration.vibrate(3 * 1000);
             setPassword([]);
           }
         };
@@ -90,7 +99,7 @@ const LockPage = ({ route }: any): React.JSX.Element => {
               color: isDarkMode ? 'white' : '#222428',
             }}
           >
-            Enter Password
+            {changePassword ? t('Change_the_Password') : t('Enter_Password')}
           </Text>
         </View>
         <View style={[LockPageStyle.PasswordContainer]}>

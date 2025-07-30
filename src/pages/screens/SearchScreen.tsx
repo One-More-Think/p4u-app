@@ -21,9 +21,11 @@ import {
 import Question from 'components/Question';
 import store from 'reducers/index';
 import { GetQuestions } from 'reducers/actions/UserAction';
+import { useTranslation } from 'react-i18next';
 
 const SearhScreen = ({ navigation }: any): React.JSX.Element => {
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
+  const { t } = useTranslation();
   const [search, setSearch] = useState<string>('');
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const [data, setData] = useState<any[]>([]);
@@ -59,7 +61,7 @@ const SearhScreen = ({ navigation }: any): React.JSX.Element => {
           barStyle={isDarkMode ? 'light-content' : 'dark-content'}
           backgroundColor={isDarkMode ? '#222428' : 'white'}
         />
-        <Text style={SearchScreenStyle.SafeAreaText}>Search</Text>
+        <Text style={SearchScreenStyle.SafeAreaText}>{t('Search')}</Text>
         <TouchableOpacity
           style={{ position: 'absolute', left: 0, marginLeft: 20 }}
           onPress={() => navigation.goBack()}
@@ -69,7 +71,7 @@ const SearhScreen = ({ navigation }: any): React.JSX.Element => {
       </SafeAreaView>
       <SearchBar
         round
-        placeholder="Search"
+        placeholder={t('Search')}
         cancelButtonTitle="Cancel"
         containerStyle={{
           backgroundColor: '#0000',

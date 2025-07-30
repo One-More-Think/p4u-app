@@ -23,8 +23,10 @@ import SkeletonBar from 'components/SkeletonBar';
 import store from 'reducers/index';
 import { GetUserDetail } from 'reducers/actions/UserAction';
 import { useFocusEffect } from '@react-navigation/native';
+import { useTranslation } from 'react-i18next';
 
 const UserPage = ({ route, navigation }: any): React.JSX.Element => {
+  const { t } = useTranslation();
   const { userId } = route.params;
   const [isLoading, setIsLoading] = useState<boolean>(false);
   const userInfo = useSelector((state: any) => state.user.userInfo);
@@ -69,7 +71,7 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
             <Ionicons name="pencil" size={30} />
           </TouchableOpacity>
         )}
-        <Text style={UserPageStyle.SafeAreaText}>Profile</Text>
+        <Text style={UserPageStyle.SafeAreaText}>{t('Profile')}</Text>
         {userId === userInfo.id && (
           <TouchableOpacity
             style={{ marginRight: 20 }}
@@ -90,7 +92,7 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
         />
       </View>
       <View style={UserPageStyle.Container}>
-        <Text style={UserPageStyle.Text}>User Information</Text>
+        <Text style={UserPageStyle.Text}>{t('User_Information')}</Text>
         {isLoading ? (
           <SkeletonBar style={UserPageStyle.UserInfoBox} />
         ) : (
@@ -127,7 +129,7 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
                     color: isDarkMode ? 'white' : '#222428',
                   }}
                 >
-                  I'm From
+                  {t('Im_From')}
                 </Text>
                 <CountryFlag
                   isoCode={userInfo.country}
@@ -146,11 +148,14 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
                     color: isDarkMode ? 'white' : '#222428',
                   }}
                 >
-                  I'm <Text style={{ color: '#79699a' }}>{userInfo.age}</Text>{' '}
-                  old{' '}
+                  {t('Im')}{' '}
+                  <Text style={{ color: '#79699a' }}>{userInfo.age}</Text>{' '}
+                  {t('old')}{' '}
                   <Text style={{ color: GenderColor(userInfo.gender) }}>
-                    {userInfo.gender.at(0).toUpperCase() +
-                      userInfo.gender.slice(1)}
+                    {t(
+                      userInfo.gender.at(0).toUpperCase() +
+                        userInfo.gender.slice(1)
+                    )}
                   </Text>{' '}
                   <Text style={{ color: '#9a7969' }}>
                     {userInfo.occupation.at(0).toUpperCase() +
@@ -170,7 +175,7 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
                     color: isDarkMode ? 'white' : '#222428',
                   }}
                 >
-                  About Me
+                  {t('About_Me')}
                 </Text>
                 <Text
                   style={{
@@ -185,7 +190,7 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
             </View>
           </View>
         )}
-        <Text style={UserPageStyle.Text}>Written Questions</Text>
+        <Text style={UserPageStyle.Text}>{t('Written_Questions')}</Text>
         <View style={UserPageStyle.WrittenQuestionList}>
           <FlatList
             horizontal
@@ -194,7 +199,7 @@ const UserPage = ({ route, navigation }: any): React.JSX.Element => {
             showsHorizontalScrollIndicator={false}
           />
         </View>
-        <Text style={UserPageStyle.Text}>Commented Questions</Text>
+        <Text style={UserPageStyle.Text}>{t('Commented_Questions')}</Text>
         <View style={UserPageStyle.CommentedQuestionList}>
           <FlatList
             horizontal

@@ -22,9 +22,11 @@ import {
 import { Input } from '@rneui/themed';
 import store from 'reducers/index';
 import { UpdateQuestion } from 'reducers/actions/UserAction';
+import { useTranslation } from 'react-i18next';
 
 const EditQuestionScreen = ({ navigation, route }: any): React.JSX.Element => {
   const { data } = route.params;
+  const { t } = useTranslation();
   const categoryList = useMemo((): string[] => {
     return ['Living', 'Career', 'Food', 'RelationShip'];
   }, []);
@@ -110,18 +112,14 @@ const EditQuestionScreen = ({ navigation, route }: any): React.JSX.Element => {
     );
 
     if (hasUnsavedChanges) {
-      Alert.alert(
-        'Discard changes?',
-        'You have unsaved changes. Are you sure to discard them and leave the screen?',
-        [
-          { text: "Don't leave", style: 'cancel' },
-          {
-            text: 'Discard',
-            style: 'destructive',
-            onPress: () => navigation.goBack(),
-          },
-        ]
-      );
+      Alert.alert(t('Discard_Alert'), t('Discard_Alert_message'), [
+        { text: t('Discard_Alert_cancel'), style: 'cancel' },
+        {
+          text: t('Discard_Alert_confirm'),
+          style: 'destructive',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
     } else {
       navigation.goBack();
     }
@@ -146,7 +144,7 @@ const EditQuestionScreen = ({ navigation, route }: any): React.JSX.Element => {
             color: isDarkMode ? 'white' : '#222428',
           }}
         >
-          Edit
+          {t('Edit')}
         </Text>
         <TouchableOpacity
           style={{ position: 'absolute', right: 0, marginRight: 20 }}
@@ -159,11 +157,15 @@ const EditQuestionScreen = ({ navigation, route }: any): React.JSX.Element => {
             }}
           >
             <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'white' }}>
-              Update
+              {t('Upload')}
             </Text>
           </View>
         </TouchableOpacity>
       </SafeAreaView>
+      {/* <KeyboardAvoidingView
+        style={{ flex: 1 }}
+        behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+      > */}
       <ScrollView style={PostScreenStyle.ScrollView}>
         <View style={PostScreenStyle.CategoryTimeContainer}>
           <View style={PostScreenStyle.CategoryContainer}>
@@ -173,7 +175,7 @@ const EditQuestionScreen = ({ navigation, route }: any): React.JSX.Element => {
                 height: '15%',
               }}
             >
-              Category
+              {t('Category')}
             </Text>
             <View
               style={{
@@ -202,7 +204,7 @@ const EditQuestionScreen = ({ navigation, route }: any): React.JSX.Element => {
                       color: isDarkMode ? 'white' : '#222428',
                     }}
                   >
-                    {item}
+                    {t(item)}
                   </Text>
                   {category === item ? (
                     <Ionicons
@@ -255,11 +257,11 @@ const EditQuestionScreen = ({ navigation, route }: any): React.JSX.Element => {
         <Text
           style={{ ...PostScreenStyle.Text, marginTop: 10, marginBottom: 10 }}
         >
-          Title
+          {t('Title')}
         </Text>
         <Input
-          placeholder="Title"
-          placeholderTextColor={isDarkMode ? 'white' : '#222428'}
+          placeholder={String(t('Title') + '...')}
+          placeholderTextColor="lightgray"
           inputStyle={{
             ...PostScreenStyle.TextContainer,
             color: isDarkMode ? 'white' : '#222428',
@@ -292,10 +294,10 @@ const EditQuestionScreen = ({ navigation, route }: any): React.JSX.Element => {
         <Text
           style={{ ...PostScreenStyle.Text, marginTop: 10, marginBottom: 10 }}
         >
-          Description
+          {t('Description')}
         </Text>
         <Input
-          placeholder="Description"
+          placeholder={String(t('Description') + '...')}
           multiline
           leftIconContainerStyle={{
             position: 'absolute',
@@ -312,7 +314,7 @@ const EditQuestionScreen = ({ navigation, route }: any): React.JSX.Element => {
               />
             ) : undefined
           }
-          placeholderTextColor={isDarkMode ? 'white' : '#222428'}
+          placeholderTextColor="lightgray"
           inputStyle={{
             ...PostScreenStyle.TextContainer,
             color: isDarkMode ? 'white' : '#222428',
@@ -390,6 +392,8 @@ const EditQuestionScreen = ({ navigation, route }: any): React.JSX.Element => {
           </TouchableOpacity>
         )} */}
       </ScrollView>
+      {/* </KeyboardAvoidingView> */}
+
       <BannerAd
         unitId={
           Platform.OS === 'ios'

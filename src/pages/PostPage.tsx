@@ -9,6 +9,7 @@ import {
   ScrollView,
   Platform,
   Keyboard,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import Common from 'components/Common';
@@ -23,8 +24,10 @@ import { Picker } from '@react-native-picker/picker';
 import { Input, Icon } from '@rneui/themed';
 import store from 'reducers/index';
 import { PostQuestion } from 'reducers/actions/UserAction';
+import { useTranslation } from 'react-i18next';
 
 const PostPage = ({ navigation }: any): React.JSX.Element => {
+  const { t } = useTranslation();
   const [category, setCategory] = useState<string>('');
   const [time, setTime] = useState<string>('none');
   const [title, setTitle] = useState<string>('');
@@ -72,8 +75,8 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
 
       await store.dispatch(PostQuestion(post_data, navigation));
     } else {
-      Alert.alert('Please fill out every options', '', [
-        { text: 'OK', style: 'cancel' },
+      Alert.alert(t('Post_Alert_message'), '', [
+        { text: t('OK'), style: 'cancel' },
       ]);
     }
   }, [category, time, title, description, options]);
@@ -115,18 +118,14 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
     );
 
     if (hasUnsavedChanges) {
-      Alert.alert(
-        'Discard changes?',
-        'You have unsaved changes. Are you sure to discard them and leave the screen?',
-        [
-          { text: "Don't leave", style: 'cancel' },
-          {
-            text: 'Discard',
-            style: 'destructive',
-            onPress: () => navigation.goBack(),
-          },
-        ]
-      );
+      Alert.alert(t('Discard_Alert'), t('Discard_Alert_message'), [
+        { text: t('Discard_Alert_cancel'), style: 'cancel' },
+        {
+          text: t('Discard_Alert_confirm'),
+          style: 'destructive',
+          onPress: () => navigation.goBack(),
+        },
+      ]);
     } else {
       navigation.goBack();
     }
@@ -182,7 +181,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
             color: isDarkMode ? 'white' : '#222428',
           }}
         >
-          Post
+          {t('Post')}
         </Text>
         <TouchableOpacity
           style={{ position: 'absolute', right: 0, marginRight: 20 }}
@@ -195,7 +194,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
             }}
           >
             <Text style={{ fontSize: 15, fontWeight: 'bold', color: 'white' }}>
-              Post
+              {t('Upload')}
             </Text>
           </View>
         </TouchableOpacity>
@@ -209,7 +208,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
                 height: '15%',
               }}
             >
-              Category
+              {t('Category')}
             </Text>
             <View
               style={{
@@ -238,7 +237,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
                       color: isDarkMode ? 'white' : '#222428',
                     }}
                   >
-                    {item}
+                    {t(item)}
                   </Text>
                   {category === item ? (
                     <Ionicons
@@ -264,7 +263,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
                 height: '15%',
               }}
             >
-              Time
+              {t('Time')}
             </Text>
             <Picker
               onValueChange={(itemValue) => onTime(itemValue)}
@@ -273,7 +272,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
             >
               {timeList.map((item: any) => (
                 <Picker.Item
-                  label={item}
+                  label={t(item)}
                   value={item}
                   key={time}
                   color={
@@ -291,11 +290,15 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
         <Text
           style={{ ...PostScreenStyle.Text, marginTop: 10, marginBottom: 10 }}
         >
-          Title
+          {t('Title')}
         </Text>
+        {/* <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        > */}
         <Input
-          placeholder="Posting Title..."
-          placeholderTextColor={isDarkMode ? 'white' : '#222428'}
+          placeholder={t('Title_Description')}
+          placeholderTextColor="lightgray"
           inputStyle={{
             ...PostScreenStyle.TextContainer,
             color: isDarkMode ? 'white' : '#222428',
@@ -325,13 +328,18 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
           value={title}
           onSubmitEditing={() => Keyboard.dismiss()}
         />
+        {/* </KeyboardAvoidingView> */}
         <Text
           style={{ ...PostScreenStyle.Text, marginTop: 10, marginBottom: 10 }}
         >
-          Description
+          {t('Description')}
         </Text>
+        {/* <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        > */}
         <Input
-          placeholder="Description..."
+          placeholder={t('Description_Description')}
           // multiline
           leftIconContainerStyle={{
             position: 'absolute',
@@ -363,16 +371,22 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
           onChangeText={(text) => onDescription(text)}
           onSubmitEditing={() => Keyboard.dismiss()}
         />
+        {/* </KeyboardAvoidingView> */}
         <Text
           style={{ ...PostScreenStyle.Text, marginTop: 10, marginBottom: 10 }}
         >
-          Options
+          {t('Options')}
         </Text>
         {options.map((item, idx) => (
+          // <KeyboardAvoidingView
+          //   key={`option-${idx}`}
+          //   style={{ flex: 1 }}
+          //   behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+          // >
           <Input
             scrollEnabled={false}
+            placeholder={`${t('Options')} ${idx + 1}`}
             key={`option-${idx}`}
-            placeholder={`Option ${idx + 1}`}
             // multiline
             placeholderTextColor={isDarkMode ? 'white' : '#222428'}
             inputStyle={{
@@ -410,6 +424,7 @@ const PostPage = ({ navigation }: any): React.JSX.Element => {
               />
             }
           />
+          // </KeyboardAvoidingView>
         ))}
         {options.length < 3 && (
           <TouchableOpacity

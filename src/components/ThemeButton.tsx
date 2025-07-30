@@ -1,11 +1,12 @@
 import React from 'react';
-import {TouchableOpacity, View, Text, useColorScheme} from 'react-native';
-import {RadioButtonStyle} from 'style';
+import { TouchableOpacity, View, Text, useColorScheme } from 'react-native';
+import { RadioButtonStyle } from 'style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 import store from 'reducers/index';
-import {setDarkMode} from 'reducers/userSlice';
-import {setMode} from 'reducers/configSlice';
+import { setDarkMode } from 'reducers/userSlice';
+import { setMode } from 'reducers/configSlice';
+import { useTranslation } from 'react-i18next';
 
 const ThemeButton = ({
   name,
@@ -16,6 +17,7 @@ const ThemeButton = ({
 }: any): React.JSX.Element => {
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const systemMode = useColorScheme() === 'dark';
+  const { t } = useTranslation();
   const handleTheme = (mode: any) => {
     let darkMode = true;
     switch (mode) {
@@ -38,7 +40,8 @@ const ThemeButton = ({
       style={{
         ...RadioButtonStyle.Container,
         borderBottomColor: isDarkMode ? 'white' : '#222428',
-      }}>
+      }}
+    >
       <TouchableOpacity
         style={{
           ...RadioButtonStyle.TouchableOpacity,
@@ -46,16 +49,17 @@ const ThemeButton = ({
         }}
         onPress={() => {
           chooseButton(title), handleTheme(title);
-        }}>
+        }}
+      >
         <View style={RadioButtonStyle.IconContainer}>
           <Ionicons
             name={name}
             size={40}
-            style={{color: isDarkMode ? 'white' : '#222428'}}
+            style={{ color: isDarkMode ? 'white' : '#222428' }}
           />
           <View style={RadioButtonStyle.IconTextWrapper}>
-            <Text style={{color: isDarkMode ? 'white' : '#222428'}}>
-              {title}
+            <Text style={{ color: isDarkMode ? 'white' : '#222428' }}>
+              {t(title)}
             </Text>
             {description && (
               <Text style={RadioButtonStyle.DescriptionText}>
@@ -69,13 +73,13 @@ const ThemeButton = ({
             <Ionicons
               name="radio-button-on"
               size={30}
-              style={{color: isDarkMode ? 'white' : '#222428'}}
+              style={{ color: isDarkMode ? 'white' : '#222428' }}
             />
           ) : (
             <Ionicons
               name="radio-button-off"
               size={30}
-              style={{color: isDarkMode ? 'white' : '#222428'}}
+              style={{ color: isDarkMode ? 'white' : '#222428' }}
             />
           )}
         </View>

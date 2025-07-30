@@ -5,12 +5,13 @@ import { SearchBar } from '@rneui/themed';
 import { CommonHeaderStyle } from 'screens/settings/style';
 import { useSelector } from 'react-redux';
 import LanguageButton from 'components/LanguageButton';
+import { useTranslation } from 'react-i18next';
 
 const LanguageScreen = ({ route, navigation }: any): React.JSX.Element => {
   const [search, setSearch] = useState<string>('');
-  const language = useSelector((state: any) => state.config.language);
+  const { t, i18n } = useTranslation();
   const [filteredLanguage, setFilteredLanguage] = useState([]);
-  const [selected, setSelected] = useState<string>(language);
+  const [selected, setSelected] = useState<string>(i18n.language);
   const { title } = route.params;
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const handleChange = (text: any) => {
@@ -23,11 +24,12 @@ const LanguageScreen = ({ route, navigation }: any): React.JSX.Element => {
     [selected]
   );
   const LanguageList: any = [
-    { name: 'us', title: 'English' },
-    // {name: 'es', title: 'Español'},
-    // {name: 'kr', title: '한국어'},
-    // {name: 'jp', title: '日本語'},
-    // {name: 'cn', title: '中國語'},
+    { name: 'us', title: 'English', language: 'en' },
+    { name: 'es', title: 'Español', language: 'es' },
+    { name: 'kr', title: '한국어', language: 'ko' },
+    { name: 'jp', title: '日本語', language: 'ja' },
+    { name: 'cn', title: '中國語', language: 'zh' },
+    { name: 'vn', title: 'Tiếng Việt', language: 'vn' },
   ];
 
   useEffect(() => {
@@ -37,12 +39,12 @@ const LanguageScreen = ({ route, navigation }: any): React.JSX.Element => {
   }, [search]);
 
   return (
-    <SettingCommonHeader title={title} navigation={navigation}>
+    <SettingCommonHeader title={t('Languages')} navigation={navigation}>
       <View style={CommonHeaderStyle.Container}>
-        <Text style={CommonHeaderStyle.ContainerText}>Language</Text>
+        <Text style={CommonHeaderStyle.ContainerText}>{t('Languages')}</Text>
         <SearchBar
           round
-          placeholder="Search"
+          placeholder={t('Search')}
           cancelButtonTitle="Cancel"
           containerStyle={{
             backgroundColor: '#0000',
@@ -63,7 +65,8 @@ const LanguageScreen = ({ route, navigation }: any): React.JSX.Element => {
             title={language.title}
             name={language.name}
             selected={selected}
-            chooseButton={chooseButton}
+            chooseButton={() => chooseButton(language.language)}
+            language={language.language}
           />
         ))}
       </View>

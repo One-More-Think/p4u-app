@@ -7,14 +7,16 @@ import CountryFlag from 'components/CountryFlag';
 import { useSelector } from 'react-redux';
 import store from 'reducers/index';
 import { DeleteUser } from 'reducers/actions/UserAction';
+import { useTranslation } from 'react-i18next';
 
 const AccountScreen = ({ route, navigation }: any): React.JSX.Element => {
   const { title } = route.params;
+  const { t } = useTranslation();
   const userInfo = useSelector((state: any) => state.user.userInfo);
   const AccountList = [
-    { title: 'Email', description: userInfo.email },
+    { title: `${t('Email')}`, description: userInfo.email },
     {
-      title: 'Country',
+      title: `${t('Country')}`,
       description: (
         <CountryFlag
           isoCode={userInfo.country}
@@ -24,26 +26,27 @@ const AccountScreen = ({ route, navigation }: any): React.JSX.Element => {
       ),
     },
     {
-      title: 'Gender',
-      description:
-        userInfo.gender.at(0).toUpperCase() + userInfo.gender.slice(1),
+      title: `${t('Gender')}`,
+      description: t(
+        userInfo.gender.at(0).toUpperCase() + userInfo.gender.slice(1)
+      ),
     },
     {
-      title: 'Occupation',
+      title: `${t('Occupation')}`,
       description:
         userInfo.occupation.at(0).toUpperCase() + userInfo.occupation.slice(1),
     },
     {
-      title: 'Delete Account',
+      title: `${t('Delete_Account')}`,
       onPress: () =>
-        Alert.alert('Delete Account', 'Are you sure delete your account?', [
+        Alert.alert(t('Delete_Account'), t('Delete_Account_message'), [
           {
-            text: 'Cancel',
+            text: t('Cancel'),
             onPress: () => console.log('Cancel Pressed'),
             style: 'cancel',
           },
           {
-            text: 'OK',
+            text: t('OK'),
             onPress: async () => {
               await store.dispatch(DeleteUser(userInfo.id));
               navigation.reset({
@@ -60,7 +63,7 @@ const AccountScreen = ({ route, navigation }: any): React.JSX.Element => {
   return (
     <SettingCommonHeader title={title} navigation={navigation}>
       <View style={CommonHeaderStyle.Container}>
-        <Text style={CommonHeaderStyle.ContainerText}>Account</Text>
+        <Text style={CommonHeaderStyle.ContainerText}>{t('Account')}</Text>
         {AccountList.map((account) => (
           <SettingBlock
             key={account.title}

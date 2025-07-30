@@ -20,6 +20,7 @@ import {
   Alert,
   Keyboard,
   Share,
+  KeyboardAvoidingView,
 } from 'react-native';
 import Common from 'components/Common';
 import { useSelector } from 'react-redux';
@@ -37,6 +38,7 @@ import {
   ReportQuestion,
   SelectOption,
 } from 'reducers/actions/UserAction';
+import { useTranslation } from 'react-i18next';
 import { useFocusEffect } from '@react-navigation/native';
 import { setIsLoading } from 'reducers/configSlice';
 
@@ -44,6 +46,7 @@ const QuestionDetailScreen = ({
   route,
   navigation,
 }: any): React.JSX.Element => {
+  const { t } = useTranslation();
   const { data } = route.params;
   const title = data?.title || '';
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
@@ -183,20 +186,20 @@ const QuestionDetailScreen = ({
         >
           <Ionicons name="chevron-back" size={40} color="#222428" />
         </TouchableOpacity>
-        <Text style={QuestionDetailStyle.SafeAreaText}>Contents</Text>
+        <Text style={QuestionDetailStyle.SafeAreaText}>{t('Contents')}</Text>
         <View>
           <MenuView
-            title="Options"
+            title={t('Options')}
             onPressAction={async ({ nativeEvent }) => {
               switch (JSON.parse(JSON.stringify(nativeEvent)).event) {
                 case 'delete':
                   Alert.alert(
-                    'Delete question',
-                    'Are you sure to delete this question?',
+                    t('Delete_question'),
+                    t('Delete_question_message'),
                     [
-                      { text: 'Cancel', style: 'cancel' },
+                      { text: t('Cancel'), style: 'cancel' },
                       {
-                        text: 'Ok',
+                        text: t('Ok'),
                         style: 'destructive',
                         onPress: async () => {
                           await store.dispatch(DeleteQuestion(data.id)),
@@ -219,15 +222,15 @@ const QuestionDetailScreen = ({
                   break;
                 case 'report':
                   Alert.alert(
-                    'Report Question',
-                    'Do you want to report this question?',
+                    t('Report_Question'),
+                    t('Report_Question_message'),
                     [
                       {
-                        text: 'Cancel',
+                        text: t('Cancel'),
                         style: 'destructive',
                       },
                       {
-                        text: 'OK',
+                        text: t('OK'),
                         onPress: async () =>
                           await store.dispatch(ReportQuestion(data.id)),
                       },
@@ -254,7 +257,7 @@ const QuestionDetailScreen = ({
                   ? [
                       {
                         id: 'edit',
-                        title: 'Edit',
+                        title: t('Edit'),
                         titleColor: '#2367A2',
                         image: Platform.select({
                           ios: 'pencil',
@@ -274,7 +277,7 @@ const QuestionDetailScreen = ({
                       // },
                       {
                         id: 'delete',
-                        title: 'Delete',
+                        title: t('Delete'),
                         attributes: {
                           destructive: true,
                         },
@@ -297,7 +300,7 @@ const QuestionDetailScreen = ({
                       // },
                       {
                         id: 'delete',
-                        title: 'Delete',
+                        title: t('Delete'),
                         attributes: {
                           destructive: true,
                         },
@@ -320,7 +323,7 @@ const QuestionDetailScreen = ({
                     // },
                     {
                       id: 'report',
-                      title: 'Report',
+                      title: t('Report'),
                       image: Platform.select({
                         ios: 'flag',
                         android: 'ic_menu_report_image',
@@ -358,11 +361,13 @@ const QuestionDetailScreen = ({
         {detailInfo && (
           <View style={QuestionDetailStyle.Container}>
             <View style={QuestionDetailStyle.HeaderBox}>
-              <UserBox
-                data={data}
-                timeout={detailInfo?.timeout}
-                timestamp={data.timestamp}
-              />
+              <View style={{ width: '90%' }}>
+                <UserBox
+                  data={data}
+                  timeout={detailInfo?.timeout}
+                  timestamp={data.timestamp}
+                />
+              </View>
               <View style={QuestionDetailStyle.CategoryBox}>
                 <Ionicons
                   name={CATEGORY_MAP[detailInfo?.category]}
@@ -423,8 +428,12 @@ const QuestionDetailScreen = ({
         )}
       </ScrollView>
       <SafeAreaView style={{ width: '100%' }}>
+        {/* <KeyboardAvoidingView
+          style={{ flex: 1 }}
+          behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
+        > */}
         <Input
-          placeholder="Comment"
+          placeholder={t('Comment')}
           placeholderTextColor={isDarkMode ? 'white' : '#222428'}
           rightIcon={
             <TouchableOpacity
@@ -458,8 +467,8 @@ const QuestionDetailScreen = ({
           }}
           value={comment}
           onChangeText={(text) => onComment(text)}
-          // onSubmitEditing={() => Keyboard.dismiss()}
         />
+        {/* </KeyboardAvoidingView> */}
       </SafeAreaView>
     </Common>
   );

@@ -8,6 +8,7 @@ import {
   View,
 } from 'react-native';
 import { SocialButtonStyle } from '../style';
+import { useTranslation } from 'react-i18next';
 
 type SocialLoginButtonProps = PropsWithChildren<{
   title: string;
@@ -17,6 +18,7 @@ const SocialLoginButton = ({
   title,
   onPress,
 }: SocialLoginButtonProps): React.JSX.Element => {
+  const { t } = useTranslation();
   const LogoImage = (title: string) => {
     switch (title) {
       case 'Google':
@@ -49,7 +51,7 @@ const SocialLoginButton = ({
             fontWeight: 'bold',
           }}
         >
-          Sign In with {title}
+          {t('Social_Login')} {title}
         </Text>
       </View>
     </TouchableOpacity>

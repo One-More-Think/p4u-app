@@ -1,16 +1,16 @@
-import React, {useState, useEffect} from 'react';
-import {Text, View} from 'react-native';
+import React, { useState, useEffect } from 'react';
+import { Text, View } from 'react-native';
 import SettingCommonHeader from 'components/SettingCommonHeader';
-import {CommonHeaderStyle} from 'screens/settings/style';
-import {SearchBar} from '@rneui/themed';
+import { CommonHeaderStyle } from 'screens/settings/style';
+import { SearchBar } from '@rneui/themed';
 import SettingBlock from 'components/SettingBlock';
-import {useSelector} from 'react-redux';
+import { useSelector } from 'react-redux';
 
-const SupportScreen = ({route, navigation}: any): React.JSX.Element => {
+const SupportScreen = ({ route, navigation }: any): React.JSX.Element => {
   const [search, setSearch] = useState<string>('');
   const [filteredTips, setFilteredTips] = useState<any>([]);
   const [filteredPolicies, setFilteredPolicy] = useState<any>([]);
-  const {title} = route.params;
+  const { title } = route.params;
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const handleChange = (text: any) => {
     setSearch(text);
@@ -46,13 +46,13 @@ const SupportScreen = ({route, navigation}: any): React.JSX.Element => {
   useEffect(() => {
     setFilteredPolicy(
       policyList.filter((policy: any) =>
-        policy.title.toLowerCase().includes(search.toLowerCase()),
-      ),
+        policy.title.toLowerCase().includes(search.toLowerCase())
+      )
     );
     setFilteredTips(
       customerTipList.filter((tip: any) =>
-        tip.title.toLowerCase().includes(search.toLowerCase()),
-      ),
+        tip.title.toLowerCase().includes(search.toLowerCase())
+      )
     );
   }, [search]);
   return (

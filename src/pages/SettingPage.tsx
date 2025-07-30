@@ -1,4 +1,4 @@
-import React from 'react';
+import React, { useEffect } from 'react';
 import {
   Text,
   SafeAreaView,
@@ -20,21 +20,21 @@ import {
   BannerAdSize,
   TestIds,
 } from 'react-native-google-mobile-ads';
-import { CommonActions } from '@react-navigation/native';
-import { userLogOut } from 'reducers/userSlice';
+import { useTranslation } from 'react-i18next';
 
 const SettingPage = ({ route, navigation }: any): React.JSX.Element => {
+  const { t, i18n } = useTranslation();
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
-  const language = useSelector((state: any) => state.config.language);
   const userInfo = useSelector((state: any) => state.user.userInfo);
   const configInfo = useSelector((state: any) => state.config);
   const backgroundStyle = {
     backgroundColor: isDarkMode ? '#222428' : 'white',
   };
+
   const settingList = [
     {
       name: 'person-circle',
-      title: 'Account',
+      title: `${t('Account')}`,
       description: userInfo.email,
       page: 'Account',
     },
@@ -46,20 +46,20 @@ const SettingPage = ({ route, navigation }: any): React.JSX.Element => {
     // },
     {
       name: 'lock-closed',
-      title: 'Privacy & Security',
+      title: `${t('Privacy_Security')}`,
       description: '',
       page: 'Privacy',
     },
     {
       name: 'contrast',
-      title: 'Themes',
-      description: configInfo.mode,
+      title: `${t('Themes')}`,
+      description: `${t('System_Mode')}`,
       page: 'Theme',
     },
     {
       name: 'globe-outline',
-      title: 'Languages',
-      description: language,
+      title: `${t('Languages')}`,
+      description: `${i18n.language}`,
       page: 'Language',
     },
     // {
@@ -70,20 +70,20 @@ const SettingPage = ({ route, navigation }: any): React.JSX.Element => {
     // },
     {
       name: 'information-circle-outline',
-      title: 'About',
+      title: `${t('About')}`,
       description: configInfo.appInfo.version,
       page: 'About',
     },
     {
       name: 'log-in-outline',
-      title: 'LogOut',
+      title: `${t('LogOut')}`,
       page: 'LogOut',
       fontColor: '#e06666',
       onPress: () =>
-        Alert.alert('LogOut', 'Do you want to logout?', [
-          { text: 'Cancel', style: 'cancel' },
+        Alert.alert(t('LogOut'), t('LogOut_message'), [
+          { text: t('Cancel'), style: 'cancel' },
           {
-            text: 'OK',
+            text: t('OK'),
             onPress: () => {
               store.dispatch(LogoutUser());
               navigation.reset({
@@ -124,7 +124,7 @@ const SettingPage = ({ route, navigation }: any): React.JSX.Element => {
             color: isDarkMode ? 'white' : '#222428',
           }}
         >
-          Settings
+          {t('Settings')}
         </Text>
       </SafeAreaView>
       <ScrollView style={{ width: '100%' }}>

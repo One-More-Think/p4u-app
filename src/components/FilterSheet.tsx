@@ -7,6 +7,7 @@ import { SearchBar } from '@rneui/themed';
 import CountryBox, { countryCodes } from './CountryBox';
 import store from 'reducers/index';
 import { GetQuestions } from 'reducers/actions/UserAction';
+import { useTranslation } from 'react-i18next';
 
 const FilterSheet = ({ bottomSheetRef, setData }: any): React.JSX.Element => {
   enum CategoryEnum {
@@ -15,6 +16,7 @@ const FilterSheet = ({ bottomSheetRef, setData }: any): React.JSX.Element => {
     'Food' = 2,
     'RelationShip' = 3,
   }
+  const { t, i18n } = useTranslation();
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const snapPoints = useMemo<string[]>(() => ['65%'], []);
   const [filter, setFilter] = useState<string>('Category');
@@ -149,7 +151,7 @@ const FilterSheet = ({ bottomSheetRef, setData }: any): React.JSX.Element => {
                 color: isDarkMode ? 'white' : '#222428',
               }}
             >
-              {item}
+              {t(item)}
             </Text>
             {action === item ? (
               <Ionicons
@@ -182,7 +184,7 @@ const FilterSheet = ({ bottomSheetRef, setData }: any): React.JSX.Element => {
           <>
             <SearchBar
               round
-              placeholder="Search"
+              placeholder={`${t('Search')}`}
               cancelButtonTitle="Cancel"
               containerStyle={{
                 backgroundColor: '#0000',
@@ -209,7 +211,17 @@ const FilterSheet = ({ bottomSheetRef, setData }: any): React.JSX.Element => {
       default:
         return <></>;
     }
-  }, [filter, category, country, age, gender, sort, isDarkMode, search]);
+  }, [
+    filter,
+    category,
+    country,
+    age,
+    gender,
+    sort,
+    isDarkMode,
+    search,
+    i18n.language,
+  ]);
   const renderItem = useCallback(
     ({ item }: any) => (
       <View
@@ -243,12 +255,12 @@ const FilterSheet = ({ bottomSheetRef, setData }: any): React.JSX.Element => {
                 : '#cad1e2',
             }}
           >
-            {item}
+            {t(item)}
           </Text>
         </TouchableOpacity>
       </View>
     ),
-    [isDarkMode, filter]
+    [isDarkMode, filter, i18n.language]
   );
 
   const handleReset = useCallback(() => {
@@ -304,7 +316,7 @@ const FilterSheet = ({ bottomSheetRef, setData }: any): React.JSX.Element => {
               marginLeft: 20,
             }}
           >
-            Filter
+            {t('Filter')}
           </Text>
           <TouchableOpacity
             style={{ marginRight: 20 }}
@@ -387,7 +399,7 @@ const FilterSheet = ({ bottomSheetRef, setData }: any): React.JSX.Element => {
                 color: '#222428',
               }}
             >
-              Reset
+              {t('Reset')}
             </Text>
           </TouchableOpacity>
           <TouchableOpacity
@@ -423,7 +435,7 @@ const FilterSheet = ({ bottomSheetRef, setData }: any): React.JSX.Element => {
                 color: '#222428',
               }}
             >
-              Filter
+              {t('Filter')}
             </Text>
           </TouchableOpacity>
         </BottomSheetView>

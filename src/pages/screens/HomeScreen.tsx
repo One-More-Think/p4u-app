@@ -31,8 +31,12 @@ import {
 import FilterSheet from 'components/FilterSheet';
 import store from 'reducers/index';
 import { GetQuestions } from 'reducers/actions/UserAction';
+import i18n from 'i18next';
+// import { useTranslation } from 'react-i18next';
+// import {i18n} from 'util/'
 
 const HomeScreen = ({ navigation }: any): React.JSX.Element => {
+  // const { t, i18n } = useTranslation();
   const [isLoading, setIsLoading] = useState(false);
   const [page, setPage] = useState<number>(0);
   const [endOfPage, isEndOfPage] = useState<boolean>(false);
@@ -69,13 +73,19 @@ const HomeScreen = ({ navigation }: any): React.JSX.Element => {
     bottomSheetRef.current?.expand();
   }, []);
 
-  const handleScroll: (event: any) => void = (event: any): void => {
+  const handleScroll: (event: any) => void = async (
+    event: any
+  ): Promise<void> => {
     const contentHeight: any = event.nativeEvent.contentSize.height;
     const contentOffsetY: any = event.nativeEvent.contentOffset.y;
     const layoutHeight: any = event.nativeEvent.layoutMeasurement.height;
 
-    if (contentHeight - contentOffsetY <= layoutHeight + 20) {
-      fetchData(page);
+    if (
+      contentHeight - contentOffsetY <= layoutHeight + 20 &&
+      !endOfPage &&
+      !refreshing
+    ) {
+      await fetchData(page);
     }
   };
 
@@ -83,16 +93,17 @@ const HomeScreen = ({ navigation }: any): React.JSX.Element => {
     const refreshMainPage = async () => {
       try {
         await new Promise<void>((resolve) => {
+          isEndOfPage(false);
+          setPage(0);
           setTimeout(async () => {
             await fetchData(0);
             resolve();
-          }, 500);
+          }, 1000);
         });
       } catch (err) {
         console.error('Error refreshing the page:', err);
       } finally {
         setRefreshing(false);
-        isEndOfPage(false);
       }
     };
     if (refreshing) refreshMainPage();
@@ -118,7 +129,7 @@ const HomeScreen = ({ navigation }: any): React.JSX.Element => {
         >
           <Ionicons name="search" size={30} color="#222428" />
         </TouchableOpacity>
-        <Text style={HomeScreenStyle.SafeAreaText}>Forum</Text>
+        <Text style={HomeScreenStyle.SafeAreaText}>{i18n.t('Forum')}</Text>
         <TouchableOpacity
           onPress={handlePresentModal}
           style={{ marginRight: 15 }}

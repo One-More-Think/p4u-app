@@ -7,24 +7,23 @@ import {
   Platform,
   TouchableOpacity,
   Keyboard,
+  ScrollView,
 } from 'react-native';
 import Common from 'components/Common';
 import { useDispatch, useSelector } from 'react-redux';
 import { NewMemberScreenStyle } from 'style';
 import { Picker } from '@react-native-picker/picker';
-import {
-  BannerAd,
-  TestIds,
-  BannerAdSize,
-} from 'react-native-google-mobile-ads';
+import { BannerAd, BannerAdSize } from 'react-native-google-mobile-ads';
 import Ionicons from 'react-native-vector-icons/Ionicons';
 import CountryFlag from 'components/CountryFlag';
 import { Input } from '@rneui/themed';
 import { userLogin } from 'reducers/userSlice';
 import { UpdateUser } from 'reducers/actions/UserAction';
+import { useTranslation } from 'react-i18next';
 import store from 'reducers/index';
 
 const NewMemberScreen = (): React.JSX.Element => {
+  const { t } = useTranslation();
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
   const userInfo = useSelector((state: any) => state.user.userInfo);
   const [age, setAge] = useState<number>(15);
@@ -41,7 +40,7 @@ const NewMemberScreen = (): React.JSX.Element => {
     [age]
   );
   const genderList = useMemo(() => {
-    return ['none', 'male', 'female'];
+    return ['none', 'Male', 'Female'];
   }, []);
   const onGender = useCallback(
     (text: string) => {
@@ -92,203 +91,221 @@ const NewMemberScreen = (): React.JSX.Element => {
               color: isDarkMode ? 'white' : '#222428',
             }}
           >
-            New Member
+            {t('New_User')}
           </Text>
         </SafeAreaView>
-        <View style={NewMemberScreenStyle.Container}>
-          <View style={NewMemberScreenStyle.RowContainer}>
-            <Text
-              style={{
-                ...NewMemberScreenStyle.Text,
-                marginTop: 10,
-                marginBottom: 10,
-              }}
-            >
-              Email
-            </Text>
-            <Text
-              style={{
-                color: isDarkMode ? 'white' : '#222428',
-                fontSize: 14,
-                fontWeight: 'bold',
-              }}
-            >
-              {userInfo.email}
-            </Text>
-            <Text
-              style={{
-                ...NewMemberScreenStyle.Text,
-                marginTop: 10,
-                marginBottom: 10,
-              }}
-            >
-              Country
-            </Text>
-            <CountryFlag isoCode={userInfo.country} size={30} />
-          </View>
-          <View style={NewMemberScreenStyle.RowContainer}>
-            <View style={NewMemberScreenStyle.ColumnContainer}>
-              <Text
-                style={{
-                  ...NewMemberScreenStyle.Text,
-                  marginTop: 10,
-                  marginBottom: 10,
-                }}
-              >
-                Age
-              </Text>
-              <Picker
-                onValueChange={(itemValue) => onAge(itemValue)}
-                selectedValue={age}
-                style={{ width: '100%' }}
-              >
-                {ageList.map((item: any) => (
-                  <Picker.Item
-                    label={item}
-                    value={item}
-                    key={age}
-                    color={
-                      Platform.OS === 'android'
-                        ? '#7a7b7e'
-                        : isDarkMode
-                        ? 'white'
-                        : '#222428'
-                    }
-                  />
-                ))}
-              </Picker>
-            </View>
-            <View style={NewMemberScreenStyle.ColumnContainer}>
-              <Text
-                style={{
-                  ...NewMemberScreenStyle.Text,
-                  marginTop: 10,
-                  marginBottom: 10,
-                }}
-              >
-                Gender
-              </Text>
-              <Picker
-                onValueChange={(itemValue) => onGender(itemValue)}
-                selectedValue={gender}
-                style={{ width: '100%' }}
-              >
-                {genderList.map((item: any) => (
-                  <Picker.Item
-                    label={item}
-                    value={item}
-                    key={gender}
-                    color={
-                      Platform.OS === 'android'
-                        ? '#7a7b7e'
-                        : isDarkMode
-                        ? 'white'
-                        : '#222428'
-                    }
-                  />
-                ))}
-              </Picker>
-            </View>
-          </View>
-          <Text
-            style={{
-              ...NewMemberScreenStyle.Text,
-              marginTop: 10,
-              marginBottom: 10,
-            }}
-          >
-            Occupation
-          </Text>
-          <Input
-            placeholder="Input your job"
-            leftIconContainerStyle={{
-              position: 'absolute',
-              left: 0,
-              top: -8,
-            }}
-            leftIcon={
-              occupation ? (
-                <Ionicons
-                  name="close-circle"
-                  onPress={() => setOccupation('')}
-                  size={20}
-                  color={isDarkMode ? '#222428' : 'gray'}
-                />
-              ) : undefined
-            }
-            placeholderTextColor={isDarkMode ? 'white' : '#222428'}
-            inputStyle={{
-              ...NewMemberScreenStyle.TextContainer,
-              color: isDarkMode ? 'white' : '#222428',
-            }}
-            inputContainerStyle={{
-              ...NewMemberScreenStyle.inputContainerStyle,
-              width: '45%',
-              height: 40,
-              backgroundColor: isDarkMode ? '#70747e' : 'white',
-              flexWrap: 'wrap',
-            }}
-            value={occupation}
-            onChangeText={(text) => onOccupation(text)}
-            onSubmitEditing={() => Keyboard.dismiss()}
-          />
-          <Text
-            style={{
-              ...NewMemberScreenStyle.Text,
-              marginTop: 10,
-              marginBottom: 10,
-            }}
-          >
-            About Me
-          </Text>
-          <Input
-            placeholder="About Me..."
-            multiline
-            leftIconContainerStyle={{
-              position: 'absolute',
-              left: 0,
-              top: -8,
-            }}
-            leftIcon={
-              aboutMe ? (
-                <Ionicons
-                  name="close-circle"
-                  onPress={() => setAboutMe('')}
-                  size={20}
-                  color={isDarkMode ? '#222428' : 'gray'}
-                />
-              ) : undefined
-            }
-            placeholderTextColor={isDarkMode ? 'white' : '#222428'}
-            inputStyle={{
-              ...NewMemberScreenStyle.TextContainer,
-              color: isDarkMode ? 'white' : '#222428',
-            }}
-            inputContainerStyle={{
-              ...NewMemberScreenStyle.inputContainerStyle,
-              height: 100,
-              backgroundColor: isDarkMode ? '#70747e' : 'white',
-              flexWrap: 'wrap',
-            }}
-            value={aboutMe}
-            onChangeText={(text) => onAboutMe(text)}
-            onSubmitEditing={() => Keyboard.dismiss()}
-          />
-        </View>
-        <TouchableOpacity
-          style={NewMemberScreenStyle.ConfirmButton}
-          onPress={handleNewMember}
+        <ScrollView
+          style={{
+            display: 'flex',
+            flexDirection: 'column',
+            marginTop: 15,
+            height: '100%',
+            width: '100%',
+          }}
         >
-          <Text
-            style={{
-              fontSize: 20,
-              fontWeight: 'bold',
-              color: isDarkMode ? 'white' : '#222428',
-            }}
-          >
-            Confirm
-          </Text>
-        </TouchableOpacity>
+          <View style={NewMemberScreenStyle.Container}>
+            <View style={NewMemberScreenStyle.RowContainer}>
+              <Text
+                style={{
+                  ...NewMemberScreenStyle.Text,
+                  marginTop: 10,
+                  marginBottom: 10,
+                }}
+              >
+                {t('Email')}
+              </Text>
+              <Text
+                style={{
+                  color: isDarkMode ? 'white' : '#222428',
+                  fontSize: 14,
+                  fontWeight: 'bold',
+                }}
+              >
+                {userInfo.email}
+              </Text>
+              <Text
+                style={{
+                  ...NewMemberScreenStyle.Text,
+                  marginTop: 10,
+                  marginBottom: 10,
+                }}
+              >
+                {t('Country')}
+              </Text>
+              <CountryFlag isoCode={userInfo.country} size={30} />
+            </View>
+            <View style={NewMemberScreenStyle.RowContainer}>
+              <View style={NewMemberScreenStyle.ColumnContainer}>
+                <Text
+                  style={{
+                    ...NewMemberScreenStyle.Text,
+                    marginTop: 10,
+                    marginBottom: 10,
+                  }}
+                >
+                  {t('Age')}
+                </Text>
+                <Picker
+                  onValueChange={(itemValue) => onAge(itemValue)}
+                  selectedValue={age}
+                  style={{ width: '100%' }}
+                >
+                  {ageList.map((item: any) => (
+                    <Picker.Item
+                      label={item}
+                      value={item}
+                      key={age}
+                      color={
+                        Platform.OS === 'android'
+                          ? '#7a7b7e'
+                          : isDarkMode
+                          ? 'white'
+                          : '#222428'
+                      }
+                    />
+                  ))}
+                </Picker>
+              </View>
+              <View style={NewMemberScreenStyle.ColumnContainer}>
+                <Text
+                  style={{
+                    ...NewMemberScreenStyle.Text,
+                    marginTop: 10,
+                    marginBottom: 10,
+                  }}
+                >
+                  {t('Gender')}
+                </Text>
+                <Picker
+                  onValueChange={(itemValue) => onGender(itemValue)}
+                  selectedValue={gender}
+                  style={{ width: '100%' }}
+                >
+                  {genderList.map((item: any) => (
+                    <Picker.Item
+                      label={t(item)}
+                      value={item}
+                      key={gender}
+                      color={
+                        Platform.OS === 'android'
+                          ? '#7a7b7e'
+                          : isDarkMode
+                          ? 'white'
+                          : '#222428'
+                      }
+                    />
+                  ))}
+                </Picker>
+              </View>
+            </View>
+            <Text
+              style={{
+                ...NewMemberScreenStyle.Text,
+                marginTop: 10,
+                marginBottom: 10,
+              }}
+            >
+              {t('Occupation')}
+            </Text>
+            <Input
+              placeholder={t('Occupation_Input')}
+              leftIconContainerStyle={{
+                position: 'absolute',
+                left: 0,
+                top: -8,
+              }}
+              leftIcon={
+                occupation ? (
+                  <Ionicons
+                    name="close-circle"
+                    onPress={() => setOccupation('')}
+                    size={20}
+                    color={isDarkMode ? '#222428' : 'gray'}
+                  />
+                ) : undefined
+              }
+              placeholderTextColor={isDarkMode ? 'white' : '#222428'}
+              inputStyle={{
+                ...NewMemberScreenStyle.TextContainer,
+                color: isDarkMode ? 'white' : '#222428',
+              }}
+              inputContainerStyle={{
+                ...NewMemberScreenStyle.inputContainerStyle,
+                width: '45%',
+                height: 40,
+                backgroundColor: isDarkMode ? '#70747e' : 'white',
+                flexWrap: 'wrap',
+              }}
+              value={occupation}
+              onChangeText={(text) => onOccupation(text)}
+              onSubmitEditing={() => Keyboard.dismiss()}
+            />
+            <Text
+              style={{
+                ...NewMemberScreenStyle.Text,
+                marginTop: 10,
+                marginBottom: 10,
+                marginLeft: 10,
+              }}
+            >
+              {t('About_Me')}
+            </Text>
+            <Input
+              placeholder={String(t('About_Me') + '...')}
+              multiline
+              leftIconContainerStyle={{
+                position: 'absolute',
+                left: 0,
+                top: -3,
+              }}
+              leftIcon={
+                aboutMe ? (
+                  <Ionicons
+                    name="close-circle"
+                    onPress={() => setAboutMe('')}
+                    size={20}
+                    color={isDarkMode ? '#222428' : 'gray'}
+                  />
+                ) : undefined
+              }
+              placeholderTextColor={isDarkMode ? 'white' : '#222428'}
+              inputStyle={{
+                ...NewMemberScreenStyle.TextContainer,
+                color: isDarkMode ? 'white' : '#222428',
+              }}
+              inputContainerStyle={{
+                ...NewMemberScreenStyle.inputContainerStyle,
+                height: 100,
+                backgroundColor: isDarkMode ? '#70747e' : 'white',
+                flexWrap: 'wrap',
+              }}
+              value={aboutMe}
+              onChangeText={(text) => onAboutMe(text)}
+            />
+            <TouchableOpacity
+              style={NewMemberScreenStyle.ConfirmButton}
+              onPress={handleNewMember}
+            >
+              <Text
+                style={{
+                  fontSize: 20,
+                  fontWeight: 'bold',
+                  color: isDarkMode ? 'white' : '#222428',
+                }}
+              >
+                {t('Confirm')}
+              </Text>
+            </TouchableOpacity>
+          </View>
+        </ScrollView>
+        <BannerAd
+          unitId={
+            Platform.OS === 'ios'
+              ? process.env.BANNER_IOS_UNIT_ID || ''
+              : process.env.BANNER_ANDROID_UNIT_ID || ''
+          }
+          size={BannerAdSize.ANCHORED_ADAPTIVE_BANNER}
+        />
       </Common>
     </>
   );

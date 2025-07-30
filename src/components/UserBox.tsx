@@ -28,6 +28,7 @@ const UserBox = ({
     <TouchableOpacity
       style={{
         ...UserBoxStyle.HeaderBox,
+        width: '100%',
       }}
       onPress={() =>
         navigation.navigate('UserDetailScreen', { userId: writerId })

@@ -58,9 +58,16 @@ const configSlice = createSlice({
     setIsLockOn: (state: any, action: IsLockOnProps) => {
       state.isLockOn = action.payload;
     },
+    setResetConfig: () => initialState,
   },
 });
-export const { setLanguage, setAppInfo, setMode, setIsLoading, setAppState } =
-  configSlice.actions;
+export const {
+  setLanguage,
+  setAppInfo,
+  setMode,
+  setIsLoading,
+  setAppState,
+  setResetConfig,
+} = configSlice.actions;
 
 export default configSlice.reducer;

@@ -1,17 +1,32 @@
-import i18next from 'i18next';
+import i18n from 'i18next';
 import { initReactI18next } from 'react-i18next';
-// import LanguageDetector from 'i18next-browser-languagedetector';
-// import HTTPApi from 'i18next-http-backend';
+import LANGUAGE from 'utils/translate.json';
 
-i18next
-  .use(initReactI18next)
-  .use(LanguageDetector)
-  .use(HTTPApi)
-  .init({
-    fallbackLng: 'en',
-    interpolation: {
-      escapeValue: false,
+i18n.use(initReactI18next).init({
+  resources: {
+    en: {
+      translation: LANGUAGE['TRANSLATE']['en'],
     },
-  });
-
-export default i18next;
+    ko: {
+      translation: LANGUAGE['TRANSLATE']['ko'],
+    },
+    es: {
+      translation: LANGUAGE['TRANSLATE']['es'],
+    },
+    ja: {
+      translation: LANGUAGE['TRANSLATE']['ja'],
+    },
+    zh: {
+      translation: LANGUAGE['TRANSLATE']['zh'],
+    },
+    vn: {
+      translation: LANGUAGE['TRANSLATE']['vn'],
+    },
+  },
+  lng: 'ko',
+  fallbackLng: 'en',
+  debug: false,
+  interpolation: {
+    escapeValue: false,
+  },
+});

@@ -27,6 +27,13 @@ export const UserInactivityProvider = ({ children }: any) => {
         .name === 'LockPage'
     )
       return;
+    if (
+      isLockOn === 'true' &&
+      appState.current === 'inactive' &&
+      nextAppState === 'active'
+    ) {
+      navigation.push('LockPage', { isSetPassword: false });
+    }
     if (isLockOn === 'true' && appState.current === 'background') {
       navigation.push('LockPage', { isSetPassword: false });
     }

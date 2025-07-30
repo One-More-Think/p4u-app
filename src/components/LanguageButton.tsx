@@ -1,13 +1,14 @@
 import React from 'react';
-import {TouchableOpacity, View, Text} from 'react-native';
-import {RadioButtonStyle} from 'style';
+import { TouchableOpacity, View, Text } from 'react-native';
+import { RadioButtonStyle } from 'style';
 import Ionicons from 'react-native-vector-icons/Ionicons';
-import {useSelector} from 'react-redux';
-import store from 'reducers/index';
-import {setLanguage} from 'reducers/configSlice';
+import { useSelector } from 'react-redux';
 import CountryFlag from 'components/CountryFlag';
+import { useTranslation } from 'react-i18next';
+import EncryptedStorage from 'react-native-encrypted-storage';
 
 const LanguageButton = ({
+  language,
   name,
   title,
   description = '',
@@ -15,31 +16,35 @@ const LanguageButton = ({
   chooseButton,
 }: any): React.JSX.Element => {
   const isDarkMode = useSelector((state: any) => state.user.darkmode);
-  const handleLanguage = (lan: any) => {
-    store.dispatch(setLanguage(lan));
+  const { t, i18n } = useTranslation();
+  const handleLanguage = async (lan: any) => {
+    await i18n.changeLanguage(lan);
+    await EncryptedStorage.setItem('language', lan);
   };
   return (
     <View
       style={{
         ...RadioButtonStyle.Container,
         borderBottomColor: isDarkMode ? 'white' : '#222428',
-      }}>
+      }}
+    >
       <TouchableOpacity
         style={{
           ...RadioButtonStyle.TouchableOpacity,
           borderBottomColor: isDarkMode ? 'white' : '#222428',
         }}
         onPress={() => {
-          chooseButton(title), handleLanguage(title);
-        }}>
+          chooseButton(title), handleLanguage(language);
+        }}
+      >
         <View style={RadioButtonStyle.IconContainer}>
           <CountryFlag
             isoCode={name}
             size={40}
-            style={{borderWidth: 0.5, borderColor: 'black'}}
+            style={{ borderWidth: 0.5, borderColor: 'black' }}
           />
           <View style={RadioButtonStyle.IconTextWrapper}>
-            <Text style={{color: isDarkMode ? 'white' : '#222428'}}>
+            <Text style={{ color: isDarkMode ? 'white' : '#222428' }}>
               {title}
             </Text>
             {description && (
@@ -50,17 +55,17 @@ const LanguageButton = ({
           </View>
         </View>
         <View style={RadioButtonStyle.RadioButton}>
-          {selected === title ? (
+          {selected === language ? (
             <Ionicons
               name="radio-button-on"
               size={30}
-              style={{color: isDarkMode ? 'white' : '#222428'}}
+              style={{ color: isDarkMode ? 'white' : '#222428' }}
             />
           ) : (
             <Ionicons
               name="radio-button-off"
               size={30}
-              style={{color: isDarkMode ? 'white' : '#222428'}}
+              style={{ color: isDarkMode ? 'white' : '#222428' }}
             />
           )}
         </View>

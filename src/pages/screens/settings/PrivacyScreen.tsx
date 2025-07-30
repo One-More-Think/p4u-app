@@ -6,10 +6,11 @@ import SettingBlock from 'components/SettingBlock';
 import EncryptedStorage from 'react-native-encrypted-storage';
 import store from 'reducers/index';
 import { showAlert } from 'reducers/alertSlice';
+import { useTranslation } from 'react-i18next';
 
 const PrivacyScreen = ({ route, navigation }: any): React.JSX.Element => {
   const { title } = route.params;
-
+  const { t } = useTranslation();
   const [isEnabled, setIsEnabled] = useState<boolean>(false);
   const [isInitializing, setIsInitializing] = useState<boolean>(true);
 
@@ -18,7 +19,7 @@ const PrivacyScreen = ({ route, navigation }: any): React.JSX.Element => {
   };
   const privacyList = [
     {
-      title: 'Lock Screen',
+      title: t('Lock_Screen'),
       description: (
         <Switch
           trackColor={{ false: '#767577', true: '#81b0ff' }}
@@ -31,8 +32,12 @@ const PrivacyScreen = ({ route, navigation }: any): React.JSX.Element => {
     //   title: 'Biometric ID (Touch ID, Face ID)',
     // },
     {
-      title: 'Change the Password',
-      onPress: () => navigation.push('LockPage', { isSetPassword: true }),
+      title: t('Change_the_Password'),
+      onPress: () =>
+        navigation.push('LockPage', {
+          isSetPassword: true,
+          changePassword: true,
+        }),
     },
   ];
 
@@ -81,7 +86,7 @@ const PrivacyScreen = ({ route, navigation }: any): React.JSX.Element => {
   return (
     <SettingCommonHeader title={title} navigation={navigation}>
       <View style={CommonHeaderStyle.Container}>
-        <Text style={CommonHeaderStyle.ContainerText}>Security</Text>
+        <Text style={CommonHeaderStyle.ContainerText}>{t('Security')}</Text>
         {privacyList.map((privacy) => (
           <SettingBlock
             key={privacy.title}
