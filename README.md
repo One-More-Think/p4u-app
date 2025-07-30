@@ -18,9 +18,9 @@ P4U is a social mobile app where users can upload questions and make decisions i
 
 ## 🧑‍💻 Tech Stack
 
-| Frontend            | Backend           | Other               |
-|---------------------|-------------------|---------------------|
-| React Native        | Nest.js           | SQLite / PostgreSQL |
+| Frontend            | Backend           | Other                     |
+|---------------------|-------------------|---------------------------|
+| React Native        | Nest.js           | SQLite / PostgreSQL / AWS |
 ------------------------------------------------------------------
 
 App Link: https://apps.apple.com/app/p4u/id6744564359
